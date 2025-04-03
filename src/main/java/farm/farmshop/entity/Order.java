@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -20,8 +22,11 @@ public class Order {
     @JoinColumn(name = "member_id") // Foreign Key
     private Member member;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderProduct> orderItems = new ArrayList<>();
+
     @OneToOne(fetch = LAZY,cascade = CascadeType.ALL)
-    @JoinColumn
+    @JoinColumn(name = "deliver_id")
     private Delivery delivery;
 
     private LocalDateTime orderDate;
@@ -34,6 +39,11 @@ public class Order {
         this.member = member;
         member.getOrders().add(this);
     }
+
+    /*public void addOrderProduct(OrderProduct orderProduct){
+        orderProduct.add(orderProduct);
+        orderProduct.setOrder(this);
+    }*/
 
     public void setDelivery(Delivery delivery) {
         this.delivery = delivery;
