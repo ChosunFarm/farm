@@ -13,4 +13,16 @@ public class Address {
         this.street = street;
         this.zipcode = zipcode;
     } // 생성할 때만 만들어지기 위해 하기 위해서
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public String getZipcode() {
+        return zipcode;
+    }
 }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project</title>
+    <link th:href="@{/css/log.css}" rel="stylesheet">
+</head>
+
+<body>
+    <p class="top"></p>
+
+    <div class="cont">
+        <div class="form sign-in">
+            <h2>로그인</h2>
+            <form th:action="@{/login}" method="post">
+            <label>
+                <span>이메일을 입력하세요</span>
+                <input type="email" name="email" />
+            </label>
+            <label>
+                <span>비밀번호</span>
+                <input type="password" name="password" />
+            </label>
+            <p class="forgot-pass">비밀번호를 잊어버렸나요?</p>
+            <button type="submit" class="submit">로그인</button>
+        </div>
+
+        <div class="sub-cont">
+            <div class="img">
+                <div class="img__text m--up">
+                    <h2>환영합니다</h2>
+                    <p>회원가입은</p>
+                    <p>아래의 버튼을 눌러주세요</p>
+                </div>
+                <div class="img__text m--in">
+                    <h2>환영합니다!</h2>
+                    <p>직거래 경매 사이트에 오신 걸</p>
+                    <p>환영합니다</p>
+                </div>
+                <div class="img__btn">
+                    <span class="m--up">회원가입</span>
+                    <span class="m--in">로그인</span>
+                </div>
+            </div>
+
+            <div class="form sign-up">
+                <h2>회원가입</h2>
+                <label>
+                    <span>이름</span>
+                    <input type="text" name="name" />
+                </label>
+                <label>
+                    <span>주소</span>
+                    <input type="text" name="address" />
+                </label>
+                <label>
+                    <span>이메일</span>
+                    <input type="email" name="email" />
+                </label>
+                <label>
+                    <span>전화번호</span>
+                    <input type="phone2numeric" name="phone2numeric" />
+                </label>
+                <label>
+                    <span>비밀번호</span>
+                    <input type="password" name="password" />
+                </label>
+                <button type="submit" class="submit">로그인</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/Log.js}" defer></script>
+</body>
+</html>
