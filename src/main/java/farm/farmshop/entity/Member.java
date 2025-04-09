@@ -25,8 +25,9 @@ public class Member {
 
     private String phone;
 
-    @Embedded
-    private Address address;
+    /*@Embedded
+    private Address address;*/
+    private String address;
 
     @Column(name = "user_type")
     private String user_type;

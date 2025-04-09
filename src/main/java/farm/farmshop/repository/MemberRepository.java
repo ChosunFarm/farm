@@ -32,4 +32,11 @@ public class MemberRepository {
                 .setParameter("name",name)
                 .getResultList();
     }
+    public Member findByEmail(String email) {
+        List<Member> result = em.createQuery("select m from Member m where m.email = :email", Member.class)
+                .setParameter("email", email)
+                .getResultList();
+        return result.isEmpty() ? null : result.get(0);
+    }
+
 }
