@@ -22,6 +22,5 @@ public class MemberService {
             return member; // 로그인 성공
         }
         return null; // 실패
-        //add
     }
 }
