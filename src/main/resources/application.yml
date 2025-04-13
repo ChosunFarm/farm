@@ -10,8 +10,10 @@ spring:
       ddl-auto: create
     properties:
       hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
         # show_sql: true
         format_sql: true
+        
 logging:
   level:
     org.hibernate.SQL: debug

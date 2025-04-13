@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 경매</title>
+    <link th:href="@{/css/live_auction.css}" rel="stylesheet">
+</head>
+
+<body>
+<header class="top-nav">
+    <div class="logo-section">
+        <a th:href="@{/}"> 
+            <img class="logo-img" th:src="@{/images/logo2.png}" alt="현대농산물">
+        </a>
+    </div>
+
+    <!-- 메뉴 -->
+    <nav class="menu">
+        <a th:href="@{/}">경매 예정 상품</a>
+        <a th:href="@{/}">상품 검색</a>
+        <a th:href="@{/auction}">실시간 경매</a>
+        <a th:href="@{/mypage}">마이페이지</a>
+    </nav>
+
+    <!-- 사용자 정보 -->
+    <div class="user-section">
+    <span>OOO님</span>
+    <button class="logout-btn">로그아웃</button>
+    </div>
+</header>
+        
+    <div class="content">
+        <aside>
+            <div>
+                <a th:href="@{/manual}">
+                    이용방법
+                </a>
+            </div>
+            <hr style="margin: 20px 0;">
+            <div>
+                <a th:href="@{/}">
+                    나의 경매
+                </a>
+            </div>
+        </aside>
+        
+        <main>
+            <h2>실시간 경매 한 눈에 보기</h2>
+            <p style="color: green;">• 원하는 상품이 있으면 가격을 제안해보세요!</p>
+        
+            <div class="auction-box">
+                <div class="product-card">
+                    <div> 거창 꿀사과 5kg</div>
+                    <div class="bids">
+                        <div class="bid">○○님 <span>15,000</span></div>
+                        <div class="bid">○△님 <span>16,000</span></div>
+                        <div class="bid">△△님 <span>17,000</span></div>
+                    </div>
+                <button class="offer-button">가격 제안하기</button>
+                </div>
+        
+                <div class="product-card">
+                    <div> 상주 곶감 3kg</div>
+                        <div class="bids">
+                        <div class="bid">○○님 <span>20,000</span></div>
+                        <div class="bid">○△님 <span>21,000</span></div>
+                        <div class="bid">ㅇ△ㅇ님 <span>21,500</span></div>
+                    </div>
+                <button class="offer-button">가격 제안하기</button>
+                </div>
+            </div>
+        </main>
+    </div>
+        
+</body>
+</html>
