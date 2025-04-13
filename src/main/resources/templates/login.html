@@ -12,13 +12,14 @@
 <p class="top"></p>
 
 <div class="cont">
+
     <!-- 로그인 폼 -->
     <div class="form sign-in">
         <h2>로그인</h2>
         <form th:action="@{/login}" method="post">
             <label>
                 <span>이메일을 입력하세요</span>
-                <input type="email" name="email" />
+                <input type="email" name="username" /> <!-- 여기만 수정 스프링 시큐리티 때문에-->
             </label>
             <label>
                 <span>비밀번호</span>
