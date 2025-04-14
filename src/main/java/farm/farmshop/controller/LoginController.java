@@ -5,13 +5,18 @@ import farm.farmshop.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class LoginController {
 
-    private final MemberService memberService;
+    @GetMapping("/login")
+    public String loginForm(){
+        return "login";
+    }
+    /*private final MemberService memberService;
 
     public LoginController(MemberService memberService) {
         this.memberService = memberService;
@@ -30,5 +35,5 @@ public class LoginController {
 
         session.setAttribute("loginMember", loginMember);
         return "redirect:/"; // 성공 시 메인 화면으로
-    }
+    }*/
 }
