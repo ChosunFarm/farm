@@ -24,11 +24,11 @@
             <!-- 왼쪽 로고 및 데스크톱 메뉴 -->
             <div class="flex">
                 <a th:href="@{/}" class="flex-shrink-0 flex items-center">
-                    <img class="h-8 w-auto" th:src="@{/images/logo.png}" alt="농산물 경매 마켓">
+                    <img class="h-8 w-auto" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
                 </a>
                 <div class="hidden md:flex ml-10 space-x-4 items-center">
                     <a th:href="@{/auction}" class="text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap">
-                        경매참여
+                        상품등록
                     </a>
                     <a th:href="@{/mypage}" class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap">
                         마이페이지
@@ -53,10 +53,10 @@
                         <button class="!rounded-button bg-custom text-white px-4 py-2 text-sm font-medium hover:bg-custom/90 whitespace-nowrap">
                             로그인
                         </button>
+                        <button class="!rounded-button border border-custom text-custom px-4 py-2 text-sm font-medium hover:bg-custom/10 whitespace-nowrap">
+                            회원가입
+                        </button>
                     </a>
-                    <button class="!rounded-button border border-custom text-custom px-4 py-2 text-sm font-medium hover:bg-custom/10 whitespace-nowrap">
-                        회원가입
-                    </button>
                 </div>
             </div>
             <!-- 모바일 햄버거 버튼 -->
@@ -79,7 +79,7 @@
     <div class="md:hidden hidden" id="mobile-menu">
         <div class="px-2 pt-2 pb-3 space-y-1">
             <a th:href="@{/auction}" class="block text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md text-base font-medium">
-                경매참여
+                상품등록
             </a>
             <a th:href="@{/mypage}" class="block text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-base font-medium">
                 마이페이지
@@ -106,7 +106,7 @@
     <!-- 실시간 경매 현황 영역 -->
     <div class="mb-12">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold">실시간 경매 한눈에 보기기</h2>
+            <h2 class="text-2xl font-bold">실시간 경매 한눈에 보기</h2>
             <a th:href="@{/auctions}" class="text-custom hover:text-custom/80">
                 전체보기 <i class="fas fa-chevron-right ml-1"></i>
             </a>
