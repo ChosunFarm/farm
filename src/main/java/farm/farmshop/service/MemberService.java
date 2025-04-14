@@ -48,7 +48,6 @@ public class MemberService implements UserDetailsService {
         if (member == null) {
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username);
         }
-<<<<<<< HEAD
 
         // 사용자 권한 설정 - user_type 필드 값 사용
         String role = "ROLE_" + member.getUser_type();
@@ -58,8 +57,5 @@ public class MemberService implements UserDetailsService {
                 member.getPassword(), // 암호화된 비밀번호
                 Collections.singletonList(new SimpleGrantedAuthority(role)) // 권한 목록
         );
-=======
-        return null; // 실패
->>>>>>> origin/Login
     }
 }
