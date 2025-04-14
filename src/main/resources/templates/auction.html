@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>상품 등록</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/font.css}" rel="stylesheet">
+    <link th:href="@{/css/auction.css}" rel="stylesheet"/>
+
+    <script th:src="@{/js/auction.js}"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white border-b">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between h-16">
+            <div class="flex">
+                <a th:href="@{/}" class="flex-shrink-0 flex items-center">
+                    <img class="h-12 w-auto" th:src="@{/images/logo2.png}" alt="현대농산물">
+                </a>
+              <!-- 데스크톱 네비게이션 (화면이 md 이상일 때 보임) -->
+                <div class="hidden md:flex ml-10 space-x-4 items-center">
+                    <a th:href="@{/manual}" class="block text-base text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md font-medium">
+                    이용방법
+                    </a>
+                    <a th:href="@{/mypage}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">
+                    마이페이지
+                    </a>
+                    <a th:href="@{/live_auction}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">
+                    실시간 경매
+                    </a>
+                    <a th:href="@{/scheduled}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">
+                    경매 예정 상품
+                    </a>
+                </div>
+            </div>
+            <div class="hidden md:flex ml-10 space-x-4 items-center">
+                <div class="flex items-center">
+                    <span class="text-base text-gray-700 mr-4">OOO님</span>
+                    <button type="button" class="px-3 py-1 text-base text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50" onclick="window.location.href='/'">로그아웃</button>
+                </div>
+            </div>
+
+            <!-- 모바일 햄버거 버튼 (md 이하일 때 보임) -->
+            <div class="flex items-center md:hidden">
+              <button id="mobile-menu-button"
+                      class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-custom"
+                      aria-controls="mobile-menu" aria-expanded="false">
+                <span class="sr-only">메인 메뉴 열기</span>
+                <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                     xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- 모바일 메뉴 (기본적으로 숨김 처리됨) -->
+        <div id="mobile-menu" class="md:hidden hidden">
+          <div class="px-2 pt-2 pb-3 space-y-1">
+            <!-- 모바일 메뉴 내 텍스트 크기는 text-base로 고정 -->
+            <div class="flex items-center">
+                <span class="text-base text-gray-700 mr-4">OOO님</span>
+                <button type="button" class="px-3 py-1 text-base text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50" onclick="window.location.href='/'">
+                  로그아웃
+                </button>
+            </div>
+            <a th:href="@{/manual}" class="block text-base text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md font-medium">
+              이용방법
+            </a>
+            <a th:href="@{/mypage}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">
+              마이페이지
+            </a>
+            <a th:href="@{/live-auction}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">
+              실시간 경매
+            </a>
+            <a th:href="@{/scheduled}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">
+              경매 예정 상품
+            </a>
+
+          </div>
+        </div>
+      </nav>
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main class="mt-0">
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h1 class="text-xl font-medium text-gray-900">상품 등록</h1>
+                    <p class="text-xs text-red-600 mt-2">*검수 후 경매 일정을 확정할 수 있습니다.</p>
+                    <p class="text-xs text-red-600 mt-2">*검수 완료까지 최대 2일이 소요됩니다.</p>
+                </div>
+                <form class="p-6 space-y-6" th:action="@{/submit-product}" method="post" enctype="multipart/form-data">
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                        <div class="sm:col-span-1">
+                            <label for="product_type" class="block text-sm font-medium text-gray-700">상품 종류</label>
+                            <select id="product_type" name="product_type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-custom focus:border-custom !rounded-button">
+                                <option>과일</option>
+                                <option>채소</option>
+                                <option>곡물</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-1">
+                            <label for="amount" class="block text-sm font-medium text-gray-700">판매량 (kg)</label>
+                            <input type="number" name="amount" id="amount" class="mt-1 block w-full border-gray-300 focus:ring-custom focus:border-custom !rounded-button" placeholder="판매량을 입력하세요"/>
+                        </div>
+                        <div class="sm:col-span-3">
+                            <label for="description" class="block text-sm font-medium text-gray-700">상품 설명</label>
+                            <textarea id="description" name="description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-custom focus:border-custom !rounded-button" placeholder="상품에 대한 상세 설명을 입력하세요"></textarea>
+                        </div>
+                        <div class="sm:col-span-1">
+                            <label for="price" class="block text-sm font-medium text-gray-700">시작 금액 (원)</label>
+                            <input type="number" name="price" id="price" class="mt-1 block w-full border-gray-300 focus:ring-custom focus:border-custom !rounded-button" placeholder="시작 금액을 입력하세요"/>
+                        </div>
+                        <div class="sm:col-span-3">
+                            <label class="block text-sm font-medium text-gray-700">상품 이미지</label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                                <div class="space-y-1 text-center">
+                                    <i class="fas fa-image text-gray-400 text-3xl mb-3"></i>
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-custom hover:text-custom-dark focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-custom">
+                                            <span>이미지 업로드</span>
+                                            <input id="file-upload" name="file-upload" type="file" class="sr-only"/>
+                                        </label>
+                                    </div>
+                                    <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sm:col-span-3">
+                            <label class="block text-sm font-medium text-gray-700">경매 일자</label>
+                            <div class="mt-1 flex items-center gap-4">
+                                <div class="relative inline-block w-48 mr-2">
+                                    <select name="year" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-custom focus:border-custom !rounded-button">
+                                        <option>2024년</option>
+                                        <option>2025년</option>
+                                        <option>2026년</option>
+                                    </select>
+                                </div>
+                                <div class="relative inline-block w-48 mr-2">
+                                    <select name="month" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-custom focus:border-custom !rounded-button">
+                                        <option>1월</option>
+                                        <option>2월</option>
+                                        <option>3월</option>
+                                        <option>4월</option>
+                                        <option>5월</option>
+                                        <option>6월</option>
+                                        <option>7월</option>
+                                        <option>8월</option>
+                                        <option>9월</option>
+                                        <option>10월</option>
+                                        <option>11월</option>
+                                        <option>12월</option>
+                                    </select>
+                                </div>
+                                <div class="relative inline-block w-48">
+                                    <select name="day" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-custom focus:border-custom !rounded-button">
+                                        <option>1일</option>
+                                        <option>2일</option>
+                                        <option>3일</option>
+                                        <option>4일</option>
+                                        <option>5일</option>
+                                        <option>6일</option>
+                                        <option>7일</option>
+                                        <option>8일</option>
+                                        <option>9일</option>
+                                        <option>10일</option>
+                                        <option>11일</option>
+                                        <option>12일</option>
+                                        <option>13일</option>
+                                        <option>14일</option>
+                                        <option>15일</option>
+                                        <option>16일</option>
+                                        <option>17일</option>
+                                        <option>18일</option>
+                                        <option>19일</option>
+                                        <option>20일</option>
+                                        <option>21일</option>
+                                        <option>22일</option>
+                                        <option>23일</option>
+                                        <option>24일</option>
+                                        <option>25일</option>
+                                        <option>26일</option>
+                                        <option>27일</option>
+                                        <option>28일</option>
+                                        <option>29일</option>
+                                        <option>30일</option>
+                                        <option>31일</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 경매 일자까지 입력 영역 -->
+<div class="mt-6">
+    <p class="text-sm text-red-600">
+        ※ 검수 후에 상품 등록이 가능하므로 2일 내외의 시간이 걸린다는 점 양해 부탁드립니다.
+    </p>
+</div>
+
+<!-- 버튼/문구 영역 -->
+<div class="mt-6 border-t border-gray-200 pt-4 flex flex-col items-end gap-2">
+    <div class="flex space-x-3">
+        <button type="button"
+                class="bg-gray-500 text-white px-6 py-2 !rounded-button hover:bg-gray-600
+                       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                onclick="openInspectionPopup()">
+            검수 신청
+        </button>
+        <button type="submit"
+                class="bg-gray-500 text-white px-6 py-2 !rounded-button hover:bg-gray-600
+                       focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            등록하기
+        </button>
+    </div>
+    <p class="text-xs text-red-600">
+        ※ 검수 후에 상품 등록되는데 2일 정도 소요됩니다.
+    </p>
+</div>
+
+
+
+                </form>
+                <div id="inspectionPopup" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                    <div class="relative top-20 mx-auto p-6 border w-[36rem] shadow-lg rounded-md bg-white">
+                        <div class="mt-3 text-center">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">검수 신청</h3>
+                            <div class="mt-4">
+                                <div class="mt-2 mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">검수용 이미지 등록</label>
+                                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                                        <div class="space-y-1 text-center">
+                                            <i class="fas fa-image text-gray-400 text-3xl mb-3"></i>
+                                            <div class="flex text-sm text-gray-600">
+                                                <label class="relative cursor-pointer bg-white rounded-md font-medium text-custom hover:text-custom-dark focus-within:outline-none">
+                                                    <span>이미지 업로드</span>
+                                                    <input type="file" class="sr-only"/>
+                                                </label>
+                                            </div>
+                                            <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end space-x-3">
+                                    <button type="button" class="bg-gray-200 px-4 py-2 !rounded-button text-gray-800" onclick="closeInspectionPopup()">취소</button>
+                                    <button type="button" class="bg-custom text-white px-4 py-2 !rounded-button hover:bg-custom-dark">검수 신청</button>
+                                    <p class="text-xs text-red-600 mt-2">*검수 완료 후 알림을 전송해드립니다</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script th:src="@{/js/moblie.js}"></script>
+</body>
+</html>
