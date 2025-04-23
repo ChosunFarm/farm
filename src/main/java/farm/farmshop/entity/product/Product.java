@@ -20,6 +20,23 @@ public abstract class Product {
     private int price;
     private int stockQuantity;
 
+    @Column(name = "dtype", insertable = false, updatable = false)
+    private String dtype;
+
+    @Column(name = "image_url") // 데이터베이스 컬럼 이름을 지정
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+
+
+
 //    @ManyToMany(mappedBy = "items")
 //    private List<Category> categories = new ArrayList<>();
 }
