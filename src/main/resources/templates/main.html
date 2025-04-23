@@ -19,6 +19,7 @@
 
   <!-- Custom CSS -->
   <link th:href="@{/css/main.css}" rel="stylesheet">
+  <link th:href="@{/css/font.css}" rel="stylesheet">
 
   <!-- Custom JS -->
   <script th:src="@{/js/main.js}"></script>
@@ -209,24 +210,26 @@
         </div>
         <div class="grid grid-cols-4 gap-6">
           <!-- 경매 아이템 1 -->
-          <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-            <img th:src="@{https://creatie.ai/ai/api/search-image?query=Fresh red apples arranged neatly on a clean white surface with soft natural lighting, showcasing their perfect shape and vibrant color. The composition is simple and elegant with minimal styling&width=300&height=200&orientation=landscape&flag=41939306-f703-460d-ab39-f8642927ad3a}" class="w-full h-48 object-cover" alt="사과">
-            <div class="p-4">
-              <div class="flex justify-between items-center mb-2">
-                <span class="text-sm text-gray-500">충주 사과</span>
-                <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">마감 임박</span>
-              </div>
-              <h3 class="font-medium mb-2">충주 사과 10kg</h3>
-              <div class="flex justify-between items-center mb-2">
-                <span class="text-sm">현재가</span>
-                <span class="font-bold text-custom">35,000원</span>
-              </div>
-              <div class="flex justify-between items-center text-sm text-gray-500">
-                <span>입찰 32회</span>
-                <span>남은시간 01:23:45</span>
+          <a th:href="@{/propose}" class="block">
+            <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              <img th:src="@{https://creatie.ai/ai/api/search-image?query=Fresh red apples arranged neatly on a clean white surface with soft natural lighting, showcasing their perfect shape and vibrant color. The composition is simple and elegant with minimal styling&width=300&height=200&orientation=landscape&flag=41939306-f703-460d-ab39-f8642927ad3a}" class="w-full h-48 object-cover" alt="사과">
+              <div class="p-4">
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-sm text-gray-500">충주 사과</span>
+                  <span class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">마감 임박</span>
+                </div>
+                <h3 class="font-medium mb-2">충주 사과 10kg</h3>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-sm">현재가</span>
+                  <span class="font-bold text-custom">35,000원</span>
+                </div>
+                <div class="flex justify-between items-center text-sm text-gray-500">
+                  <span>입찰 32회</span>
+                  <span>남은시간 01:23:45</span>
+                </div>
               </div>
             </div>
-          </div>
+          </a>
           <!-- 경매 아이템 2 -->
           <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <img th:src="@{https://creatie.ai/ai/api/search-image?query=Fresh Korean pears displayed on a clean white surface with soft natural lighting, highlighting their smooth texture and golden color. The arrangement is minimalist and professional&width=300&height=200&orientation=landscape&flag=baed05f1-134f-4468-806e-3aabd3a587d8}" class="w-full h-48 object-cover" alt="배">
