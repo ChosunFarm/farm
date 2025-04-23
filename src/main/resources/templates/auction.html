@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 등록 - 현대농산물</title>
+
+    <!-- External CSS Libraries -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+
+    <!-- External JS Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Glide.js/3.6.0/glide.min.js"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+
+    <!-- Custom CSS -->
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+</head>
+<body class="font-['Noto_Sans_KR'] bg-gray-50">
+<!-- 헤더 영역은 메인 페이지와 동일하게 유지 -->
+<header class="bg-white shadow-sm">
+    <nav class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- 왼쪽 로고 및 데스크톱 메뉴 -->
+            <div class="flex items-center">
+                <a th:href="@{/}" class="flex-shrink-0 flex items-center">
+                    <img class="h-12 w-auto" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+                </a>
+                <div class="hidden md:flex ml-10 space-x-4 items-center">
+                    <a th:href="@{/auction}" class="text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+                        상품등록
+                    </a>
+                    <a th:href="@{/mypage}" class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+                        마이페이지
+                    </a>
+                    <a th:href="@{/support}" class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+                        고객센터
+                    </a>
+                </div>
+            </div>
+            <!-- 나머지 헤더 요소 -->
+        </div>
+    </nav>
+</header>
+
+<!-- 메인 콘텐츠 영역 - 상품 등록 폼 -->
+<main>
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-lg shadow p-6">
+            <h1 class="text-2xl font-bold mb-6">상품 등록</h1>
+
+            <form th:action="@{/auction}" method="post" enctype="multipart/form-data">
+                <!-- 카테고리 선택 -->
+                <div class="mb-4">
+                    <label for="category" class="block text-gray-700 text-sm font-medium mb-2">카테고리</label>
+                    <select id="category" name="category"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom">
+                        <option value="">카테고리를 선택하세요</option>
+                        <option value="F">과일</option>
+                        <option value="V">채소</option>
+                        <option value="G">곡물</option>
+                    </select>
+                </div>
+
+                <!-- 상품명 -->
+                <div class="mb-4">
+                    <label for="name" class="block text-gray-700 text-sm font-medium mb-2">상품명</label>
+                    <input type="text" id="name" name="name"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
+                           placeholder="상품명을 입력하세요">
+                </div>
+
+                <!-- 품목별 이름 (과일명/채소명/곡물명) - 카테고리에 따라 동적으로 표시 -->
+                <div class="mb-4 fruit-field" style="display: none;">
+                    <label for="fruitName" class="block text-gray-700 text-sm font-medium mb-2">과일명</label>
+                    <input type="text" id="fruitName" name="fruitName"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
+                           placeholder="과일명을 입력하세요">
+                </div>
+
+                <div class="mb-4 vegetable-field" style="display: none;">
+                    <label for="vegetableName" class="block text-gray-700 text-sm font-medium mb-2">채소명</label>
+                    <input type="text" id="vegetableName" name="vegetableName"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
+                           placeholder="채소명을 입력하세요">
+                </div>
+
+                <div class="mb-4 grain-field" style="display: none;">
+                    <label for="grainName" class="block text-gray-700 text-sm font-medium mb-2">곡물명</label>
+                    <input type="text" id="grainName" name="grainName"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
+                           placeholder="곡물명을 입력하세요">
+                </div>
+
+                <!-- 중량 (gram) -->
+                <div class="mb-4">
+                    <label for="gram" class="block text-gray-700 text-sm font-medium mb-2">중량 (g)</label>
+                    <input type="number" id="gram" name="gram"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
+                           placeholder="중량을 입력하세요">
+                </div>
+
+                <!-- 가격 -->
+                <div class="mb-4">
+                    <label for="price" class="block text-gray-700 text-sm font-medium mb-2">시작가격 (원)</label>
+                    <input type="number" id="price" name="price"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
+                           placeholder="시작 가격을 입력하세요">
+                </div>
+
+                <!-- 수량 -->
+                <div class="mb-4">
+                    <label for="stockQuantity" class="block text-gray-700 text-sm font-medium mb-2">수량</label>
+                    <input type="number" id="stockQuantity" name="stockQuantity"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
+                           placeholder="수량을 입력하세요">
+                </div>
+
+                <!-- 이미지 업로드 -->
+                <div class="mb-4">
+                    <label for="image" class="block text-gray-700 text-sm font-medium mb-2">상품 이미지</label>
+                    <input type="file" id="image" name="imageFile"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom">
+                </div>
+
+                <!-- 상품 설명 -->
+                <div class="mb-4">
+                    <label for="description" class="block text-gray-700 text-sm font-medium mb-2">상품 설명</label>
+                    <textarea id="description" name="description" rows="4"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
+                              placeholder="상품에 대한 설명을 입력하세요"></textarea>
+                </div>
+
+                <!-- 제출 버튼 -->
+                <div class="flex justify-end">
+                    <button type="submit"
+                            class="bg-custom text-white px-4 py-2 rounded-md hover:bg-custom/90 focus:outline-none focus:ring-2 focus:ring-custom focus:ring-offset-2">
+                        상품 등록하기
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<!-- 푸터 영역 -->
+<footer class="bg-gray-800 text-gray-300">
+    <!-- 푸터 내용 -->
+</footer>
+
+<!-- 카테고리에 따라 필드 표시 변경하는 스크립트 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const categorySelect = document.getElementById('category');
+        const fruitField = document.querySelector('.fruit-field');
+        const vegetableField = document.querySelector('.vegetable-field');
+        const grainField = document.querySelector('.grain-field');
+
+        categorySelect.addEventListener('change', function() {
+            // 모든 필드 숨기기
+            fruitField.style.display = 'none';
+            vegetableField.style.display = 'none';
+            grainField.style.display = 'none';
+
+            // 선택된 카테고리에 따라 해당 필드 표시
+            switch(this.value) {
+                case 'F':
+                    fruitField.style.display = 'block';
+                    break;
+                case 'V':
+                    vegetableField.style.display = 'block';
+                    break;
+                case 'G':
+                    grainField.style.display = 'block';
+                    break;
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -198,7 +198,52 @@
           </a>
         </div>
       </div>
+      <!-- 실시간 경매 현황 영역 -->
+      <div class="mb-12">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-2xl font-bold">실시간 경매 현황</h2>
+          <a th:href="@{/live_auction}" class="text-custom hover:text-custom/80">
+            전체보기 <i class="fas fa-chevron-right ml-1"></i>
+          </a>
+        </div>
+        <div class="grid grid-cols-4 gap-6">
+          <!-- Thymeleaf로 DB에서 상품 목록을 가져와 표시 -->
+          <div th:each="product : ${products}" class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+            <!-- 상품 이미지 - 실제 이미지가 있으면 그것을 사용하고, 없으면 기본 이미지 사용 -->
+            <img th:if="${product.imageUrl != null}" th:src="@{${product.imageUrl}}" class="w-full h-48 object-cover" th:alt="${product.name}">
+            <img th:unless="${product.imageUrl != null}" th:src="@{/images/default-product.jpg}" class="w-full h-48 object-cover" th:alt="${product.name}">
 
+            <div class="p-4">
+              <div class="flex justify-between items-center mb-2">
+                <!-- 상품 종류에 따라 다른 이름 표시 -->
+                <span class="text-sm text-gray-500" th:text="${product.dtype == 'F' ? product.fruitName : (product.dtype == 'V' ? product.vegetableName : product.grainName)}">상품 종류</span>
+                <span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">진행중</span>
+              </div>
+
+              <!-- 상품명과 그램수 표시 -->
+              <h3 class="font-medium mb-2" th:text="${product.name + ' ' + product.gram + 'g'}">상품명</h3>
+
+              <!-- 가격 정보 -->
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm">현재가</span>
+                <span class="font-bold text-custom" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA') + '원'}">가격</span>
+              </div>
+
+              <!-- 재고 수량 표시 -->
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm">재고수량</span>
+                <span class="text-gray-700" th:text="${product.stockQuantity + '개'}">수량</span>
+              </div>
+
+              <!-- 경매 정보 -->
+              <div class="flex justify-between items-center text-sm text-gray-500">
+                <span>입찰 0회</span>
+                <span>남은시간 12:00:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- 실시간 낙찰 현황 영역 -->
       <div class="mb-12">
         <div class="flex justify-between items-center mb-6">
