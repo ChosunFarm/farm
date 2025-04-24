@@ -1,21 +1,22 @@
 package farm.farmshop.controller;
 
-import farm.farmshop.entity.product.Fruit;
-import farm.farmshop.entity.product.Grain;
-import farm.farmshop.entity.product.Product;
-import farm.farmshop.entity.product.Vegetable;
+import farm.farmshop.entity.Member;
+import farm.farmshop.entity.product.*;
+import farm.farmshop.entity.product.ProductImage;
+import farm.farmshop.repository.MemberRepository;
+import farm.farmshop.repository.ProductImageRepository;
 import farm.farmshop.service.ProductService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/auction")
@@ -23,21 +24,29 @@ import java.nio.file.Paths;
 public class AuctionController {
 
     private final ProductService productService;
+    private final MemberRepository memberRepository;
+    private final ProductImageRepository productImageRepository;
 
-    // 상품 등록 폼 페이지 보여주기
+    /**  
+     * application.yml 에 설정된 업로드 루트 디렉터리 (예: "./uploads/images")  
+     */
+    @Value("${spring.file.upload.directory}")
+    private String uploadRootDir;
+
     @GetMapping
-    public String showAuctionForm(Model model, HttpSession session) {
-        // 로그인 상태 확인
-        Boolean isLogin = (Boolean) session.getAttribute("isLogin");
-        String username = (String) session.getAttribute("username");
-
-        model.addAttribute("isLogin", isLogin != null ? isLogin : false);
-        model.addAttribute("username", username);
-
+    public String showAuctionForm(Model model, Principal principal) {
+        if (principal != null) {
+            Member member = memberRepository.findByEmail(principal.getName());
+            if (member != null) {
+                model.addAttribute("username", member.getUsername());
+                model.addAttribute("isLogin", true);
+            }
+        } else {
+            model.addAttribute("isLogin", false);
+        }
         return "auction";
     }
 
-    // 상품 등록 처리
     @PostMapping
     public String registerProduct(
             @RequestParam("category") String category,
@@ -45,15 +54,13 @@ public class AuctionController {
             @RequestParam("price") int price,
             @RequestParam("stockQuantity") int stockQuantity,
             @RequestParam("gram") int gram,
-            @RequestParam(value = "fruitName", required = false) String fruitName,
+            @RequestParam(value = "fruitName",     required = false) String fruitName,
             @RequestParam(value = "vegetableName", required = false) String vegetableName,
-            @RequestParam(value = "grainName", required = false) String grainName,
-            @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile) {
-
-        // 카테고리에 따라 적절한 상품 객체 생성
-        Product product = null;
-
+            @RequestParam(value = "grainName",     required = false) String grainName,
+            @RequestParam(value = "imageFile",     required = false) MultipartFile[] imageFiles
+    ) throws IOException {
+        // 1) 상품 엔티티 생성
+        Product product;
         switch (category) {
             case "F":
                 Fruit fruit = new Fruit();
@@ -62,10 +69,10 @@ public class AuctionController {
                 product = fruit;
                 break;
             case "V":
-                Vegetable vegetable = new Vegetable();
-                vegetable.setVegetableName(vegetableName);
-                vegetable.setGram(gram);
-                product = vegetable;
+                Vegetable veg = new Vegetable();
+                veg.setVegetableName(vegetableName);
+                veg.setGram(gram);
+                product = veg;
                 break;
             case "G":
                 Grain grain = new Grain();
@@ -76,44 +83,55 @@ public class AuctionController {
             default:
                 throw new IllegalArgumentException("Invalid category: " + category);
         }
-
-        // 공통 필드 설정
         product.setName(name);
         product.setPrice(price);
         product.setStockQuantity(stockQuantity);
 
-        // 이미지 저장 (이미지 파일이 존재하는 경우)
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                String imageUrl = saveImage(imageFile);  // 이미지 저장 후 URL 얻기
-                product.setImageUrl(imageUrl);  // 이미지 URL을 product 객체에 설정
-            } catch (IOException e) {
-                e.printStackTrace();  // 예외 처리
+        // 2) 저장 → ID 발급
+        productService.saveProduct(product);
+
+        // 3) 업로드된 파일들 처리 (원본 파일명 그대로 저장)
+        if (imageFiles != null && imageFiles.length > 0) {
+            for (MultipartFile file : imageFiles) {
+                if (file.isEmpty()) continue;
+
+                // 실제 디스크에 저장하고, _DB 에는 파일명만_
+                String filename = saveImage(file);
+
+                // PRODUCT_IMAGES 테이블에 URL 저장
+                ProductImage pi = new ProductImage();
+                pi.setProductId(product.getId());
+                pi.setImageUrl(filename);
+                productImageRepository.save(pi);
+
+                // 대표 이미지가 비어있으면 첫 번째 것으로 설정
+                if (product.getImageUrl() == null) {
+                    product.setImageUrl(filename);
+                    productService.saveProduct(product);
+                }
             }
         }
 
-        // 상품 저장
-        productService.saveProduct(product);
-
-        return "redirect:/"; // 메인 페이지로 리다이렉트
+        // 4) 메인 페이지로 리다이렉트
+        return "redirect:/";
     }
 
+    /**
+     * 디스크에 파일을 저장하고, DB에는 **원본 파일명**을 반환합니다.
+     */
+    private String saveImage(MultipartFile imageFile) throws IOException {
+        // 1) 업로드 폴더 절대경로 생성
+        Path uploadPath = Paths.get(uploadRootDir).toAbsolutePath();
+        Files.createDirectories(uploadPath);
 
-    public String saveImage(MultipartFile imageFile) throws IOException {
-        // 실제 경로로 저장할 경로 (static/images 디렉토리)
-        String uploadDir = Paths.get("src", "main", "resources", "static", "images").toString(); // 프로젝트 내 static/images 디렉토리 사용
+        // 2) 원본 파일명 정리 (공백/.. 제거)
+        String originalFilename = StringUtils.cleanPath(imageFile.getOriginalFilename());
 
-        // 이미지 파일 이름 (원본 파일 이름을 그대로 사용)
-        String imageName = imageFile.getOriginalFilename();
+        // 3) 디스크에 저장
+        Path filePath = uploadPath.resolve(originalFilename);
+        imageFile.transferTo(filePath.toFile());
 
-        // 저장할 경로
-        Path path = Paths.get(uploadDir, imageName);
-
-        // 디렉터리 생성 (존재하지 않으면 생성)
-        Files.createDirectories(path.getParent()); // 디렉터리 생성
-        imageFile.transferTo(path.toFile()); // 파일 저장
-
-        // 저장된 이미지 파일 경로 반환 (웹에서 접근 가능한 경로)
-        return "/images/" + imageName; // 반환 경로
+        // 4) DB 에 저장할 값(원본 파일명) 리턴
+        return originalFilename;
     }
 }
