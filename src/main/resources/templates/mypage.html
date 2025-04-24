@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>마이페이지</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/font.css}" rel="stylesheet"/>
+    <link th:href="@{/css/mypage.css}" rel="stylesheet"/>
+
+    <script th:src="@{/js/mypage.js}"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+<nav class="bg-white border-b">
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex">
+                <a th:href="@{/}" class="flex-shrink-0 flex items-center">
+                    <img class="h-12 w-auto" th:src="@{/images/logo2.png}" alt="현대농산물">
+                </a>
+                <div class="hidden md:flex ml-10 space-x-4 items-center">
+                    <a th:href="@{/manual}" class="block text-base text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md font-medium">이용방법</a>
+                    <a th:href="@{/mypage}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">마이페이지</a>
+                    <a th:href="@{/live_auction}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">실시간 경매</a>
+                    <a th:href="@{/scheduled}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">경매 예정 상품</a>
+                </div>
+            </div>
+            <div class="hidden md:flex ml-10 space-x-4 items-center">
+                <div class="flex items-center">
+                    <span class="text-base text-gray-700 mr-4">OOO님</span>
+                    <button type="button" class="px-3 py-1 text-base text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50" onclick="window.location.href='/'">로그아웃</button>
+                </div>
+            </div>
+
+            <div class="flex items-center md:hidden">
+                <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-custom" aria-controls="mobile-menu" aria-expanded="false">
+                    <span class="sr-only">메인 메뉴 열기</span>
+                    <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="mobile-menu" class="md:hidden hidden px-2 pt-2 pb-3 space-y-1">
+        <div class="flex items-center">
+            <span class="text-base text-gray-700 mr-4">OOO님</span>
+            <button type="button" class="px-3 py-1 text-base text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50" onclick="window.location.href='/'">로그아웃</button>
+        </div>
+        <a th:href="@{/manual}" class="block text-base text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md font-medium">이용방법</a>
+        <a th:href="@{/mypage}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">마이페이지</a>
+        <a th:href="@{/live-auction}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">실시간 경매</a>
+        <a th:href="@{/scheduled}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">경매 예정 상품</a>
+    </div>
+</nav>
+
+<div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="mt-0">
+        <div class="bg-white shadow rounded-lg px-6 py-4 border-b border-gray-200">
+            <form th:action="@{/submit-product}" method="post" enctype="multipart/form-data" class="space-y-6">
+                <div class="mypage-container grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                    <aside class="sidebar">
+                        <h2>마이페이지</h2>
+                        <ul>
+                            <li><strong>마이페이지</strong></li>
+                            
+                        </ul>
+                        <div class="nav-actions">
+                            <a th:href="@{/auction}">상품 등록 +</a>
+                            <a th:href="@{/live_auction}">실시간 경매 +</a>
+                            <button type="button">실시간 시세 +</button>
+                        </div>
+                    </aside>
+
+                    <main class="mypage-content col-span-2">
+                        <section class="profile-section">
+                            <div class="profile-image">
+                                <div class="avatar-placeholder">👤</div>
+                                <button type="button" class="small-btn">사진 변경하기</button>
+                            </div>
+
+                            <div class="profile-info">
+                                <div class="nickname" th:text="${username}">
+                                    <strong>경매의 제왕</strong>
+                                    <button type="button" class="small-btn">변경하기</button>
+                                </div>
+
+                                <div class="rating">
+                                    <span>⭐☆☆☆☆</span>
+                                    <strong>4.5</strong>
+                                    <button type="button" class="small-btn">받은 후기보기</button>
+                                </div>
+
+                                <div class="address">
+                                    <span>광주광역시</span>
+                                    <span>동구</span>
+                                    <span>서석동 11-12</span>
+                                    <button type="button">주소 변경하기</button>
+                                </div>
+
+                                <div class="bio">
+                                    <textarea th:placeholder="'한줄소개를 입력해주세요'">한줄 소개 넣을까?</textarea>
+                                    <button type="submit">등록하기</button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="sales-history">
+                            <h2>나의 판매내역 ⌄</h2>
+                            <a th:href="@{/auction}" class="small-btn">상품 등록하러가기</a>
+
+                            <div class="product-card">
+                                <div class="product-image">🍎</div>
+                                <div class="product-info">
+                                    <strong>우리집 뒤뜰 왕사과</strong>
+                                    <p>1kg · <span class="price">15,000원</span></p>
+                                    <span class="status success">판매 완료 ✔</span>
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/mobile.js}"></script>
+<script th:src="@{/js/mypage.js}"></script>
+</body>
+</html>
