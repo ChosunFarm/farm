@@ -151,7 +151,7 @@
                             <!-- 현재 로그인한 사용자 ID를 전달하기 위한 숨겨진 필드 -->
                             <input type="hidden" name="memberId" th:if="${#authentication != null && #authentication.principal != null}" th:value="${#authentication.principal.id}" />
                         </div>
-                        <!-- 품목별 이름 (과일명/채소명/곡물명) - 카테고리에 따라 동적으로 표시 -->
+                        <!-- 품목별 이름 (과일명/채소명/곡물명) - 카테고리에 따라 동적으로 표시
                         <div class="mb-4 fruit-field" style="display: none;">
                             <label for="fruitName" class="block text-gray-700 text-sm font-medium mb-2">과일명</label>
                             <input type="text" id="fruitName" name="fruitName"
@@ -171,13 +171,12 @@
                             <input type="text" id="grainName" name="grainName"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
                                    placeholder="곡물명을 입력하세요">
-                        </div>
-
-                        <div class="sm:col-span-1">
-                            <label for="gram" class="block text-sm font-medium text-gray-700">판매량 (g)</label>
-                            <input type="number" name="gram" id="gram" 
-                                   class="mt-1 block w-full border-gray-300 focus:ring-custom focus:border-custom !rounded-button" 
-                                   placeholder="판매량을 입력하세요"/>
+                        </div> -->
+                        <div class="mb-4" id="dynamicField" style="display: none;">
+                            <label id="dynamicLabel" class="block text-gray-700 text-sm font-medium mb-2"></label>
+                            <input type="text" id="dynamicInput"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
+                                   placeholder="">
                         </div>
 
                         <div class="sm:col-span-1">
@@ -192,6 +191,13 @@
                             <input type="number" id="stockQuantity" name="stockQuantity"
                                    class="mt-1 block w-full border-gray-300 focus:ring-custom focus:border-custom !rounded-button"
                                    placeholder="수량을 입력하세요">
+                        </div>
+
+                        <div class="sm:col-span-1">
+                            <label for="gram" class="block text-sm font-medium text-gray-700">판매량 (g)</label>
+                            <input type="number" name="gram" id="gram" 
+                                   class="mt-1 block w-full border-gray-300 focus:ring-custom focus:border-custom !rounded-button" 
+                                   placeholder="판매량을 입력하세요"/>
                         </div>
 
                         <div class="sm:col-span-3">
