@@ -148,6 +148,8 @@
                             <input type="text" id="name" name="name"
                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-custom focus:border-custom"
                                    placeholder="상품명을 입력하세요">
+                            <!-- 현재 로그인한 사용자 ID를 전달하기 위한 숨겨진 필드 -->
+                            <input type="hidden" name="memberId" th:if="${#authentication != null && #authentication.principal != null}" th:value="${#authentication.principal.id}" />
                         </div>
                         <!-- 품목별 이름 (과일명/채소명/곡물명) - 카테고리에 따라 동적으로 표시 -->
                         <div class="mb-4 fruit-field" style="display: none;">

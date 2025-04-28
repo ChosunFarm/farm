@@ -296,6 +296,12 @@
                 <span>남은시간 12:00:00</span>
               </div>
             </div>
+
+            <!-- 상품 정보 표시 부분에 판매자 정보 추가 -->
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm">판매자</span>
+              <span class="text-gray-700" th:text="${product.member != null ? product.member.username : '미등록'}">판매자명</span>
+            </div>
           </div>
         </div>
       </div>
