@@ -1,0 +1,433 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   nav.css — 전체 CSS (header-wrapper부터 모바일 전용 레이아웃까지)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* 공통 스타일 */
+.header-wrapper {
+    background-color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .nav-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  @media (min-width: 640px) {
+    .nav-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .nav-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4rem;
+  }
+  
+  /* ───────────────────────────────── nav-left ───────────────────────────────── */
+  .nav-left {
+    display: flex;
+    align-items: center;
+  }
+  .nav-logo-link {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+  }
+  .nav-logo-img {
+    height: 3rem;
+    width: auto;
+  }
+  
+  /* ────────────────────────────── nav-right ────────────────────────────── */
+  /* 검색 + 프로필/로그인 한 줄로 */
+  .nav-right {
+    display: flex;
+    align-items: center;
+  }
+  @media (min-width: 768px) {
+    .nav-right {
+      flex: 1;
+      justify-content: flex-end;
+    }
+  }
+  
+  /* ───────────────────────────────── nav-menu ───────────────────────────────── */
+  .nav-menu {
+    display: none;
+    margin-left: 2.5rem;
+    gap: 1rem;
+    align-items: center;
+  }
+  @media (min-width: 768px) {
+    .nav-menu {
+      display: flex;
+    }
+  }
+  .nav-menu-link {
+    color: #4B5563;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .nav-menu-link:hover {
+    background-color: #F3F4F6;
+  }
+  
+  /* 공통 숨김 클래스 */
+  .hidden {
+    display: none !important;
+  }
+  
+  /* ───────────────────────────────── 검색창 ───────────────────────────────── */
+  /* container */
+  .nav-search {
+    position: relative;
+    max-width: 16rem;
+    margin-right: 1.5rem;
+  }
+  
+  /* 입력창 스타일 */
+  .nav-search-input {
+    width: 100%;
+    height: 2.25rem;
+    padding: 0 0.75rem 0 2.5rem;    /* left 여유 확보 */
+    border: 1px solid #D1D5DB;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    color: #374151;
+    background-color: white;
+  }
+  .nav-search-input::placeholder {
+    color: #9CA3AF;
+  }
+  .nav-search-input:focus {
+    outline: none;
+    border-color: #6366F1;
+    box-shadow: 0 0 0 1px #6366F1;
+  }
+  
+  /* 돋보기 아이콘 */
+  .nav-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.25rem;
+    color: #9CA3AF;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  /* ─────────────────────────────────── 프로필 ─────────────────────────────────── */
+  .nav-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+  }
+  .nav-profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+  }
+  .nav-profile-img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    object-fit: cover;
+  }
+  .nav-profile-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #111827;
+  }
+  
+  /* 드롭다운 */
+  .nav-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    margin-top: 0.5rem;
+    width: 10rem;
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.375rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 0;
+    z-index: 10;
+  }
+  .nav-profile-btn:focus + .nav-dropdown-menu,
+  .nav-dropdown-menu:hover {
+    display: block;
+  }
+  .nav-dropdown-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #374151;
+  }
+  .nav-dropdown-link:hover {
+    background-color: #F3F4F6;
+  }
+  
+  /* ─────────────────────────────── 로그인/회원가입 ────────────────────────────── */
+  .nav-auth {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .nav-auth-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    white-space: nowrap;
+  }
+  .nav-auth-btn.black {
+    background: black;
+    color: white;
+  }
+  .nav-auth-btn.black:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+  .nav-auth-btn.white {
+    background: transparent;
+    border: 1px solid black;
+    color: black;
+  }
+  .nav-auth-btn.white:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  /* ────────────────────────────── 모바일 메뉴 버튼 ───────────────────────────── */
+  .nav-mobile {
+    display: flex;
+    align-items: center;
+  }
+  @media (min-width: 768px) {
+    .nav-mobile {
+      display: none;
+    }
+  }
+  .nav-mobile-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    color: #9CA3AF;
+  }
+  .nav-mobile-btn:hover {
+    color: #6B7280;
+    background: #F3F4F6;
+  }
+  .nav-mobile-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #9CA3AF;
+  }
+  .nav-mobile-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  /* ────────────────────────────── 모바일 전용 레이아웃 ──────────────────────────── */
+  @media (max-width: 767px) {
+    /* 데스크탑 요소 숨기기 */
+    .nav-search,
+    .nav-profile,
+    .nav-auth {
+      display: none !important;
+    }
+  
+    /* 모바일 메뉴: open일 때만 표시 */
+    #mobile-menu {
+      display: none;
+    }
+    #mobile-menu.open {
+      display: block;
+    }
+  
+    .mobile-menu-inner {
+      padding: 0.5rem 1rem;
+    }
+    .mobile-menu-link {
+      display: block;
+      color: #4B5563;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .mobile-menu-link:hover {
+      background-color: #F3F4F6;
+    }
+  
+    /* 검색 + 프로필 한 줄 배치 */
+    .mobile-search-auth {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+    }
+    .mobile-search-auth .mobile-search {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .mobile-search-auth .mobile-profile,
+    .mobile-search-auth .mobile-auth {
+      flex-shrink: 0;
+    }
+  
+    /* 모바일 검색창 */
+    .mobile-search {
+      position: relative;
+      margin-bottom: 0.75rem;
+    }
+    .mobile-search-input {
+      height: 2.25rem;
+      padding: 0 0.75rem 0 2.5rem;
+      border: 1px solid #D1D5DB;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      color: #374151;
+      background-color: white;
+    }
+    .mobile-search-input::placeholder {
+      color: #9CA3AF;
+    }
+    .mobile-search-input:focus {
+      outline: none;
+      border-color: #6366F1;
+      box-shadow: 0 0 0 1px #6366F1;
+    }
+    .mobile-search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.25rem;
+      color: #9CA3AF;
+      pointer-events: none;
+      z-index: 1;
+    }
+  
+    /* 모바일 프로필 & 드롭다운 */
+    .mobile-profile {
+      position: relative;
+      margin-bottom: 0.75rem;
+    }
+    .mobile-profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+    }
+    .mobile-profile-img {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 9999px;
+      object-fit: cover;
+    }
+    .mobile-profile-name {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #111827;
+    }
+    .mobile-dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      margin-top: 0.5rem;
+      width: 10rem;
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 0.375rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      padding: 0.5rem 0;
+      z-index: 10;
+    }
+    .mobile-profile-btn:focus + .mobile-dropdown-menu,
+    .mobile-dropdown-menu:hover {
+      display: block;
+    }
+    .mobile-dropdown-link {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #374151;
+    }
+    .mobile-dropdown-link:hover {
+      background-color: #F3F4F6;
+    }
+  
+    /* 모바일 로그인/회원가입 */
+    .mobile-auth {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .mobile-auth-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 0.375rem;
+      white-space: nowrap;
+    }
+    .mobile-auth-btn.black {
+      background: black;
+      color: white;
+    }
+    .mobile-auth-btn.black:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .mobile-auth-btn.white {
+      background: transparent;
+      border: 1px solid black;
+      color: black;
+    }
+    .mobile-auth-btn.white:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  /* 데스크톱(≥768px) 에서는 모바일 메뉴 완전 숨김 */
+  @media (min-width: 768px) {
+    #mobile-menu,
+    .mobile-search-auth {
+      display: none !important;
+    }
+  }
+  /* ─── 검색창 겹침 방지용 override ─── */
+.nav-search-input {
+    box-sizing: border-box !important;
+    padding-left: 40px !important;      /* 40px 만큼 왼쪽 여유 확보 */
+    border-radius: 0.5em !important;  /* border-radius 적용 */
+  }
+  .nav-search-icon {
+    left: 12px !important;              /* 아이콘은 12px 지점에 고정 */
+    z-index: 2 !important;              /* 텍스트 위로 떠 있도록 */
+  }
+ 
+  /* 모바일도 동일하게 */
+  @media (max-width: 767px) {
+    .mobile-search-input {
+      box-sizing: border-box !important;
+      padding-left: 40px !important;
+      border-radius: 0.5em !important;  
+    }
+    .mobile-search-icon {
+      left: 12px !important;
+      z-index: 2 !important;
+    }
+  }
+  
