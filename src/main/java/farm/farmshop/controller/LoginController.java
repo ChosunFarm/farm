@@ -16,6 +16,7 @@ public class LoginController {
     public String loginForm(){
         return "login";
     }
+}
     /*private final MemberService memberService;
 
     public LoginController(MemberService memberService) {
@@ -36,4 +37,5 @@ public class LoginController {
         session.setAttribute("loginMember", loginMember);
         return "redirect:/"; // 성공 시 메인 화면으로
     }*/
-}
+
+

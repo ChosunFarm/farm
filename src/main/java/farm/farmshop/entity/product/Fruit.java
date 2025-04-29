@@ -9,7 +9,6 @@ import lombok.Setter;
 @DiscriminatorValue("F")
 @Getter @Setter
 public class Fruit extends Product{
-
     private String FruitName;
     private int gram;
 }

@@ -1,5 +1,6 @@
 package farm.farmshop.controller;
 
+
 import farm.farmshop.entity.Member;
 import farm.farmshop.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +12,13 @@ import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
-public class Live_AuctionController {
-    
+public class MypageController {
+
     private final MemberRepository memberRepository;
-    @GetMapping("/live_auction")
-    public String showLiveAuctionPage(Model model, Principal principal) {
-        if (principal != null) {
+    
+    @GetMapping("/mypage")
+    public String myPage(Model model, Principal principal) {
+         if (principal != null) {
             String email = principal.getName(); // 로그인한 사용자의 이메일
             Member member = memberRepository.findByEmail(email);
             if (member != null) {
@@ -27,6 +29,7 @@ public class Live_AuctionController {
         else {
             model.addAttribute("isLogin", false);
         }
-        return "live_auction"; // templates/live_auction.html 을 렌더링
+
+        return "mypage"; // templates/mypage.html
     }
 }
