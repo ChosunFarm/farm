@@ -198,7 +198,7 @@
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10">
-                <img th:if="${product.imageUrl != null}" th:src="@{'/uploads/images/' + ${product.imageUrl}}" class="h-10 w-10 rounded-full object-cover" alt="상품 이미지">
+                <img th:if="${product.imageUrl != null}" th:src="@{/images/{fn}(fn=${product.imageUrl})}" class="h-10 w-10 rounded-full object-cover" th:alt="${product.name}">
                 <div th:unless="${product.imageUrl != null}" class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                   <i class="fas fa-image text-gray-400"></i>
                 </div>

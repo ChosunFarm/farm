@@ -422,4 +422,22 @@ body {
     font-size: 0.875rem;
     color: #9CA3AF;          /* text-gray-400 */
 }
+.product-thumbnail {
+    width: 100%;
+    height: auto;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+  
+.product-thumbnail img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    object-position: center;
+}
   
