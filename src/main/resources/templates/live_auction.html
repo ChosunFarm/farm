@@ -158,7 +158,7 @@
                 <div th:each="product : ${approvedProducts}" class="auction-item">
                     <!-- 상품 이미지 -->
                     <div class="product-image">
-                        <img th:if="${product.imageUrl != null}" th:src="@{'/uploads/images/' + ${product.imageUrl}}" alt="상품 이미지" class="w-full h-full object-cover">
+                        <img th:if="${product.imageUrl != null}" th:src="@{/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
                         <i th:unless="${product.imageUrl != null}" class="fas fa-seedling"></i>
                     </div>
 
@@ -166,6 +166,8 @@
                     <div class="product-info">
                         <h3 class="product-title" th:text="'상품 이름: ' + ${product.name}">상품 이름: 샘플</h3>
                         <h3 class="product-title" th:text="'무게: ' + ${product.gram} + 'g'">무게: 100g</h3>
+                        <h3 class="product-title" th:text="${product.name}"> </h3>
+                        <p class="product-weight" th:text="${product.gram} + 'g'"> </p>
 
                         <!-- 판매자 정보 -->
                         <div class="flex items-center gap-2 mb-2">
@@ -177,14 +179,15 @@
                             <div class="price-box">
                                 <div class="price-name">시작가</div>
                                 <div class="price-value" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'">가격</div>
+                                <div class="price-value" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"> </div>
                             </div>
                             <div class="price-box">
                                 <div class="price-name">현재가</div>
-                                <div class="price-value" th:text="${#numbers.formatInteger(product.currentBidPrice != null ? product.currentBidPrice : product.price, 0, 'COMMA')} + '원'">5,000원</div>
+                                <div class="price-value" th:text="${#numbers.formatInteger(product.currentBidPrice != null ? product.currentBidPrice : product.price, 0, 'COMMA')} + '원'"> </div>
                             </div>
                             <div class="price-box">
                                 <div class="price-name">입찰수</div>
-                                <div class="price-value" th:text="${product.bidCount != null ? product.bidCount : 0}">0</div>
+                                <div class="price-value" th:text="${product.bidCount != null ? product.bidCount : 0}"> </div>
                             </div>
                         </div>
 

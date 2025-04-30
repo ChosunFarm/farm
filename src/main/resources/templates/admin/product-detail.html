@@ -135,7 +135,7 @@
       <div class="border-t border-gray-200">
         <dl>
           <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-            <dt class="text-sm font-medium text-gray-500">카테고리</dt>
+            <dt class="textf-sm font-medium text-gray-500">카테고리</dt>
             <dd class="mt-1 text-sm text-gray-900 sm:col-span-2">
               <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
                     th:classappend="${product.dtype == 'F' ? 'bg-red-100 text-red-800' : (product.dtype == 'V' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800')}"
@@ -165,7 +165,7 @@
             <dd class="mt-1 text-sm text-gray-900 sm:col-span-2">
               <div class="flex items-center">
                 <div class="h-40 w-40 bg-gray-200 rounded-md overflow-hidden">
-                  <img th:if="${product.imageUrl != null}" th:src="@{'/uploads/images/' + ${product.imageUrl}}" class="h-full w-full object-cover" alt="상품 이미지">
+                  <img th:if="${product.imageUrl != null}" th:src="@{/images/{fn}(fn=${product.imageUrl})}" class="h-full w-full object-cover" th:alt="${product.name}">
                   <div th:unless="${product.imageUrl != null}" class="h-full w-full flex items-center justify-center">
                     <i class="fas fa-image text-gray-400 text-4xl"></i>
                   </div>
