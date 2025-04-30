@@ -164,14 +164,19 @@
 
                     <!-- 상품 정보 -->
                     <div class="product-info">
-                        <h3 class="product-title" th:text="${product.name}">신선한 사과</h3>
-                        <p class="product-weight" th:text="${product.gram} + 'g'">500g</p>
+                        <h3 class="product-title" th:text="'상품 이름: ' + ${product.name}">상품 이름: 샘플</h3>
+                        <h3 class="product-title" th:text="'무게: ' + ${product.gram} + 'g'">무게: 100g</h3>
 
+                        <!-- 판매자 정보 -->
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="font-bold text-custom">판매자</span>
+                            <span class="font-bold text-custom" th:text="${product.member != null ? product.member.username + '님' : '미등록'}">판매자명</span>
+                        </div>
                         <!-- 가격 정보 -->
                         <div class="price-list">
                             <div class="price-box">
                                 <div class="price-name">시작가</div>
-                                <div class="price-value" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'">5,000원</div>
+                                <div class="price-value" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'">가격</div>
                             </div>
                             <div class="price-box">
                                 <div class="price-name">현재가</div>
