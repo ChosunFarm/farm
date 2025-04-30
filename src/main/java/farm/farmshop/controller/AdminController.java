@@ -4,16 +4,16 @@ import farm.farmshop.entity.Member;
 import farm.farmshop.entity.product.Product;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.ProductRepository;
+import farm.farmshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -22,6 +22,7 @@ public class AdminController {
 
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
+    private final ProductService productService;
 
     @GetMapping("")
     public String adminMain(Model model, Principal principal) {
@@ -50,10 +51,10 @@ public class AdminController {
 
     @GetMapping("/members")
     public String memberManagement(
-            @RequestParam(defaultValue = "1") int page,  // 페이지 번호 파라미터 추가
-            @RequestParam(required = false) String search,  // 검색어 파라미터 추가
-            @RequestParam(required = false) String memberType,  // 회원 유형 필터 추가
-            @RequestParam(required = false) String status,  // 상태 필터 추가
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String memberType,
+            @RequestParam(required = false) String status,
             Model model,
             Principal principal) {
 
@@ -73,29 +74,20 @@ public class AdminController {
         int pageSize = 10;
 
         // 회원 목록 가져오기 (검색 및 필터링 적용)
-        // 실제 Repository 메서드는 기능에 맞게 구현 필요
         List<Member> allMembers;
         if (search != null && !search.isEmpty()) {
             // 검색어가 있는 경우 검색 조건에 맞는 회원 조회
-            // ✅ 수정된 코드
             allMembers = memberRepository.findByUsernameOrEmailContaining(search);
-
         } else {
             // 검색어가 없는 경우 전체 회원 조회
             allMembers = memberRepository.findAll();
         }
 
         // 필터링 처리 (memberType, status에 따라)
-        // 실제 구현은 Repository에 맞게 수정 필요
         if (memberType != null && !memberType.isEmpty()) {
             allMembers = allMembers.stream()
                     .filter(m -> memberType.equals(m.getUser_type()))
                     .toList();
-        }
-
-        if (status != null && !status.isEmpty()) {
-            // status 필드가 있다면 필터링
-            // 예: allMembers = allMembers.stream().filter(m -> status.equals(m.getStatus())).toList();
         }
 
         // 페이지네이션 처리
@@ -152,14 +144,55 @@ public class AdminController {
         return "admin/products";
     }
 
-    @PostMapping("/member/update-role")
-    public String updateMemberRole(@RequestParam("memberId") Long memberId,
-                                   @RequestParam("role") String role) {
-        Member member = memberRepository.findOne(memberId);
-        if (member != null) {
-            member.setUser_type(role);
-            memberRepository.save(member);
+    @GetMapping("/pendinglist")
+    public String pendingProducts(Model model, Principal principal) {
+        // 로그인 정보 추가
+        if (principal != null) {
+            String email = principal.getName();
+            Member member = memberRepository.findByEmail(email);
+            if (member != null) {
+                model.addAttribute("username", member.getUsername());
+                model.addAttribute("isLogin", true);
+
+                // 관리자 권한 확인
+                if (!"ADMIN".equals(member.getUser_type())) {
+                    return "redirect:/"; // 관리자가 아닌 경우 메인 페이지로 리다이렉트
+                }
+            }
+        } else {
+            model.addAttribute("isLogin", false);
+            return "redirect:/login"; // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
         }
-        return "redirect:/admin/members";
+
+        // 검수 대기 중인 상품만 가져오기 (status가 'pending'인 상품)
+        List<Product> pendingProducts = productService.findByStatus("pending");
+        model.addAttribute("pendingProducts", pendingProducts);
+
+        return "admin/pendinglist";
+    }
+    @PostMapping("/products/approve")
+    public String approveProduct(@RequestParam("productId") Long productId,
+                                 RedirectAttributes redirectAttributes) {
+        // 상품 검수 승인 처리
+        productService.approveProduct(productId);
+
+        redirectAttributes.addFlashAttribute("message", "상품 검수가 승인되었습니다.");
+        redirectAttributes.addFlashAttribute("messageType", "success");
+
+        // 실시간 경매 페이지로 리다이렉트
+        return "redirect:/live_auction";
+    }
+
+    @PostMapping("/products/reject")
+    public String rejectProduct(@RequestParam("productId") Long productId,
+                                RedirectAttributes redirectAttributes) {
+        // 상품 검수 거부 처리
+        productService.rejectProduct(productId);
+
+        redirectAttributes.addFlashAttribute("message", "상품 검수가 거부되었습니다.");
+        redirectAttributes.addFlashAttribute("messageType", "success");
+
+        // 검수 대기 목록 페이지로 리다이렉트
+        return "redirect:/admin/pendinglist";
     }
 }

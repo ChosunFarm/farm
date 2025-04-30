@@ -9,41 +9,35 @@ function closeInspectionPopup() {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-  const categorySelect = document.getElementById('category');
-  const dynamicField = document.getElementById('dynamicField');
-  const dynamicLabel = document.getElementById('dynamicLabel');
-  const dynamicInput = document.getElementById('dynamicInput');
+    const categorySelect = document.getElementById('category');
+    const dynamicField = document.getElementById('dynamicField');
+    const dynamicLabel = document.getElementById('dynamicLabel');
+    const dynamicInput = document.getElementById('dynamicInput');
 
-  categorySelect.addEventListener('change', function() {
-      const selectedValue = this.value;
-      
-      switch (selectedValue) {
-          case 'F':
-              dynamicField.style.display = 'block';
-              dynamicLabel.textContent = '과일명';
-              dynamicInput.placeholder = '과일명을 입력하세요';
-              dynamicInput.name = 'fruitName';
-              break;
-          case 'V':
-              dynamicField.style.display = 'block';
-              dynamicLabel.textContent = '채소명';
-              dynamicInput.placeholder = '채소명을 입력하세요';
-              dynamicInput.name = 'vegetableName';
-              break;
-          case 'G':
-              dynamicField.style.display = 'block';
-              dynamicLabel.textContent = '곡물명';
-              dynamicInput.placeholder = '곡물명을 입력하세요';
-              dynamicInput.name = 'grainName';
-              break;
-          default:
-              dynamicField.style.display = 'none';
-              dynamicLabel.textContent = '';
-              dynamicInput.placeholder = '';
-              dynamicInput.name = '';
-              break;
-      }
-  });
+    if(categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            const selectedCategory = this.value;
+
+            if (selectedCategory === 'F') {
+                dynamicField.style.display = 'block';
+                dynamicLabel.textContent = '과일명';
+                dynamicInput.name = 'fruitName';
+                dynamicInput.placeholder = '과일명을 입력하세요';
+            } else if (selectedCategory === 'V') {
+                dynamicField.style.display = 'block';
+                dynamicLabel.textContent = '채소명';
+                dynamicInput.name = 'vegetableName';
+                dynamicInput.placeholder = '채소명을 입력하세요';
+            } else if (selectedCategory === 'G') {
+                dynamicField.style.display = 'block';
+                dynamicLabel.textContent = '곡물명';
+                dynamicInput.name = 'grainName';
+                dynamicInput.placeholder = '곡물명을 입력하세요';
+            } else {
+                dynamicField.style.display = 'none';
+            }
+        });
+    }
 });
 
 // 기존 파일 업로드 함수 (단일 이미지 업로드)
@@ -68,8 +62,34 @@ function loadFile(input) {
     reader.readAsDataURL(file);
   }
 }
+// 이미지 파일 선택 시 미리보기 생성
+function loadFiles(input) {
+    const previewContainer = document.getElementById('previewContainer');
+    const uploadIcon = document.getElementById('uploadIcon');
 
-// 여러 이미지 업로드 및 미리보기 처리
+    if (input.files && input.files.length > 0) {
+        uploadIcon.style.display = 'none';
+        previewContainer.innerHTML = '';
+
+        for (let i = 0; i < input.files.length; i++) {
+            const file = input.files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const previewImg = document.createElement('img');
+                previewImg.src = e.target.result;
+                previewImg.className = 'w-32 h-32 object-cover border rounded-lg';
+                previewContainer.appendChild(previewImg);
+            }
+
+            reader.readAsDataURL(file);
+        }
+    } else {
+        uploadIcon.style.display = 'block';
+        previewContainer.innerHTML = '';
+    }
+}
+/*// 여러 이미지 업로드 및 미리보기 처리
 function loadFiles(input) {
   const previewContainer = document.getElementById('previewContainer');
   const icon = document.getElementById('uploadIcon');
@@ -125,4 +145,4 @@ function loadFiles(input) {
 
     reader.readAsDataURL(file);
   });
-}
+}*/
