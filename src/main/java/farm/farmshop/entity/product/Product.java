@@ -1,10 +1,10 @@
 package farm.farmshop.entity.product;
 
+import farm.farmshop.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -19,6 +19,11 @@ public abstract class Product {
     private String name;
     private int price;
     private int stockQuantity;
+
+    // Product.java 파일 - Member와의 ManyToOne 관계 추가
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(name = "dtype", insertable = false, updatable = false)
     private String dtype;

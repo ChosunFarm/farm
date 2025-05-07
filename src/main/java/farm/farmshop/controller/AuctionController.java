@@ -54,10 +54,11 @@ public class AuctionController {
             @RequestParam("price") int price,
             @RequestParam("stockQuantity") int stockQuantity,
             @RequestParam("gram") int gram,
-            @RequestParam(value = "fruitName",     required = false) String fruitName,
+            @RequestParam(value = "fruitName", required = false) String fruitName,
             @RequestParam(value = "vegetableName", required = false) String vegetableName,
-            @RequestParam(value = "grainName",     required = false) String grainName,
-            @RequestParam(value = "imageFile",     required = false) MultipartFile[] imageFiles
+            @RequestParam(value = "grainName", required = false) String grainName,
+            @RequestParam(value = "imageFile", required = false) MultipartFile[] imageFiles,
+            Principal principal  // 현재 로그인한 사용자 정보 가져오기
     ) throws IOException {
         // 1) 상품 엔티티 생성
         Product product;
@@ -86,6 +87,12 @@ public class AuctionController {
         product.setName(name);
         product.setPrice(price);
         product.setStockQuantity(stockQuantity);
+
+        // 현재 로그인한 회원 정보 가져오기
+        if (principal != null) {
+            Member member = memberRepository.findByEmail(principal.getName());
+            product.setMember(member); // 상품과 회원 연결
+        }
 
         // 2) 저장 → ID 발급
         productService.saveProduct(product);

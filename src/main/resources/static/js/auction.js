@@ -7,6 +7,45 @@ function closeInspectionPopup() {
   document.getElementById('inspectionPopup').classList.add('hidden');
 }
 
+
+document.addEventListener('DOMContentLoaded', function() {
+  const categorySelect = document.getElementById('category');
+  const dynamicField = document.getElementById('dynamicField');
+  const dynamicLabel = document.getElementById('dynamicLabel');
+  const dynamicInput = document.getElementById('dynamicInput');
+
+  categorySelect.addEventListener('change', function() {
+      const selectedValue = this.value;
+      
+      switch (selectedValue) {
+          case 'F':
+              dynamicField.style.display = 'block';
+              dynamicLabel.textContent = '과일명';
+              dynamicInput.placeholder = '과일명을 입력하세요';
+              dynamicInput.name = 'fruitName';
+              break;
+          case 'V':
+              dynamicField.style.display = 'block';
+              dynamicLabel.textContent = '채소명';
+              dynamicInput.placeholder = '채소명을 입력하세요';
+              dynamicInput.name = 'vegetableName';
+              break;
+          case 'G':
+              dynamicField.style.display = 'block';
+              dynamicLabel.textContent = '곡물명';
+              dynamicInput.placeholder = '곡물명을 입력하세요';
+              dynamicInput.name = 'grainName';
+              break;
+          default:
+              dynamicField.style.display = 'none';
+              dynamicLabel.textContent = '';
+              dynamicInput.placeholder = '';
+              dynamicInput.name = '';
+              break;
+      }
+  });
+});
+
 // 기존 파일 업로드 함수 (단일 이미지 업로드)
 function loadFile(input) {
   const preview = document.getElementById('previewImg');
