@@ -174,8 +174,51 @@
                                 </div>
                             </div>
                         </section>
-
                         <section class="sales-history">
+                            <h2>나의 상품등록 목록 ⌄</h2>
+                            <a th:href="@{/auction}" class="small-btn">상품 등록하러가기</a>
+
+                            <!-- 상품이 없는 경우 -->
+                            <div th:if="${productDTOs == null || productDTOs.isEmpty()}">
+                                <p>등록한 상품이 없습니다.</p>
+                            </div>
+
+                            <!-- 상품 목록 -->
+                            <div th:if="${productDTOs != null && !productDTOs.isEmpty()}" th:each="product : ${productDTOs}" class="product-card">
+                                <div class="product-image">
+                                    <!-- 이미지가 있는 경우 -->
+                                    <img th:if="${product.imageUrl != null && !product.imageUrl.isEmpty()}"
+                                         th:src="@{'/images/' + ${product.imageUrl}}"
+                                         alt="상품 이미지"
+                                         style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+
+                                    <!-- 이미지가 없는 경우 상품 유형에 따라 이모지 표시 -->
+                                    <span th:if="${product.imageUrl == null || product.imageUrl.isEmpty()}">
+                                    <span th:if="${product.productType == '과일'}">🍎</span>
+                                    <span th:if="${product.productType == '채소'}">🥕</span>
+                                    <span th:if="${product.productType == '곡물'}">🌾</span>
+                                </span>
+                                </div>
+                                <div class="product-info">
+                                    <strong th:text="${product.name}">상품명</strong>
+                                    <p>
+                                        <span th:text="${product.weightInfo + ' · '}">무게</span>
+                                        <span class="price" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA') + '원'}">가격</span>
+                                    </p>
+
+                                    <!-- 판매 상태 (상태별 다른 아이콘 적용) -->
+                                    <span th:class="'status ' + ${product.statusClass}">
+                                    <span th:text="${product.status}">판매 상태</span>
+                                    <span th:if="${product.statusClass == 'success'}">✔</span>
+                                    <span th:if="${product.statusClass == 'active'}">⏱</span>
+                                    <span th:if="${product.statusClass == 'pending'}">⌛</span>
+                                    <span th:if="${product.statusClass == 'waiting'}">⌛</span>
+                                    <span th:if="${product.statusClass == 'rejected'}">❌</span>
+                                </span>
+                                </div>
+                            </div>
+                        </section>
+                        <!--<section class="sales-history">
                             <h2>나의 상품등록 목록 ⌄</h2>
                             <a th:href="@{/auction}" class="small-btn">상품 등록하러가기</a>
                             //
@@ -188,7 +231,7 @@
                                 </div>
                             </div>
                             //
-                        </section>
+                        </section>-->
                     </main>
                 </div>
             </form>

@@ -1,5 +1,6 @@
 package farm.farmshop.repository;
 
+import farm.farmshop.entity.Member;
 import farm.farmshop.entity.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -31,4 +32,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     // 카테고리 및 상태별 상품 조회
     @Query("SELECT p FROM Product p WHERE p.dtype = :dtype AND p.status = :status")
     List<Product> findByCategoryAndStatus(@Param("dtype") String dtype, @Param("status") String status);
+
+    // 회원이 등록한 상품 목록 조회
+    List<Product> findByMember(Member member);
+
 }
