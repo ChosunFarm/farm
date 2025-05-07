@@ -1,107 +1,261 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Member Management</title>
-  <!-- Add your CSS references here -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원 관리 - 현대농산물</title>
+
+  <!-- External CSS Libraries -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+
+  <!-- External JS Libraries (head 부분) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Glide.js/3.6.0/glide.min.js"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+  <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+
+  <!-- Custom CSS -->
+  <link th:href="@{/css/admin.css}" rel="stylesheet">
+  <link th:href="@{/css/font.css}" rel="stylesheet">
+
+  <!-- Custom JS -->
+  <script src="/js/profileToggle.js"></script>
 </head>
-<body>
-<header>
-  <!-- Navigation bar -->
-  <div th:if="${isLogin}">
-    <span th:text="'Welcome, ' + ${username}"></span>
-    <a href="/logout">Logout</a>
-  </div>
-  <div th:unless="${isLogin}">
-    <a href="/login">Login</a>
+<body class="font-['Noto_Sans_KR'] bg-gray-50">
+
+<!-- 헤더 영역 -->
+<header class="bg-white shadow-sm">
+  <nav class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- 왼쪽 로고 및 데스크톱 메뉴 -->
+      <div class="flex items-center">
+        <a th:href="@{/}" class="flex-shrink-0 flex items-center">
+          <img class="h-12 w-auto" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+        </a>
+        <div class="hidden md:flex ml-10 space-x-4 items-center">
+          <a th:href="@{/admin}" class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+            관리자 대시보드
+          </a>
+          <a th:href="@{/admin/members}" class="text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+            회원 관리
+          </a>
+          <a th:href="@{/admin/products}" class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+            상품 관리
+          </a>
+          <a th:href="@{/}" class="text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+            메인으로 돌아가기
+          </a>
+        </div>
+      </div>
+
+      <!-- 데스크톱 전용: 프로필/로그인 -->
+      <div class="hidden md:flex items-center">
+        <!-- 로그인했을 때 -->
+        <div id="profile-container-full" th:if="${isLogin}" class="flex items-center gap-2">
+          <button id="profileBtn-full" class="flex items-center gap-2 whitespace-nowrap">
+            <img class="w-8 h-8 rounded-full object-cover" th:src="@{/images/profile.png}" alt="프로필 이미지">
+            <span class="text-sm text-gray-900 font-medium" th:text="${username} + '님'"></span>
+          </button>
+          <div id="dropdownMenu-full" class="hidden absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-md py-2 z-10">
+            <a th:href="@{/mypage}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">내 프로필</a>
+            <a th:href="@{/logout}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">로그아웃</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 모바일 햄버거 버튼 -->
+      <div class="flex items-center md:hidden">
+        <button
+                id="mobile-menu-button"
+                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-custom"
+                aria-controls="mobile-menu"
+                aria-expanded="false"
+        >
+          <span class="sr-only">메인 메뉴 열기</span>
+          <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+               xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 모바일 메뉴 -->
+  <div class="md:hidden hidden" id="mobile-menu">
+    <div class="px-2 pt-2 pb-3 space-y-1">
+      <a th:href="@{/admin}" class="block text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+        관리자 대시보드
+      </a>
+      <a th:href="@{/admin/members}" class="block text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+        회원 관리
+      </a>
+      <a th:href="@{/admin/products}" class="block text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+        상품 관리
+      </a>
+      <a th:href="@{/}" class="block text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md text-base font-medium whitespace-nowrap">
+        메인으로 돌아가기
+      </a>
+    </div>
   </div>
 </header>
 
-<main>
-  <h1>Member Management</h1>
+<!-- 메인 콘텐츠 -->
+<main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+  <div class="px-4 py-6 sm:px-0">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">회원 관리</h1>
+    </div>
 
-  <!-- Search Form -->
-  <form th:action="@{/admin/members}" method="get">
-    <input type="text" name="search" th:value="${search}" placeholder="Search by username or email">
+    <!-- 검색 폼 -->
+    <div class="bg-white shadow rounded-lg mb-6 p-4">
+      <form th:action="@{/admin/members}" method="get" class="flex flex-wrap gap-4">
+        <div class="flex-1 min-w-[200px]">
+          <label for="search" class="block text-sm font-medium text-gray-700 mb-1">검색어</label>
+          <input type="text" id="search" name="search" th:value="${search}"
+                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-custom focus:ring focus:ring-custom focus:ring-opacity-50"
+                 placeholder="이름 또는 이메일 검색">
+        </div>
 
-    <select name="memberType">
-      <option value="">All Member Types</option>
-      <option value="ADMIN" th:selected="${memberType == 'ADMIN'}">Admin</option>
-      <option value="USER" th:selected="${memberType == 'USER'}">User</option>
-      <option value="SELLER" th:selected="${memberType == 'SELLER'}">Seller</option>
-    </select>
-
-    <button type="submit">Search</button>
-  </form>
-
-  <!-- Members Table -->
-  <table>
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>Username</th>
-      <th>Email</th>
-      <th>Type</th>
-      <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="member : ${members}">
-      <td th:text="${member.id}"></td>
-      <td th:text="${member.username}"></td>
-      <td th:text="${member.email}"></td>
-      <td th:text="${member.user_type}"></td>
-      <td>
-        <form th:action="@{/admin/member/update-role}" method="post">
-          <input type="hidden" name="memberId" th:value="${member.id}">
-          <select name="role">
-            <option value="ADMIN" th:selected="${member.user_type == 'ADMIN'}">Admin</option>
-            <option value="USER" th:selected="${member.user_type == 'USER'}">User</option>
-            <option value="SELLER" th:selected="${member.user_type == 'SELLER'}">Seller</option>
+        <div class="w-40">
+          <label for="memberType" class="block text-sm font-medium text-gray-700 mb-1">회원 유형</label>
+          <select id="memberType" name="memberType"
+                  class="w-full rounded-md border-gray-300 shadow-sm focus:border-custom focus:ring focus:ring-custom focus:ring-opacity-50">
+            <option value="">전체</option>
+            <option value="ADMIN" th:selected="${memberType == 'ADMIN'}">관리자</option>
+            <option value="USER" th:selected="${memberType == 'USER'}">일반 사용자</option>
+            <option value="SELLER" th:selected="${memberType == 'SELLER'}">판매자</option>
           </select>
-          <button type="submit">Update Role</button>
-        </form>
-      </td>
-    </tr>
-    <tr th:if="${members.empty}">
-      <td colspan="5">No members found</td>
-    </tr>
-    </tbody>
-  </table>
+        </div>
 
-  <!-- Pagination -->
-  <div th:if="${totalPages > 1}">
-    <ul class="pagination">
-      <!-- First and Previous buttons -->
-      <li th:class="${currentPage == 1} ? 'disabled' : ''">
-        <a th:if="${currentPage > 1}" th:href="@{/admin/members(page=1, search=${search}, memberType=${memberType}, status=${status})}">First</a>
-        <span th:unless="${currentPage > 1}">First</span>
-      </li>
-      <li th:class="${currentPage == 1} ? 'disabled' : ''">
-        <a th:if="${currentPage > 1}" th:href="@{/admin/members(page=${currentPage - 1}, search=${search}, memberType=${memberType}, status=${status})}">Previous</a>
-        <span th:unless="${currentPage > 1}">Previous</span>
-      </li>
+        <div class="flex items-end">
+          <button type="submit"
+                  class="bg-gray-800 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+            검색
+          </button>
+        </div>
+      </form>
+    </div>
 
-      <!-- Page numbers -->
-      <li th:each="pageNum : ${#numbers.sequence(startPage, endPage)}" th:class="${pageNum == currentPage} ? 'active' : ''">
-        <a th:href="@{/admin/members(page=${pageNum}, search=${search}, memberType=${memberType}, status=${status})}" th:text="${pageNum}"></a>
-      </li>
+    <!-- 회원 목록 테이블 -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            ID
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            이름
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            이메일
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            유형
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            관리
+          </th>
+        </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+        <tr th:each="member : ${members}">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${member.id}">1</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${member.username}">사용자명</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" th:text="${member.email}">user@example.com</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                    th:classappend="${member.user_type == 'ADMIN' ? 'bg-red-100 text-red-800' : (member.user_type == 'USER' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800')}"
+                    th:text="${member.user_type}">
+                USER
+              </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <form th:action="@{/admin/member/update-role}" method="post" class="flex space-x-2">
+              <input type="hidden" name="memberId" th:value="${member.id}">
+              <select name="role" class="text-sm rounded-md border-gray-300">
+                <option value="ADMIN" th:selected="${member.user_type == 'ADMIN'}">Admin</option>
+                <option value="USER" th:selected="${member.user_type == 'USER'}">User</option>
+                <option value="SELLER" th:selected="${member.user_type == 'SELLER'}">Seller</option>
+              </select>
+              <button type="submit" class="bg-indigo-600 text-white py-1 px-3 rounded text-xs hover:bg-indigo-700">
+                수정
+              </button>
+            </form>
+          </td>
+        </tr>
+        <tr th:if="${members.empty}">
+          <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+            등록된 회원이 없습니다.
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- Next and Last buttons -->
-      <li th:class="${currentPage == totalPages} ? 'disabled' : ''">
-        <a th:if="${currentPage < totalPages}" th:href="@{/admin/members(page=${currentPage + 1}, search=${search}, memberType=${memberType}, status=${status})}">Next</a>
-        <span th:unless="${currentPage < totalPages}">Next</span>
-      </li>
-      <li th:class="${currentPage == totalPages} ? 'disabled' : ''">
-        <a th:if="${currentPage < totalPages}" th:href="@{/admin/members(page=${totalPages}, search=${search}, memberType=${memberType}, status=${status})}">Last</a>
-        <span th:unless="${currentPage < totalPages}">Last</span>
-      </li>
-    </ul>
+    <!-- 페이지네이션 -->
+    <div th:if="${totalPages > 1}" class="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-4">
+      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            전체 <span class="font-medium" th:text="${totalElements}">0</span> 명 중
+            <span class="font-medium" th:text="${(currentPage - 1) * pageSize + 1}">1</span>
+            -
+            <span class="font-medium" th:text="${T(Math).min(currentPage * pageSize, totalElements)}">10</span>
+            표시
+          </p>
+        </div>
+        <div>
+          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+            <!-- 첫 페이지 버튼 -->
+            <a th:href="@{/admin/members(page=1, search=${search}, memberType=${memberType}, status=${status})}"
+               class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <span class="sr-only">처음</span>
+              <i class="fas fa-angle-double-left h-5 w-5"></i>
+            </a>
+
+            <!-- 이전 페이지 버튼 -->
+            <a th:if="${currentPage > 1}"
+               th:href="@{/admin/members(page=${currentPage - 1}, search=${search}, memberType=${memberType}, status=${status})}"
+               class="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <span class="sr-only">이전</span>
+              <i class="fas fa-angle-left h-5 w-5"></i>
+            </a>
+
+            <!-- 페이지 번호 -->
+            <a th:each="pageNum : ${#numbers.sequence(startPage, endPage)}"
+               th:href="@{/admin/members(page=${pageNum}, search=${search}, memberType=${memberType}, status=${status})}"
+               th:class="${pageNum == currentPage} ? 'relative z-10 inline-flex items-center bg-custom px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-custom' : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'"
+               th:text="${pageNum}">
+              1
+            </a>
+
+            <!-- 다음 페이지 버튼 -->
+            <a th:if="${currentPage < totalPages}"
+               th:href="@{/admin/members(page=${currentPage + 1}, search=${search}, memberType=${memberType}, status=${status})}"
+               class="relative inline-flex items-center px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <span class="sr-only">다음</span>
+              <i class="fas fa-angle-right h-5 w-5"></i>
+            </a>
+
+            <!-- 마지막 페이지 버튼 -->
+            <a th:href="@{/admin/members(page=${totalPages}, search=${search}, memberType=${memberType}, status=${status})}"
+               class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+              <span class="sr-only">마지막</span>
+              <i class="fas fa-angle-double-right h-5 w-5"></i>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
   </div>
 </main>
 
-<footer>
-  <!-- Footer content -->
-</footer>
+<!-- Custom JS -->
+<script th:src="@{/js/moblie.js}"></script>
+<script th:src="@{/js/admin.js}"></script>
 </body>
 </html>
