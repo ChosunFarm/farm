@@ -87,7 +87,8 @@ public class AuctionController {
         product.setName(name);
         product.setPrice(price);
         product.setStockQuantity(stockQuantity);
-
+        product.setStatus("pending"); // 상품 등록 시 기본 상태를 '검수 대기'로 설정
+//        product.setStatus(null); // 초기 상태는 null (검수 신청 전)
         // 현재 로그인한 회원 정보 가져오기
         if (principal != null) {
             Member member = memberRepository.findByEmail(principal.getName());

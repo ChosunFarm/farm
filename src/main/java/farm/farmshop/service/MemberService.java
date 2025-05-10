@@ -39,6 +39,18 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
+    @Transactional
+    public void createAdmin(String email, String password, String username) {
+        Member admin = new Member();
+        admin.setEmail(email);
+        admin.setPassword(passwordEncoder.encode(password));
+        admin.setUsername(username);
+        admin.setUser_type("ADMIN");
+        admin.setCreated_at(LocalDateTime.now());
+
+        memberRepository.save(admin);
+    }
+
     // 스프링 시큐리티가 사용자를 인증하기 위해 사용하는 메서드
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
