@@ -122,24 +122,27 @@
 <div class="max-w-8xl mx-auto px-8 sm:px-10 lg:px-16 py-8">
     <main class="mt-0">
         <div class="bg-white shadow rounded-lg p-6">
-            <h1 class="text-2xl font-bold text-gray-900 mb-6">실시간 경매 현황</h1>
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">
+                <span th:if="${categoryName != null}" th:text="${categoryName + ' '}"></span>
+                실시간 경매 현황
+            </h1>
 
             <!-- 필터 및 검색 -->
             <div class="mb-8">
                 <form th:action="@{/live_auction}" method="get" class="flex flex-wrap gap-4">
                     <div class="flex-1 min-w-[200px]">
-                        <input type="text" name="search"
+                        <input type="text" name="search" th:value="${search}"
                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-custom focus:ring focus:ring-custom focus:ring-opacity-50"
                                placeholder="상품명 검색">
                     </div>
 
                     <div class="w-40">
-                        <select name="category"
+                        <select name="category" th:value="${category}"
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-custom focus:ring focus:ring-custom focus:ring-opacity-50">
                             <option value="">모든 카테고리</option>
-                            <option value="F">과일</option>
-                            <option value="V">채소</option>
-                            <option value="G">곡물</option>
+                            <option value="F" th:selected="${category == 'F'}">과일</option>
+                            <option value="V" th:selected="${category == 'V'}">채소</option>
+                            <option value="G" th:selected="${category == 'G'}">곡물</option>
                         </select>
                     </div>
 
@@ -152,28 +155,51 @@
                 </form>
             </div>
 
+            <!-- 카테고리 바로가기 버튼 -->
+            <div class="flex flex-wrap gap-4 mb-8">
+                <a th:href="@{/live_auction}"
+                   class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition duration-200">
+                    전체
+                </a>
+                <a th:href="@{/live_auction/category/F}"
+                   class="px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition duration-200">
+                    과일
+                </a>
+                <a th:href="@{/live_auction/category/V}"
+                   class="px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition duration-200">
+                    채소
+                </a>
+                <a th:href="@{/live_auction/category/G}"
+                   class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-md hover:bg-yellow-200 transition duration-200">
+                    곡물
+                </a>
+            </div>
+
             <!-- 경매 상품 목록 -->
             <div class="auction-list">
                 <!-- 상품 아이템 반복 -->
                 <div th:each="product : ${approvedProducts}" class="auction-item">
-                    <!-- 상품 이미지 -->
-                    <div class="product-image">
-                        <img th:if="${product.imageUrl != null}" th:src="@{/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
-                        <i th:unless="${product.imageUrl != null}" class="fas fa-seedling"></i>
-                    </div>
+                    <!-- 상품 이미지 (클릭 시 상세 페이지로 이동) -->
+                    <a th:href="@{'/auction/detail/' + ${product.id}}" class="product-image-link">
+                        <div class="product-image">
+                            <img th:if="${product.imageUrl != null}" th:src="@{/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
+                            <i th:unless="${product.imageUrl != null}" class="fas fa-seedling"></i>
+                        </div>
+                    </a>
 
                     <!-- 상품 정보 -->
                     <div class="product-info">
-                        <h3 class="product-title" th:text="'상품 이름: ' + ${product.name}">상품 이름: 샘플</h3>
-                        <h3 class="product-title" th:text="'무게: ' + ${product.gram} + 'g'">무게: 100g</h3>
-                        <h3 class="product-title" th:text="${product.name}"> </h3>
-                        <p class="product-weight" th:text="${product.gram} + 'g'"> </p>
+                        <h3 class="product-title">
+                            <a th:href="@{'/auction/detail/' + ${product.id}}" class="hover:text-custom" th:text="${product.name}">상품명</a>
+                        </h3>
+                        <p class="product-weight" th:text="${product.gram} + 'g'">무게</p>
 
                         <!-- 판매자 정보 -->
                         <div class="flex items-center gap-2 mb-2">
                             <span class="font-bold text-custom">판매자</span>
                             <span class="font-bold text-custom" th:text="${product.member != null ? product.member.username + '님' : '미등록'}">판매자명</span>
                         </div>
+
                         <!-- 가격 정보 -->
                         <div class="price-list">
                             <div class="price-box">
@@ -182,11 +208,11 @@
                             </div>
                             <div class="price-box">
                                 <div class="price-name">현재가</div>
-                                <div class="price-value" th:text="${#numbers.formatInteger(product.currentBidPrice != null ? product.currentBidPrice : product.price, 0, 'COMMA')} + '원'"> </div>
+                                <div class="price-value" th:text="${#numbers.formatInteger(product.currentBidPrice != null ? product.currentBidPrice : product.price, 0, 'COMMA')} + '원'">현재가</div>
                             </div>
                             <div class="price-box">
                                 <div class="price-name">입찰수</div>
-                                <div class="price-value" th:text="${product.bidCount != null ? product.bidCount : 0}"> </div>
+                                <div class="price-value" th:text="${product.bidCount != null ? product.bidCount : 0}">입찰수</div>
                             </div>
                         </div>
 
@@ -202,11 +228,6 @@
                     <i class="fas fa-box-open text-5xl mb-4"></i>
                     <p>현재 진행 중인 경매가 없습니다.</p>
                 </div>
-            </div>
-
-            <!-- 페이지네이션 (필요한 경우) -->
-            <div th:if="${totalPages > 1}" class="mt-8 flex justify-center">
-                <!-- 페이지네이션 컨트롤 -->
             </div>
         </div>
     </main>

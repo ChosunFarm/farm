@@ -27,7 +27,7 @@ public class AuctionController {
     private final MemberRepository memberRepository;
     private final ProductImageRepository productImageRepository;
 
-    /**  
+    /**
      * application.yml 에 설정된 업로드 루트 디렉터리 (예: "./uploads/images")  
      */
     @Value("${spring.file.upload.directory}")
@@ -57,6 +57,7 @@ public class AuctionController {
             @RequestParam(value = "fruitName", required = false) String fruitName,
             @RequestParam(value = "vegetableName", required = false) String vegetableName,
             @RequestParam(value = "grainName", required = false) String grainName,
+            @RequestParam(value = "description", required = false) String description, // 상품 설명 추가
             @RequestParam(value = "imageFile", required = false) MultipartFile[] imageFiles,
             Principal principal  // 현재 로그인한 사용자 정보 가져오기
     ) throws IOException {
@@ -88,7 +89,8 @@ public class AuctionController {
         product.setPrice(price);
         product.setStockQuantity(stockQuantity);
         product.setStatus("pending"); // 상품 등록 시 기본 상태를 '검수 대기'로 설정
-//        product.setStatus(null); // 초기 상태는 null (검수 신청 전)
+        product.setDescription(description); // 상품 설명 설정
+
         // 현재 로그인한 회원 정보 가져오기
         if (principal != null) {
             Member member = memberRepository.findByEmail(principal.getName());
