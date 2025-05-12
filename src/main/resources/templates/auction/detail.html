@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>상품 상세 - 실시간 경매</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link th:href="@{/css/font.css}" rel="stylesheet">
+  <link th:href="@{/css/auction-detail.css}" rel="stylesheet"/>
+  <link th:href="@{/css/nav.css}" rel="stylesheet"/>
+
+  <script src="/js/profileToggle.js"></script>
+  <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+<header class="header-wrapper">
+  <nav class="nav-container">
+    <div class="nav-inner">
+
+      <!-- 로고 + 메뉴 -->
+      <div class="nav-left">
+        <a th:href="@{/}" class="nav-logo-link">
+          <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+        </a>
+        <div class="nav-menu">
+          <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+          <a th:href="@{/live_auction}" class="nav-menu-link">실시간경매</a>
+          <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+        </div>
+      </div>
+
+      <!-- 검색 + 프로필/로그인 -->
+      <div class="nav-right">
+        <div class="nav-search">
+          <input type="text" class="nav-search-input" placeholder="상품을 검색해보세요"/>
+          <div class="nav-search-icon">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+
+        <!-- 로그인한 경우 -->
+        <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
+          <button id="profileBtn-full" class="nav-profile-btn">
+            <img class="nav-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+            <span class="nav-profile-name" th:text="${username} + '님'"></span>
+          </button>
+          <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
+            <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
+            <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+          </div>
+        </div>
+
+        <!-- 로그인 안한 경우 -->
+        <div th:if="${!isLogin}" class="nav-auth">
+          <i class="ri-user-line"></i>
+          <a th:href="@{/login}">
+            <button class="nav-auth-btn black">로그인</button>
+          </a>
+          <a th:href="@{/login}">
+            <button class="nav-auth-btn white">회원가입</button>
+          </a>
+        </div>
+      </div>
+
+      <!-- 모바일 햄버거 버튼 -->
+      <div class="nav-mobile">
+        <button id="mobile-menu-button" class="nav-mobile-btn">
+          <span class="sr-only">메인 메뉴 열기</span>
+          <svg class="nav-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- 모바일 메뉴 -->
+  <div id="mobile-menu" class="mobile-menu">
+    <div class="mobile-menu-inner">
+      <a th:href="@{/auction}" class="mobile-menu-link">상품등록</a>
+      <a th:href="@{/live_auction}" class="mobile-menu-link">실시간경매</a>
+      <a th:href="@{/mypage}" class="mobile-menu-link">마이페이지</a>
+
+      <div class="mobile-search-auth">
+        <div class="mobile-search">
+          <input type="text" class="mobile-search-input" placeholder="상품을 검색해보세요"/>
+          <div class="mobile-search-icon">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+
+        <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+          <button id="profileBtn-half" class="mobile-profile-btn">
+            <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+            <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+          </button>
+          <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+            <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+            <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+          </div>
+        </div>
+
+        <div th:if="${!isLogin}" class="mobile-auth">
+          <i class="ri-user-line"></i>
+          <a th:href="@{/login}">
+            <button class="mobile-auth-btn black">로그인</button>
+          </a>
+          <a th:href="@{/login}">
+            <button class="mobile-auth-btn white">회원가입</button>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- 알림 메시지 -->
+  <div id="alert-message" class="hidden mb-4 p-4 rounded-md border-l-4"></div>
+
+  <main class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="md:flex">
+      <!-- 상품 이미지 섹션 -->
+      <div class="md:w-1/2 p-6">
+        <div class="aspect-w-4 aspect-h-3 bg-gray-200 rounded-lg overflow-hidden">
+          <img th:if="${product.imageUrl != null}"
+               th:src="@{'/images/' + ${product.imageUrl}}"
+               alt="상품 이미지"
+               class="w-full h-full object-center object-cover">
+          <div th:unless="${product.imageUrl != null}" class="w-full h-full flex items-center justify-center text-gray-400">
+            <i class="fas fa-seedling text-6xl"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- 상품 정보 및 입찰 섹션 -->
+      <div class="md:w-1/2 p-6 border-t md:border-t-0 md:border-l border-gray-200">
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold text-gray-900 mb-2" th:text="${product.name}">상품명</h1>
+
+          <div class="flex items-center text-sm text-gray-500 mb-4">
+            <span th:text="${product.dtype == 'F' ? '과일' : (product.dtype == 'V' ? '채소' : '곡물')}">카테고리</span>
+            <span class="mx-2">•</span>
+            <span th:text="${product.gram} + 'g'">무게</span>
+          </div>
+
+          <div class="flex items-center mb-4">
+            <span class="text-gray-600">판매자:</span>
+            <span class="ml-2 font-medium" th:text="${product.member != null ? product.member.username : '미등록'}">판매자명</span>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-200 pt-4 mb-6">
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-gray-600">시작가</span>
+            <span class="text-xl font-bold" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'">시작가</span>
+          </div>
+
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-gray-600">현재 최고가</span>
+            <span id="current-price" class="text-2xl font-bold text-custom"
+                  th:text="${#numbers.formatInteger(product.currentBidPrice != null ? product.currentBidPrice : product.price, 0, 'COMMA')} + '원'">
+                                현재가
+                            </span>
+          </div>
+
+          <div class="flex justify-between items-center mb-6">
+            <span class="text-gray-600">입찰 수</span>
+            <span id="bid-count" class="text-lg" th:text="${product.bidCount != null ? product.bidCount : 0} + '회'">입찰수</span>
+          </div>
+        </div>
+
+        <!-- 입찰 폼 (로그인 시에만 표시) -->
+        <div th:if="${isLogin}" class="border-t border-gray-200 pt-4 mb-6">
+          <h3 class="text-lg font-medium mb-4">가격 제안하기</h3>
+
+          <div class="flex space-x-4">
+            <div class="flex-1">
+              <input type="number" id="bid-amount"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-custom"
+                     th:min="${product.currentBidPrice != null ? product.currentBidPrice + 1000 : product.price + 1000}"
+                     th:step="1000"
+                     th:placeholder="'현재가보다 높은 금액 (최소 ' + ${#numbers.formatInteger(product.currentBidPrice != null ? product.currentBidPrice + 1000 : product.price + 1000, 0, 'COMMA')} + '원)'">
+            </div>
+            <!-- 입찰하기 버튼 스타일 수정 -->
+            <button type="button" id="submit-bid"
+                    class="px-6 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+              입찰하기
+            </button>
+          </div>
+
+          <p class="text-sm text-gray-500 mt-2">* 최소 1,000원 단위로 입찰할 수 있습니다.</p>
+        </div>
+
+        <!-- 로그인하지 않은 경우 -->
+        <div th:unless="${isLogin}" class="border-t border-gray-200 pt-4 mb-6">
+          <p class="text-center py-4 bg-gray-50 rounded-md">
+            입찰에 참여하려면 <a th:href="@{/login}" class="text-custom font-medium">로그인</a>이 필요합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 상품 설명 및 판매자 정보 -->
+    <div class="border-t border-gray-200 p-6">
+      <div class="mb-6">
+        <h2 class="text-lg font-medium mb-4">상품 설명</h2>
+        <div class="bg-gray-50 p-4 rounded-md">
+          <p th:text="${product.description != null ? product.description : '상품 설명이 없습니다.'}">상품 설명</p>
+        </div>
+      </div>
+
+      <!-- 판매자 정보 (선택적) -->
+      <div th:if="${product.member != null}">
+        <h2 class="text-lg font-medium mb-4">판매자 정보</h2>
+        <div class="bg-gray-50 p-4 rounded-md">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mr-4">
+              <i class="fas fa-user text-gray-400"></i>
+            </div>
+            <div>
+              <p class="font-medium" th:text="${product.member.username}">판매자명</p>
+              <p class="text-sm text-gray-500" th:text="'가입일: ' + ${#temporals.format(product.member.created_at, 'yyyy-MM-dd')}">가입일</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 입찰 내역 -->
+    <div class="border-t border-gray-200 p-6">
+      <h2 class="text-lg font-medium mb-4">입찰 내역</h2>
+
+      <div th:if="${bids.empty}" class="text-center py-6 bg-gray-50 rounded-md">
+        <p class="text-gray-500">아직 입찰 내역이 없습니다.</p>
+      </div>
+
+      <div th:unless="${bids.empty}" class="overflow-hidden shadow-sm rounded-md">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">입찰자</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">입찰가</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">입찰 시간</th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
+            <!-- 판매자일 경우 액션 컬럼 추가 -->
+            <th th:if="${isLogin && product.member != null && product.member.id == memberId && product.status != 'completed'}"
+                scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              액션
+            </th>
+          </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+          <tr th:each="bid : ${bids}">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center">
+                <div class="flex-shrink-0 h-8 w-8 bg-gray-200 rounded-full flex items-center justify-center">
+                  <i class="fas fa-user text-gray-400 text-xs"></i>
+                </div>
+                <div class="ml-4">
+                  <div class="text-sm font-medium text-gray-900" th:text="${bid.member.username}">입찰자명</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-bold" th:text="${#numbers.formatInteger(bid.bidAmount, 0, 'COMMA')} + '원'">입찰가</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-500" th:text="${#temporals.format(bid.bidTime, 'yyyy-MM-dd HH:mm:ss')}">입찰 시간</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                          th:classappend="${bid.status == 'pending' ? 'bg-yellow-100 text-yellow-800' : (bid.status == 'accepted' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')}"
+                                          th:text="${bid.status == 'pending' ? '대기중' : (bid.status == 'accepted' ? '수락됨' : '거부됨')}">
+                                        상태
+                                    </span>
+            </td>
+            <!-- 판매자일 경우 액션 컬럼 추가 -->
+            <td th:if="${isLogin && product.member != null && product.member.id == memberId && product.status != 'completed'}"
+                class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <form th:if="${bid.status == 'pending'}" th:action="@{/auction/accept-bid}" method="post">
+                <input type="hidden" name="bidId" th:value="${bid.id}">
+                <button type="submit" class="text-green-600 hover:text-green-900">수락</button>
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- 자바스크립트 (입찰 처리 등) -->
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    const alertMessage = document.getElementById('alert-message');
+    const bidAmountInput = document.getElementById('bid-amount');
+    const submitBidBtn = document.getElementById('submit-bid');
+    const currentPriceElement = document.getElementById('current-price');
+    const bidCountElement = document.getElementById('bid-count');
+
+    // 로그인 상태
+    const isLogin = [[${isLogin}]];
+    // 상품 ID
+    const productId = [[${product.id}]];
+    // 현재 입찰가
+    const currentPrice = [[${product.currentBidPrice != null ? product.currentBidPrice : product.price}]];
+
+    // 입찰 버튼 클릭 이벤트
+    if (submitBidBtn) {
+      submitBidBtn.addEventListener('click', function() {
+        // 로그인 체크
+        if (!isLogin) {
+          showAlert('error', '로그인이 필요합니다.');
+          return;
+        }
+
+        // 입찰가 유효성 검사
+        const bidAmount = parseInt(bidAmountInput.value);
+        if (isNaN(bidAmount) || bidAmount <= 0) {
+          showAlert('error', '유효한 입찰 금액을 입력해주세요.');
+          return;
+        }
+
+        // 현재가보다 높은지 검사
+        if (bidAmount <= currentPrice) {
+          showAlert('error', '현재 입찰가보다 높은 금액을 제시해야 합니다.');
+          return;
+        }
+
+        // 1,000원 단위 검사
+        if (bidAmount % 1000 !== 0) {
+          showAlert('error', '1,000원 단위로 입찰해주세요.');
+          return;
+        }
+
+        // AJAX 입찰 요청
+        fetch('/auction/bid', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            productId: productId,
+            bidAmount: bidAmount
+          })
+        })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.status === 'success') {
+                    // 성공 메시지 표시
+                    showAlert('success', data.message);
+
+                    // 현재가 및 입찰 수 업데이트
+                    currentPriceElement.textContent = new Intl.NumberFormat('ko-KR').format(data.currentPrice) + '원';
+                    bidCountElement.textContent = data.bidCount + '회';
+
+                    // 입력창 초기화
+                    bidAmountInput.value = '';
+
+                    // 최소 입찰가 업데이트
+                    bidAmountInput.min = data.currentPrice + 1000;
+                    bidAmountInput.placeholder = '현재가보다 높은 금액 (최소 ' + new Intl.NumberFormat('ko-KR').format(data.currentPrice + 1000) + '원)';
+
+                    // 페이지 새로고침 (새로운 입찰 내역 표시)
+                    setTimeout(() => {
+                      location.reload();
+                    }, 1500);
+
+                  } else {
+                    // 에러 메시지 표시
+                    showAlert('error', data.message);
+                  }
+                })
+                .catch(error => {
+                  console.error('입찰 처리 중 오류 발생:', error);
+                  showAlert('error', '입찰 처리 중 오류가 발생했습니다.');
+                });
+      });
+    }
+
+    // 알림 메시지 표시 함수
+    function showAlert(type, message) {
+      alertMessage.className = 'mb-4 p-4 rounded-md border-l-4';
+      alertMessage.classList.add(type === 'success' ? 'bg-green-50 border-green-400 text-green-700' : 'bg-red-50 border-red-400 text-red-700');
+      alertMessage.textContent = message;
+      alertMessage.classList.remove('hidden');
+
+      // 3초 후 자동으로 숨기기
+      setTimeout(() => {
+        alertMessage.classList.add('hidden');
+      }, 3000);
+    }
+  });
+</script>
+
+<script th:src="@{/js/moblie.js}"></script>
+</body>
+</html>

@@ -78,4 +78,14 @@ public class ProductService {
     public List<Product> findByMemberId(Long memberId) {
         return productRepository.findByMemberId(memberId);
     }
+
+    // 카테고리별 상품 조회
+    public List<Product> findByCategory(String category) {
+        return productRepository.findByCategory(category);
+    }
+
+    // 카테고리 및 상태별 상품 조회
+    public List<Product> findByCategoryAndStatus(String category, String status) {
+        return productRepository.findByCategoryAndStatus(category, status);
+    }
 }

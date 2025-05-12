@@ -20,6 +20,14 @@ public abstract class Product {
     private int price;
     private int stockQuantity;
 
+    // 무게 정보 필드 추가
+    @Column(name = "gram")
+    private int gram;
+
+    // 상품 설명 필드 추가
+    @Column(name = "description", length = 2000)
+    private String description;
+
     // 상품 상태 필드 추가
     // null: 기본 상태(검수 신청 전)
     // "pending": 검수 신청됨/검수 대기
