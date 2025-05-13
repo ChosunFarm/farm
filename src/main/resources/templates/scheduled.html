@@ -196,9 +196,9 @@
 
                                 <!-- 상품 정보 -->
                                 <div class="text-center mb-4">
-                                    <div class="font-semibold text-lg" th:text="${product.name}">상품명</div>
-                                    <div class="text-sm text-gray-500" th:text="${product.gram} + 'g'">무게</div>
-                                    <div class="mt-2 text-red-600 font-semibold" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'">10,000원</div>
+                                    <div class="font-semibold text-lg" th:text="${product.name}"></div>
+                                    <div class="text-sm text-gray-500" th:text="${product.gram} + 'g'"></div>
+                                    <div class="mt-2 text-red-600 font-semibold" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"></div>
                                 </div>
 
                                 <!-- 검수 신청 버튼 -->

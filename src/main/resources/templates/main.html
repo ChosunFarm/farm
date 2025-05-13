@@ -206,7 +206,7 @@
               <div class="flex justify-between items-center mb-2">
                 <!-- 상품 종류에 따라 다른 이름 표시 -->
                 <span class="text-sm text-gray-500" th:text="${product.dtype == 'F' ? product.fruitName : (product.dtype == 'V' ? product.vegetableName : product.grainName)}">상품 종류</span>
-                <span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">예정</span>
+                <span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">판매중</span>
               </div>
 
               <!-- 상품명과 그램수 표시 -->
@@ -247,28 +247,49 @@
       <div class="mb-12">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-bold">실시간 낙찰 현황</h2>
+          <a th:href="@{/test}" class="text-custom hover:text-custom/80">
+            전체보기 <i class="fas fa-chevron-right ml-1"></i>
+          </a>
         </div>
-        <div class="bg-white rounded-lg p-6">
-          <div class="grid grid-cols-4 gap-4">
-            <div class="border-r border-gray-200 last:border-r-0">
-              <div class="text-sm text-gray-500 mb-1">충주 사과 10kg</div>
-              <div class="font-bold text-lg mb-1">35,000원</div>
-              <div class="text-xs text-gray-400">1분 전 낙찰</div>
+        <div class="grid grid-cols-4 gap-6">
+          <!-- Thymeleaf로 DB에서 상품 목록을 가져와 표시 -->
+          <div th:each="product : ${completedProducts}" class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+            <!-- <div th:each="product : ${approvedProducts}" class="auction-item"> -->
+            <!-- 상품 이미지 - 실제 이미지가 있으면 그것을 사용하고, 없으면 기본 이미지 사용 -->
+            <div class="product-thumbnail">
+              <img th:if="${product.imageUrl != null}"
+                  th:src="@{/images/{fn}(fn=${product.imageUrl})}"
+                  th:alt="${product.name}" />
+                    
+              <img th:unless="${product.imageUrl != null}"
+                  th:src="@{/images/default-product.jpg}"
+                  alt="기본 상품 이미지" />
             </div>
-            <div class="border-r border-gray-200 last:border-r-0">
-              <div class="text-sm text-gray-500 mb-1">나주 배 5kg</div>
-              <div class="font-bold text-lg mb-1">28,000원</div>
-              <div class="text-xs text-gray-400">5분 전 낙찰</div>
-            </div>
-            <div class="border-r border-gray-200 last:border-r-0">
-              <div class="text-sm text-gray-500 mb-1">해남 고구마 10kg</div>
-              <div class="font-bold text-lg mb-1">25,000원</div>
-              <div class="text-xs text-gray-400">10분 전 낙찰</div>
-            </div>
-            <div class="border-r border-gray-200 last:border-r-0">
-              <div class="text-sm text-gray-500 mb-1">이천 쌀 20kg</div>
-              <div class="font-bold text-lg mb-1">55,000원</div>
-              <div class="text-xs text-gray-400">15분 전 낙찰</div>
+
+            <div class="p-4">
+              <div class="flex justify-between items-center mb-2">
+                <!-- 상품 종류에 따라 다른 이름 표시 -->
+                <span class="text-sm text-gray-500" th:text="${product.dtype == 'F' ? product.fruitName : (product.dtype == 'V' ? product.vegetableName : product.grainName)}">상품 종류</span>
+                <span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">판매완료</span>
+              </div>
+
+              <!-- 상품명과 그램수 표시 -->
+              <h3 class="font-medium mb-2" th:text="${product.name + ' ' + product.gram + 'g'}">상품명</h3>
+              
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-bold text-custom">판매자</span>
+                <span class="font-bold text-custom" th:text="${product.member != null ? product.member.username + '님' : '미등록'}">판매자명</span>
+
+                <!-- <span class="font-bold text-custom" th:text="${product.member != null ? product.member.username : '미등록'}">판매자명</span> -->
+              </div>
+
+              <!-- 가격 정보 -->
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-bold text-custom">낙찰가</span>
+                <span class="font-bold text-custom"
+                      th:text="${product.currentBidPrice != null ? #numbers.formatInteger(product.currentBidPrice, 0, 'COMMA') + '원' : '미정'}">
+                </span>
+              </div>
             </div>
           </div>
         </div>

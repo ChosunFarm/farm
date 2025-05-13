@@ -42,6 +42,7 @@ public class MainController {
         // 검수 상태에 따라 상품 분리 조회
         List<Product> approvedProducts = productRepository.findByStatus("approved");
         List<Product> pendingProducts = productRepository.findByStatus("pending");
+        List<Product> completedProducts = productRepository.findByStatus("completed");
 
         // approved + pending 상품 전체에 이미지 매핑 적용
         List<Product> allProducts = Stream.concat(
@@ -69,6 +70,8 @@ public class MainController {
         // 모델에 검수 상태에 따른 분리된 리스트 전달
         model.addAttribute("approvedProducts", approvedProducts); // 실시간 경매 상품
         model.addAttribute("pendingProducts", pendingProducts);   // 신규 경매 예정 상품
+        model.addAttribute("completedProducts", completedProducts);   // 신규 경매 예정 상품
+        
 
         return "main";
     }
