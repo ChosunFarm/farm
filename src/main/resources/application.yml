@@ -1,11 +1,8 @@
-spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/farmshop
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-    main:
-      allow-bean-definition-overriding: true
+    url: jdbc:mysql://127.0.0.1:3306/farmshop?useSSL=false&serverTimezone=Asia/Seoul
+    username: AHYUN 
+    password: ChosunFarm@@2025!
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   thymeleaf:
     cache: false
@@ -24,10 +21,10 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
 
 logging:
