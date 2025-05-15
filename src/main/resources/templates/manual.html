@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>이용방법 - 농산물 경매 시스템</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link th:href="@{/css/font.css}" rel="stylesheet">
+  <link th:href="@{/css/nav.css}" rel="stylesheet"/>
+
+  <script src="/js/profileToggle.js"></script>
+  <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+<header class="header-wrapper">
+  <nav class="nav-container">
+    <div class="nav-inner">
+
+      <!-- 로고 + 메뉴 -->
+      <div class="nav-left">
+        <a th:href="@{/}" class="nav-logo-link">
+          <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+        </a>
+        <div class="nav-menu">
+          <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+          <a th:href="@{/live_auction}" class="nav-menu-link">실시간경매</a>
+          <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+        </div>
+      </div>
+
+      <!-- 검색 + 프로필/로그인 -->
+      <div class="nav-right">
+        <div class="nav-search">
+          <input type="text" class="nav-search-input" placeholder="상품을 검색해보세요"/>
+          <div class="nav-search-icon">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+
+        <!-- 로그인한 경우 -->
+        <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
+          <button id="profileBtn-full" class="nav-profile-btn">
+            <img class="nav-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+            <span class="nav-profile-name" th:text="${username} + '님'"></span>
+          </button>
+          <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
+            <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
+            <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+          </div>
+        </div>
+
+        <!-- 로그인 안한 경우 -->
+        <div th:if="${!isLogin}" class="nav-auth">
+          <i class="ri-user-line"></i>
+          <a th:href="@{/login}">
+            <button class="nav-auth-btn black">로그인</button>
+          </a>
+          <a th:href="@{/login}">
+            <button class="nav-auth-btn white">회원가입</button>
+          </a>
+        </div>
+      </div>
+
+      <!-- 모바일 햄버거 버튼 -->
+      <div class="nav-mobile">
+        <button id="mobile-menu-button" class="nav-mobile-btn">
+          <span class="sr-only">메인 메뉴 열기</span>
+          <svg class="nav-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- 모바일 메뉴 -->
+  <div id="mobile-menu" class="mobile-menu">
+    <div class="mobile-menu-inner">
+      <a th:href="@{/auction}" class="mobile-menu-link">상품등록</a>
+      <a th:href="@{/live_auction}" class="mobile-menu-link">실시간경매</a>
+      <a th:href="@{/mypage}" class="mobile-menu-link">마이페이지</a>
+
+      <div class="mobile-search-auth">
+        <div class="mobile-search">
+          <input type="text" class="mobile-search-input" placeholder="상품을 검색해보세요"/>
+          <div class="mobile-search-icon">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+
+        <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+          <button id="profileBtn-half" class="mobile-profile-btn">
+            <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+            <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+          </button>
+          <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+            <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+            <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+          </div>
+        </div>
+
+        <div th:if="${!isLogin}" class="mobile-auth">
+          <i class="ri-user-line"></i>
+          <a th:href="@{/login}">
+            <button class="mobile-auth-btn black">로그인</button>
+          </a>
+          <a th:href="@{/login}">
+            <button class="mobile-auth-btn white">회원가입</button>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h1 class="text-2xl font-bold text-gray-900">농산물 경매 시스템 이용방법</h1>
+      <p class="text-sm text-gray-600 mt-1">신선한 농산물 경매에 참여하는 방법을 알아보세요.</p>
+    </div>
+
+    <div class="p-6">
+      <!-- 탭 메뉴 -->
+      <div class="border-b border-gray-200 mb-6">
+        <nav class="-mb-px flex space-x-8">
+          <a href="#" class="tab-link active whitespace-nowrap py-4 px-1 border-b-2 border-custom font-medium text-custom" data-tab="tab-register">
+            상품등록
+          </a>
+          <a href="#" class="tab-link whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="tab-auction">
+            실시간 경매
+          </a>
+          <a href="#" class="tab-link whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="tab-bid">
+            입찰하기
+          </a>
+          <a href="#" class="tab-link whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="tab-check">
+            검수절차
+          </a>
+        </nav>
+      </div>
+
+      <!-- 상품등록 탭 내용 -->
+      <div id="tab-register" class="tab-content">
+        <div class="mb-8">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">1. 농산물 상품 등록 방법</h2>
+          <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+            <p>상품 등록은 판매자 회원만 가능합니다. 로그인 후 [상품등록] 메뉴를 통해 진행할 수 있습니다.</p>
+          </div>
+          <div class="prose max-w-none">
+            <ol class="list-decimal pl-6">
+              <li class="mb-4">
+                <strong>메뉴 접근</strong> - 상단 메뉴에서 [상품등록] 버튼을 클릭합니다.
+              </li>
+              <li class="mb-4">
+                <strong>상품 정보 입력</strong>
+                <ul class="list-disc pl-6 mt-2">
+                  <li>상품 종류: 과일, 채소, 곡물 중 선택</li>
+                  <li>상품명: 판매할 상품의 이름을 입력</li>
+                  <li>시작 금액: 경매 시작 가격 설정</li>
+                  <li>수량: 판매할 상품의 개수</li>
+                  <li>판매량(g): 상품의 무게 입력</li>
+                  <li>상품 설명: 상품에 대한 상세 정보 입력</li>
+                </ul>
+              </li>
+              <li class="mb-4">
+                <strong>상품 이미지 업로드</strong> - [이미지 업로드] 버튼을 클릭하여 상품 이미지를 첨부합니다. 여러 장의 이미지를 추가할 수 있습니다.
+              </li>
+              <li class="mb-4">
+                <strong>경매 일자 설정</strong> - 경매가 진행될 날짜와 시간을 설정합니다.
+              </li>
+              <li class="mb-4">
+                <strong>검수 신청</strong> - [검수 신청하기] 버튼을 클릭하여 상품 등록을 완료합니다.
+              </li>
+            </ol>
+          </div>
+
+          <div class="mt-8 p-4 bg-yellow-50 rounded-lg">
+            <h3 class="text-yellow-800 font-medium mb-2"><i class="fas fa-exclamation-circle mr-2"></i>주의사항</h3>
+            <ul class="list-disc pl-6 text-yellow-700">
+              <li>정확한 상품 정보와 고품질 이미지를 등록하면 경매 참여율이 높아집니다.</li>
+              <li>등록된 상품은 관리자 검수 후 실시간 경매에 노출됩니다.</li>
+              <li>검수에는 최대 2일이 소요됩니다.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 실시간 경매 탭 내용 -->
+      <div id="tab-auction" class="tab-content hidden">
+        <div class="mb-8">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">2. 실시간 경매 참여 방법</h2>
+          <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+            <p>실시간 경매는 검수가 완료된 상품에 대해 진행됩니다. 경매에 참여하여 원하는 농산물을 합리적인 가격에 구매해보세요.</p>
+          </div>
+
+          <div class="prose max-w-none">
+            <ol class="list-decimal pl-6">
+              <li class="mb-4">
+                <strong>경매 페이지 접속</strong> - 상단 메뉴에서 [실시간경매] 버튼을 클릭합니다.
+              </li>
+              <li class="mb-4">
+                <strong>상품 검색 및 필터링</strong>
+                <ul class="list-disc pl-6 mt-2">
+                  <li>검색창: 원하는 상품명으로 검색</li>
+                  <li>카테고리 필터: 과일, 채소, 곡물 등 카테고리별 필터링</li>
+                  <li>카테고리 바로가기 버튼을 통해 쉽게 이동 가능</li>
+                </ul>
+              </li>
+              <li class="mb-4">
+                <strong>상품 상세정보 확인</strong> - 관심 있는 상품을 클릭하여 상세 정보를 확인합니다.
+                <ul class="list-disc pl-6 mt-2">
+                  <li>상품 이미지</li>
+                  <li>상품 설명</li>
+                  <li>시작가 및 현재 최고가</li>
+                  <li>입찰 수</li>
+                  <li>판매자 정보</li>
+                  <li>경매 일시</li>
+                </ul>
+              </li>
+              <li class="mb-4">
+                <strong>경매 참여하기</strong> - [경매 참여하기] 버튼을 클릭하여 상세 페이지로 이동합니다.
+              </li>
+            </ol>
+          </div>
+
+          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-medium text-gray-900 mb-2">실시간 경매 화면</h3>
+              <p class="text-sm text-gray-600">실시간 경매 화면에서는 다양한 상품들의 현재 경매 상태를 확인할 수 있습니다. 가격, 남은 시간, 입찰 횟수 등의 정보를 한눈에 볼 수 있습니다.</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-medium text-gray-900 mb-2">경매 마감 임박 상품</h3>
+              <p class="text-sm text-gray-600">마감이 임박한 상품들은 '마감 임박' 태그가 표시되어 특별히 강조됩니다. 놓치고 싶지 않은 상품이 있다면 주의 깊게 살펴보세요.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 입찰하기 탭 내용 -->
+      <div id="tab-bid" class="tab-content hidden">
+        <div class="mb-8">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">3. 입찰 방법</h2>
+          <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+            <p>입찰은 상품 상세 페이지에서 가능합니다. 현재 최고가보다 높은 금액으로 입찰해야 합니다.</p>
+          </div>
+
+          <div class="prose max-w-none">
+            <ol class="list-decimal pl-6">
+              <li class="mb-4">
+                <strong>상품 상세 페이지 접속</strong> - 입찰하고자 하는 상품을 클릭하여 상세 페이지로 이동합니다.
+              </li>
+              <li class="mb-4">
+                <strong>입찰 금액 입력</strong>
+                <ul class="list-disc pl-6 mt-2">
+                  <li>현재 최고가보다 높은 금액을 입력해야 합니다.</li>
+                  <li>최소 1,000원 단위로 입찰 가능합니다.</li>
+                </ul>
+              </li>
+              <li class="mb-4">
+                <strong>입찰 버튼 클릭</strong> - [입찰하기] 버튼을 클릭하여 입찰을 완료합니다.
+              </li>
+              <li class="mb-4">
+                <strong>입찰 결과 확인</strong> - 입찰 성공 시 알림 메시지가 표시되고, 실시간으로 입찰 내역이 업데이트됩니다.
+              </li>
+              <li class="mb-4">
+                <strong>마이페이지에서 내역 확인</strong> - 입찰한 내역은 [마이페이지] > [나의 입찰 내역]에서 확인할 수 있습니다.
+              </li>
+            </ol>
+          </div>
+
+          <div class="mt-8 p-4 bg-green-50 rounded-lg">
+            <h3 class="text-green-800 font-medium mb-2"><i class="fas fa-lightbulb mr-2"></i>입찰 팁</h3>
+            <ul class="list-disc pl-6 text-green-700">
+              <li>경매 마감 시간에 가까울수록 입찰 경쟁이 치열해집니다. 미리 참여하는 것이 좋습니다.</li>
+              <li>내가 최고가로 입찰 중이더라도 다른 사용자가 더 높은 금액으로 입찰할 수 있습니다.</li>
+              <li>입찰 수락은 판매자의 결정에 따릅니다. 최고가로 입찰했더라도 반드시 낙찰되는 것은 아닙니다.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 검수절차 탭 내용 -->
+      <div id="tab-check" class="tab-content hidden">
+        <div class="mb-8">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">4. 상품 검수 절차</h2>
+          <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+            <p>등록된 상품은 관리자 검수를 거쳐 실시간 경매에 노출됩니다. 검수 과정을 통해 품질이 보장된 상품만 거래됩니다.</p>
+          </div>
+
+          <div class="relative">
+            <div class="absolute h-full w-0.5 bg-gray-200 left-6 top-0"></div>
+            <ol class="relative">
+              <li class="mb-10 ml-14">
+                <div class="absolute w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center -left-6 ring-8 ring-white">
+                  <span class="text-blue-800 font-bold">1</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">상품 등록</h3>
+                <p>판매자가 상품 정보와 이미지를 등록합니다. 정확하고 상세한 정보를 입력하면 검수가 원활하게 진행됩니다.</p>
+              </li>
+              <li class="mb-10 ml-14">
+                <div class="absolute w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center -left-6 ring-8 ring-white">
+                  <span class="text-yellow-800 font-bold">2</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">검수 대기</h3>
+                <p>등록된 상품은 검수 대기 상태로 변경됩니다. [마이페이지]에서 상품 상태를 '검수 대기중'으로 확인할 수 있습니다.</p>
+              </li>
+              <li class="mb-10 ml-14">
+                <div class="absolute w-12 h-12 bg-green-100 rounded-full flex items-center justify-center -left-6 ring-8 ring-white">
+                  <span class="text-green-800 font-bold">3</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">관리자 검수</h3>
+                <p>관리자가 상품 정보와 이미지를 검토합니다. 상품 정보의 정확성, 이미지 품질, 판매 적합성 등을 종합적으로 평가합니다.</p>
+              </li>
+              <li class="mb-10 ml-14">
+                <div class="absolute w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center -left-6 ring-8 ring-white">
+                  <span class="text-indigo-800 font-bold">4</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">검수 결과</h3>
+                <p>검수 결과에 따라 상품 상태가 '경매 진행중' 또는 '검수 거부됨'으로 변경됩니다. 검수가 승인된 상품은 실시간 경매 페이지에 노출됩니다.</p>
+              </li>
+              <li class="ml-14">
+                <div class="absolute w-12 h-12 bg-red-100 rounded-full flex items-center justify-center -left-6 ring-8 ring-white">
+                  <span class="text-red-800 font-bold">5</span>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">경매 시작</h3>
+                <p>검수가 완료된 상품은 설정된 경매 일자에 맞춰 경매가 시작됩니다. 입찰자들은 상품 상세 페이지에서 입찰에 참여할 수 있습니다.</p>
+              </li>
+            </ol>
+          </div>
+
+          <div class="mt-8 p-4 bg-indigo-50 rounded-lg">
+            <h3 class="text-indigo-800 font-medium mb-2"><i class="fas fa-info-circle mr-2"></i>검수 소요 시간</h3>
+            <p class="text-indigo-700">검수는 일반적으로 최대 2일이 소요됩니다. 검수가 완료되면 판매자에게 알림이 발송됩니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 자바스크립트 -->
+<script th:src="@{/js/moblie.js}"></script>
+<script>
+  // 탭 전환 기능
+  document.addEventListener('DOMContentLoaded', function() {
+    const tabLinks = document.querySelectorAll('.tab-link');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        // 모든 탭 링크 비활성화
+        tabLinks.forEach(item => {
+          item.classList.remove('active', 'border-custom', 'text-custom');
+          item.classList.add('border-transparent', 'text-gray-500');
+        });
+
+        // 클릭한 탭 링크 활성화
+        this.classList.add('active', 'border-custom', 'text-custom');
+        this.classList.remove('border-transparent', 'text-gray-500');
+
+        // 모든 탭 내용 숨기기
+        tabContents.forEach(content => {
+          content.classList.add('hidden');
+        });
+
+        // 해당 탭 내용 표시
+        const tabId = this.getAttribute('data-tab');
+        document.getElementById(tabId).classList.remove('hidden');
+      });
+    });
+  });
+</script>
+</body>
+</html>

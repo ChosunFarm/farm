@@ -215,6 +215,13 @@
                                 <div class="price-value" th:text="${product.bidCount != null ? product.bidCount : 0}">입찰수</div>
                             </div>
                         </div>
+                        <!-- 경매 일자 표시 예시 -->
+                        <div class="flex justify-between items-center text-sm text-gray-500">
+                            <span>입찰 <span th:text="${product.bidCount != null ? product.bidCount : 0}"></span>회</span>
+                            <span th:if="${product.auctionDate != null}">
+                                경매일: <span th:text="${#temporals.format(product.auctionDate, 'yyyy-MM-dd HH:mm')}"></span>
+                            </span>
+                        </div>
 
                         <!-- 액션 버튼 -->
                         <a th:href="@{'/auction/detail/' + ${product.id}}" class="inline-block bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm font-medium">

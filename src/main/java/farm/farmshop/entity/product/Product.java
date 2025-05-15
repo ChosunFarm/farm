@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -62,6 +64,16 @@ public abstract class Product {
         this.imageUrl = imageUrl;
     }
 
-//    @ManyToMany(mappedBy = "items")
-//    private List<Category> categories = new ArrayList<>();
+    // src/main/java/farm/farmshop/entity/product/Product.java에 추가
+    @Column(name = "auction_date")
+    private LocalDateTime auctionDate;
+
+    public LocalDateTime getAuctionDate() {
+        return auctionDate;
+    }
+
+    public void setAuctionDate(LocalDateTime auctionDate) {
+        this.auctionDate = auctionDate;
+    }
+
 }

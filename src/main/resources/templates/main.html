@@ -145,9 +145,11 @@
                   <div class="text-white ml-12">
                     <h2 class="text-4xl font-bold mb-4">신선한 농산물 <br>실시간 경매</h2>
                     <p class="text-lg mb-6">전국 각지의 신선한 농산물을<br>합리적인 가격에 만나보세요</p>
-                    <button class="!rounded-button bg-custom text-white px-6 py-3 text-lg font-medium hover:bg-custom/90">
-                      지금 참여하기 <i class="fas fa-arrow-right ml-2"></i>
-                    </button>
+                    <a href="/live_auction" th:href="@{/live_auction}" class="inline-block">
+                      <button class="!rounded-button bg-custom text-white px-6 py-3 text-lg font-medium hover:bg-custom/90">
+                        지금 참여하기 <i class="fas fa-arrow-right ml-2"></i>
+                      </button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -324,7 +326,12 @@
                 <span class="text-sm">재고수량</span>
                 <span class="text-gray-700" th:text="${product.stockQuantity + '개'}">수량</span>
               </div>
-
+              <div class="flex justify-between items-center text-sm text-gray-500 mb-2">
+                <span>입찰 <span th:text="${product.bidCount != null ? product.bidCount : 0}"></span>회</span>
+                <span th:if="${product.auctionDate != null}">
+                  경매일: <span th:text="${#temporals.format(product.auctionDate, 'yyyy-MM-dd HH:mm')}"></span>
+              </span>
+              </div>
               <!-- 경매 정보 -->
               <div class="flex justify-between items-center mb-2">
                 <span class="text-sm">입찰</span>
