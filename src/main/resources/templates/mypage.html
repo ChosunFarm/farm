@@ -129,7 +129,7 @@
 <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <main class="mt-0">
         <div class="bg-white shadow rounded-lg px-6 py-4 border-b border-gray-200">
-            <form th:action="@{/submit-product}" method="post" enctype="multipart/form-data" class="space-y-6">
+            <form th:action="@{/auction/accept-bid}" method="post" enctype="multipart/form-data" class="space-y-6">
                 <div class="mypage-container grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
                     <aside class="sidebar">
                         <h2>마이페이지</h2>
@@ -316,11 +316,15 @@
 
                                     <!-- 입찰 수락 버튼 (대기 상태일 때만 표시) -->
                                     <div th:if="${bid.status == 'pending'}" class="mt-2">
-                                        <form th:action="@{/auction/accept-bid}" method="post">
+                                        <!--<form th:action="@{/auction/accept-bid}" method="post">
                                             <input type="hidden" name="bidId" th:value="${bid.id}">
                                             <button type="submit" class="bg-green-500 text-white text-xs px-3 py-1 rounded hover:bg-green-600">
                                                 입찰 수락
                                             </button>
+                                        </form>-->
+                                        <form th:if="${bid.status == 'pending'}" th:action="@{/auction/accept-bid}" method="post">
+                                            <input type="hidden" name="bidId" th:value="${bid.id}">
+                                            <button type="submit" class="bg-green-500 text-white text-xs px-3 py-1 rounded hover:bg-green-600">입찰 수락</button>
                                         </form>
                                     </div>
 
@@ -331,20 +335,6 @@
                                 </div>
                             </div>
                         </section>
-                        <!--<section class="sales-history">
-                            <h2>나의 상품등록 목록 ⌄</h2>
-                            <a th:href="@{/auction}" class="small-btn">상품 등록하러가기</a>
-                            //
-                            <div class="product-card">
-                                <div class="product-image">🍎</div>
-                                <div class="product-info">
-                                    <strong>우리집 뒤뜰 왕사과</strong>
-                                    <p>1kg · <span class="price">15,000원</span></p>
-                                    <span class="status success">판매 완료 ✔</span>
-                                </div>
-                            </div>
-                            //
-                        </section>-->
                     </main>
                 </div>
             </form>
