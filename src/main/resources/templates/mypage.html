@@ -135,12 +135,14 @@
                         <h2>마이페이지</h2>
                         <ul>
                             <li><strong>마이페이지</strong></li>
-                            
+                            <li><a th:href="@{/mypage/my-products}">나의 상품 등록 목록</a></li>
+                            <li><a th:href="@{/mypage/mybids}">나의 입찰 내역</a></li>
+                            <li><a th:href="@{/mypage/received-bids}">받은 입찰 내역</a></li>
                         </ul>
                         <div class="nav-actions">
-                            <a th:href="@{/auction}">상품 등록 +</a>
-                            <a th:href="@{/live_auction}">실시간 경매 +</a>
-                            <button type="button">실시간 시세 +</button>
+                            <a th:href="@{/auction}">상품 등록</a>
+                            <a th:href="@{/live_auction}">실시간 경매</a>
+                            <button type="button">실시간 시세</button>
                         </div>
                     </aside>
 
@@ -159,7 +161,7 @@
 
                                 <div class="rating">
                                     <span>⭐☆☆☆☆</span>
-                                    <strong>4.5</strong>
+                                    <strong>1.0</strong>
                                     <button type="button" class="small-btn">받은 후기보기</button>
                                 </div>
 
@@ -177,7 +179,7 @@
                             </div>
                         </section>
                         <section class="sales-history">
-                            <h2>나의 상품등록 목록 ⌄</h2>
+                            <h2>나의 상품 등록 목록 ⌄</h2>
                             <a th:href="@{/auction}" class="small-btn">상품 등록하러가기</a>
 
                             <!-- 상품이 없는 경우 -->
