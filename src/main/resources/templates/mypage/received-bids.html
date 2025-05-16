@@ -18,7 +18,7 @@
     <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
 
     <!-- Custom CSS -->
-    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <link th:href="@{/css/myproducts.css}" rel="stylesheet">
     <link th:href="@{/css/font.css}" rel="stylesheet">
     <link th:href="@{/css/nav.css}" rel="stylesheet">
 
@@ -36,21 +36,16 @@
                     <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
                 </a>
                 <div class="nav-menu">
+                    <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
                     <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
                     <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
-                    <a th:href="@{/support}" class="nav-menu-link">고객센터</a>
+                    <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+                    <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
                 </div>
             </div>
 
             <!-- 검색 + 프로필/로그인 -->
             <div class="nav-right">
-                <div class="nav-search">
-                    <input type="text" class="nav-search-input" placeholder="상품을 검색해보세요"/>
-                    <div class="nav-search-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                </div>
-
                 <!-- 로그인한 경우 -->
                 <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
                     <button id="profileBtn-full" class="nav-profile-btn">
@@ -92,18 +87,13 @@
     <!-- 모바일 메뉴 -->
     <div id="mobile-menu" class="mobile-menu">
         <div class="mobile-menu-inner">
-            <a th:href="@{/auction}" class="mobile-menu-link">상품등록</a>
-            <a th:href="@{/mypage}" class="mobile-menu-link">마이페이지</a>
-            <a th:href="@{/support}" class="mobile-menu-link">고객센터</a>
+            <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+            <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+            <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+            <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+            <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
 
             <div class="mobile-search-auth">
-                <div class="mobile-search">
-                    <input type="text" class="mobile-search-input" placeholder="상품을 검색해보세요"/>
-                    <div class="mobile-search-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                </div>
-
                 <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
                     <button id="profileBtn-half" class="mobile-profile-btn">
                         <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
@@ -131,7 +121,73 @@
 </header>
 
 <main class="content">
-    <div class="title">받은 입찰 목록</div>
+    <!-- 내 상품에 대한 입찰 관리 섹션 (판매자용) -->
+    <div class="bg-white shadow rounded-lg p-6">
+        <h1 class="text-2xl font-bold text-gray-900 mb-6">
+            나의 입찰 내역
+        </h1>
+        <!-- 입찰 내역이 없는 경우 -->
+        <div th:if="${receivedBidDTOs == null || receivedBidDTOs.isEmpty()}">
+            <p>받은 입찰 내역이 없습니다.</p>
+        </div>
+
+        <!-- 입찰 내역 목록 -->
+        <div th:if="${receivedBidDTOs != null && !receivedBidDTOs.isEmpty()}" th:each="bid : ${receivedBidDTOs}" class="product-card">
+            <div class="product-image">
+                <!-- 이미지가 있는 경우 -->
+                <img th:if="${bid.imageUrl != null && !bid.imageUrl.isEmpty()}"
+                     th:src="@{'/images/' + ${bid.imageUrl}}"
+                     alt="상품 이미지"
+                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
+
+                <!-- 이미지가 없는 경우 기본 아이콘 표시 -->
+                <span th:if="${bid.imageUrl == null || bid.imageUrl.isEmpty()}">
+                <i class="fas fa-seedling"></i>
+            </span>
+            </div>
+            <div class="product-info">
+                <strong th:text="${bid.productName}">상품명</strong>
+                <p>
+                    <span th:text="${bid.weightInfo + ' · '}">무게</span>
+                    <span class="price" th:text="${#numbers.formatInteger(bid.bidAmount, 0, 'COMMA') + '원'}">입찰가</span>
+                </p>
+
+                <!-- 입찰자 정보 -->
+                <p>
+                    <span>입찰자: </span>
+                    <span th:text="${bid.bidderName}">입찰자명</span>
+                </p>
+
+                <!-- 입찰 시간 -->
+                <p class="text-xs text-gray-500" th:text="${#temporals.format(bid.bidTime, 'yyyy-MM-dd HH:mm:ss')}">입찰 시간</p>
+
+                <!-- 입찰 상태 -->
+                <span th:class="'status ' + ${bid.statusClass}">
+                    <span th:text="${bid.statusText}">입찰 상태</span>
+                </span>
+
+                <!-- 입찰 수락 버튼 (대기 상태일 때만 표시) -->
+                <div th:if="${bid.status == 'pending'}" class="mt-2">
+                    <!--<form th:action="@{/auction/accept-bid}" method="post">
+                        <input type="hidden" name="bidId" th:value="${bid.id}">
+                        <button type="submit" class="bg-green-500 text-white text-xs px-3 py-1 rounded hover:bg-green-600">
+                            입찰 수락
+                        </button>
+                    </form>-->
+                    <form th:if="${bid.status == 'pending'}" th:action="@{/auction/accept-bid}" method="post">
+                        <input type="hidden" name="bidId" th:value="${bid.id}">
+                        <button type="submit" class="bg-green-500 text-white text-xs px-3 py-1 rounded hover:bg-green-600">입찰 수락</button>
+                    </form>
+                </div>
+
+                <!-- 상품 상세 페이지 링크 -->
+                <a th:href="@{'/auction/detail/' + ${bid.productId}}" class="text-sm text-custom hover:underline mt-2 inline-block">
+                    상세 보기
+                </a>
+            </div>
+        </div>
+    </div>
 </main>
+<script th:src="@{/js/moblie.js}"></script>
 </body>
 </html>

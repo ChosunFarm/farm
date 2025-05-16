@@ -162,12 +162,12 @@ public class BidController {
             redirectAttributes.addFlashAttribute("message", "입찰이 성공적으로 수락되었습니다.");
             redirectAttributes.addFlashAttribute("messageType", "success");
 
-            return "redirect:/mypage";
+            return "redirect:/mypage/received-bids"; // 수락된 입찰 목록 페이지로 리다이렉트
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("message", "입찰 수락 처리 중 오류가 발생했습니다: " + e.getMessage());
             redirectAttributes.addFlashAttribute("messageType", "error");
-            return "redirect:/mypage";
+            return "redirect:/mypage/received-bids";
         }
     }
 }
