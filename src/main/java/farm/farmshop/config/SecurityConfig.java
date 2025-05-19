@@ -21,7 +21,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/signup", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/login", "/signup", "/register", "/css/**", "/js/**", "/images/**", "/fonts/**", "/webjars/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -40,8 +40,8 @@ public class SecurityConfig {
                 .userDetailsService(userDetailsService);
 
         // 프록시 설정 추가
-        http.requiresChannel(channel ->
-                channel.anyRequest().requiresInsecure());
+//        http.requiresChannel(channel ->
+//                channel.anyRequest().requiresInsecure());
 
         return http.build();
     }

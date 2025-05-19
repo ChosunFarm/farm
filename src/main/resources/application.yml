@@ -36,6 +36,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+  logging:
+    level:
+      org.hibernate.SQL: debug
+      org.hibernate.type: trace
+      org.thymeleaf: TRACE
+      org.thymeleaf.parser: TRACE
+      org.springframework.security: DEBUG  # 추가
+      farm.farmshop: DEBUG  # 추가 - 애플리케이션 패키지
 #spring:
 #  datasource:
 #    url: jdbc:h2:tcp://localhost/~/farmshop
