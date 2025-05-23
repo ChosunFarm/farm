@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -44,6 +46,7 @@ public class MyProductsController {
 
                 // DTO로 변환
                 List<MyProductDTO> productDTOs = new ArrayList<>();
+                
                 for (Product product : products) {
                     MyProductDTO dto = new MyProductDTO();
                     dto.setId(product.getId());
@@ -92,6 +95,25 @@ public class MyProductsController {
                 }
 
                 model.addAttribute("productDTOs", productDTOs);
+
+                List<MyBidDTO> bidDTOs = new ArrayList<>();
+                for (Product product : products) {
+                    // 1. 이 상품에 달린 모든 입찰 조회
+                    List<Bid> bids = bidService.findByProductId(product.getId());
+                    // 2. 최고 입찰 하나만
+                    Bid top = bids.stream()
+                                  .max(Comparator.comparing(Bid::getBidAmount))
+                                  .orElse(null);
+                    // 3. DTO로 변환
+                    if (top != null) {
+                        MyBidDTO bdto = new MyBidDTO();
+                        bdto.setProductId(product.getId());
+                        bdto.setBidderName(top.getMember().getUsername());
+                        // (필요시 금액/시간/상태 필드도 세팅)
+                        bidDTOs.add(bdto);
+                    }
+                }
+                model.addAttribute("bidDTOs", bidDTOs);        
 
             }
         } else {

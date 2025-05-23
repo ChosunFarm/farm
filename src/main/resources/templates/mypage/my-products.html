@@ -152,7 +152,13 @@
                         <span th:text="${product.weightInfo + ' · '}">무게</span>
                         <span class="price" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA') + '원'}">가격</span>
                     </p>
-    
+                    <!-- 입찰자 정보 -->
+                    <div th:each="bid : ${bidDTOs}" th:if="${bid.productId == product.id}">
+                        <p>
+                            <span>입찰자: </span>
+                            <span th:text="${bid.bidderName}">입찰자명</span>
+                        </p>
+                    </div>
                     <!-- 판매 상태 (상태별 다른 아이콘 적용) -->
                     <span th:class="'status ' + ${product.statusClass}">
                     <span th:text="${product.status}">판매 상태</span>
