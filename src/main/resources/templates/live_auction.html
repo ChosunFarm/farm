@@ -172,7 +172,7 @@
                     <!-- 상품 이미지 (클릭 시 상세 페이지로 이동) -->
                     <a th:href="@{'/auction/detail/' + ${product.id}}" class="product-image-link">
                         <div class="product-image">
-                            <img th:if="${product.imageUrl != null}" th:src="@{/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
+                            <img th:if="${product.imageUrl != null}" th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
                             <i th:unless="${product.imageUrl != null}" class="fas fa-seedling"></i>
                         </div>
                     </a>

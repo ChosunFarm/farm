@@ -21,15 +21,16 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/signup", "/register", "/css/**", "/js/**", "/images/**", "/fonts/**", "/webjars/**").permitAll()
+                        .requestMatchers("/", "/login", "/signup", "/register", "/css/**", "/js/**", "/images/**", "/uploads/images/**", "/fonts/**", "/webjars/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/ws/**").permitAll() // WebSocket 엔드포인트 허용
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-			.usernameParameter("username")
-			.passwordParameter("password")
+                        .usernameParameter("username")
+                        .passwordParameter("password")
                         .defaultSuccessUrl("/", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
@@ -40,10 +41,6 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .userDetailsService(userDetailsService);
-
-        // 프록시 설정 추가
-//        http.requiresChannel(channel ->
-//                channel.anyRequest().requiresInsecure());
 
         return http.build();
     }

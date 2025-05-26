@@ -186,8 +186,8 @@
             <!-- 상품 이미지 - 실제 이미지가 있으면 그것을 사용하고, 없으면 기본 이미지 사용 -->
             <div class="product-thumbnail">
               <img th:if="${product.imageUrl != null}"
-                  th:src="@{/images/{fn}(fn=${product.imageUrl})}"
-                  th:alt="${product.name}" />
+                   th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}"
+                   th:alt="${product.name}" />
                     
               <img th:unless="${product.imageUrl != null}"
                   th:src="@{/images/default-product.jpg}"
@@ -250,8 +250,8 @@
             <!-- 상품 이미지 - 실제 이미지가 있으면 그것을 사용하고, 없으면 기본 이미지 사용 -->
             <div class="product-thumbnail">
               <img th:if="${product.imageUrl != null}"
-                  th:src="@{/images/{fn}(fn=${product.imageUrl})}"
-                  th:alt="${product.name}" />
+                  th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}"
+                   th:alt="${product.name}" />
                     
               <img th:unless="${product.imageUrl != null}"
                   th:src="@{/images/default-product.jpg}"
@@ -301,8 +301,8 @@
             <!-- 상품 이미지 - 실제 이미지가 있으면 그것을 사용하고, 없으면 기본 이미지 사용 -->
             <div class="product-thumbnail">
               <img th:if="${product.imageUrl != null}"
-                  th:src="@{/images/{fn}(fn=${product.imageUrl})}"
-                  th:alt="${product.name}" />
+                   th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}"
+                   th:alt="${product.name}" />
                     
               <img th:unless="${product.imageUrl != null}"
                   th:src="@{/images/default-product.jpg}"

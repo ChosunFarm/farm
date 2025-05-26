@@ -165,7 +165,7 @@
             <dd class="mt-1 text-sm text-gray-900 sm:col-span-2">
               <div class="flex items-center">
                 <div class="h-40 w-40 bg-gray-200 rounded-md overflow-hidden">
-                  <img th:if="${product.imageUrl != null}" th:src="@{/images/{fn}(fn=${product.imageUrl})}" class="h-full w-full object-cover" th:alt="${product.name}">
+                  <img th:if="${product.imageUrl != null}" th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}" class="h-full w-full object-cover" th:alt="${product.name}">
                   <div th:unless="${product.imageUrl != null}" class="h-full w-full flex items-center justify-center">
                     <i class="fas fa-image text-gray-400 text-4xl"></i>
                   </div>
