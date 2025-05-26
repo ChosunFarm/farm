@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "*") // 또는 특정 도메인
 @Controller
 @RequiredArgsConstructor
 public class BidController {
