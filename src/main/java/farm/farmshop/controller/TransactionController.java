@@ -80,35 +80,18 @@ public class TransactionController {
         return "mypage/transactions";
     }
 
-    // 진행률 계산 메소드
+    // TransactionController.java에서 진행률 계산 로직 추가
     private void calculateProgress(AuctionResult auctionResult) {
         String status = auctionResult.getDeliveryStatus();
-        int progress = 0;
-
-        switch (status) {
-            case "PENDING":
-                progress = 20;
-                break;
-            case "INFO_SUBMITTED":
-                progress = 40;
-                break;
-            case "CONFIRMED":
-                progress = 60;
-                break;
-            case "IN_TRANSIT":
-                progress = 80;
-                break;
-            case "DELIVERED":
-                progress = 90;
-                break;
-            case "COMPLETED":
-                progress = 100;
-                break;
-            default:
-                progress = 10;
-        }
-
-        // AuctionResult 엔티티에 transient 필드 추가 필요
+        int progress = switch (status != null ? status : "PENDING") {
+            case "PENDING" -> 20;
+            case "INFO_SUBMITTED" -> 40;
+            case "CONFIRMED" -> 60;
+            case "IN_TRANSIT" -> 80;
+            case "DELIVERED" -> 90;
+            case "COMPLETED" -> 100;
+            default -> 10;
+        };
         auctionResult.setProgressPercentage(progress);
     }
 
