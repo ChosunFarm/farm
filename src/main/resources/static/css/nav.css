@@ -55,7 +55,7 @@
     display: flex;
     align-items: center;
   }
-  @media (min-width: 768px) {
+  @media (min-width: 800px) {
     .nav-right {
       flex: 1;
       justify-content: flex-end;
@@ -69,7 +69,7 @@
     gap: 1rem;
     align-items: center;
   }
-  @media (min-width: 768px) {
+  @media (min-width: 800px) {
     .nav-menu {
       display: flex;
     }
@@ -217,7 +217,7 @@
     display: flex;
     align-items: center;
   }
-  @media (min-width: 768px) {
+  @media (min-width: 800px) {
     .nav-mobile {
       display: none;
     }
@@ -244,7 +244,7 @@
   }
   
   /* ────────────────────────────── 모바일 전용 레이아웃 ──────────────────────────── */
-  @media (max-width: 767px) {
+  @media (max-width: 800px) {
     /* 데스크탑 요소 숨기기 */
     .nav-search,
     .nav-profile,
@@ -326,7 +326,8 @@
     /* 모바일 프로필 & 드롭다운 */
     .mobile-profile {
       position: relative;
-      margin-bottom: 0.75rem;
+      /* margin-bottom: 0.75rem; */
+      margin-left: auto;
     }
     .mobile-profile-btn {
       display: flex;
@@ -401,7 +402,7 @@
   }
   
   /* 데스크톱(≥768px) 에서는 모바일 메뉴 완전 숨김 */
-  @media (min-width: 768px) {
+  @media (min-width: 800px) {
     #mobile-menu,
     .mobile-search-auth {
       display: none !important;
@@ -419,7 +420,7 @@
   }
  
   /* 모바일도 동일하게 */
-  @media (max-width: 767px) {
+  @media (max-width: 800px) {
     .mobile-search-input {
       box-sizing: border-box !important;
       padding-left: 40px !important;

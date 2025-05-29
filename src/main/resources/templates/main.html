@@ -28,7 +28,7 @@
 <body class="font-['Noto_Sans_KR'] bg-gray-50">
   <header class="header-wrapper">
     <nav class="nav-container">
-      <div class="nav-inner">
+      <div class="nav-inner ">
         
         <!-- 로고 + 메뉴 -->
         <div class="nav-left">
@@ -39,6 +39,7 @@
             <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
             <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
             <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+            <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
             <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
             <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
           </div>
@@ -90,6 +91,7 @@
         <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
         <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
         <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+        <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
         <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
         <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
   
@@ -390,7 +392,7 @@
           <h3 class="text-white font-medium mb-4">회사 정보</h3>
           <ul class="space-y-2 text-sm">
             <li>상호명: (주)현대농산물</li>
-            <li>대표: 강희선 </li>
+            <li>대표: 조선대 </li>
             <li>주소: 조선대학교</li>
             <li>사업자등록번호: 123-456-7890</li>
           </ul>
@@ -398,10 +400,13 @@
         <div>
           <h3 class="text-white font-medium mb-4">바로가기</h3>
           <ul class="space-y-2 text-sm">
-            <li><a th:href="@{/terms}" class="hover:text-white">이용약관</a></li>
-            <li><a th:href="@{/privacy}" class="hover:text-white">개인정보처리방침</a></li>
-            <li><a th:href="@{/faq}" class="hover:text-white">자주 묻는 질문</a></li>
-            <li><a th:href="@{/notice}" class="hover:text-white">공지사항</a></li>
+            <li><a th:href="@{/manual}" class="hover:text-white">이용방법</a></li>
+            <li><a th:href="@{/auction}" class="hover:text-white">상품등록</a></li>
+            <li><a th:href="@{/mypage}" class="hover:text-white">마이페이지</a></li>
+            <li><a th:href="@{/mypage/transactions}" class="hover:text-white">거래현황</a></li>
+            <li><a th:href="@{/live_auction}" class="hover:text-white">실시간 경매</a></li>
+            <li><a th:href="@{/scheduled}" class="hover:text-white">경매 예정 상품</a></li>
+            
           </ul>
         </div>
       </div>

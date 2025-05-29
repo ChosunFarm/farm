@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>거래 현황 - 현대농산물</title>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link th:href="@{/css/font.css}" rel="stylesheet">
+  <link th:href="@{/css/nav.css}" rel="stylesheet">
+
+  <script src="/js/profileToggle.js"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+
+  <style>
+    .progress-bar {
+      transition: width 0.5s ease-in-out;
+    }
+    .status-badge {
+      @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    }
+    .status-pending { @apply bg-yellow-100 text-yellow-800; }
+    .status-info-submitted { @apply bg-blue-100 text-blue-800; }
+    .status-confirmed { @apply bg-indigo-100 text-indigo-800; }
+    .status-in-transit { @apply bg-purple-100 text-purple-800; }
+    .status-delivered { @apply bg-green-100 text-green-800; }
+    .status-completed { @apply bg-gray-100 text-gray-800; }
+
+    .transaction-card {
+      @apply bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-all duration-200;
+    }
+
+    .tab-button {
+      @apply py-3 px-4 text-sm font-medium rounded-lg transition-colors duration-200;
+    }
+    .tab-button.active {
+      @apply bg-blue-600 text-white;
+    }
+    .tab-button:not(.active) {
+      @apply bg-gray-100 text-gray-600 hover:bg-gray-200;
+    }
+  </style>
+</head>
+<body class="font-['Noto_Sans_KR'] bg-gray-50">
+
+<!-- 헤더 -->
+<header class="header-wrapper">
+  <nav class="nav-container">
+    <div class="nav-inner ">
+      
+      <!-- 로고 + 메뉴 -->
+      <div class="nav-left">
+        <a th:href="@{/}" class="nav-logo-link">
+          <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+        </a>
+        <div class="nav-menu">
+          <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+          <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+          <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+          <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+          <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+          <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+        </div>
+      </div>
+
+      <!-- 검색 + 프로필/로그인 -->
+      <div class="nav-right">
+        <!-- 로그인한 경우 -->
+        <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
+          <button id="profileBtn-full" class="nav-profile-btn">
+            <img class="nav-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+            <span class="nav-profile-name" th:text="${username} + '님'"></span>
+          </button>
+          <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
+            <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
+            <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+          </div>
+        </div>
+
+        <!-- 로그인 안한 경우 -->
+        <div th:if="${!isLogin}" class="nav-auth">
+          <i class="ri-user-line"></i>
+          <a th:href="@{/login}">
+            <button class="nav-auth-btn black">로그인</button>
+          </a>
+          <a th:href="@{/login}">
+            <button class="nav-auth-btn white">회원가입</button>
+          </a>
+        </div>
+      </div>
+
+      <!-- 모바일 햄버거 버튼 -->
+      <div class="nav-mobile">
+        <button id="mobile-menu-button" class="nav-mobile-btn">
+          <span class="sr-only">메인 메뉴 열기</span>
+          <svg class="nav-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- 모바일 메뉴 -->
+  <div id="mobile-menu" class="mobile-menu">
+    <div class="mobile-menu-inner">
+      <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+      <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+      <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+      <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+      <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+      <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+
+      <div class="mobile-search-auth">
+        <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+          <button id="profileBtn-half" class="mobile-profile-btn">
+            <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+            <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+          </button>
+          <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+            <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+            <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+          </div>
+        </div>
+
+        <div th:if="${!isLogin}" class="mobile-auth">
+          <i class="ri-user-line"></i>
+          <a th:href="@{/login}">
+            <button class="mobile-auth-btn black">로그인</button>
+          </a>
+          <a th:href="@{/login}">
+            <button class="mobile-auth-btn white">회원가입</button>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</header>
+ 
+
+<!-- 메인 콘텐츠 -->
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+
+  <!-- 제목 -->
+  <div class="bg-white rounded-lg shadow p-6 mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 mb-2">거래 현황</h1>
+    <p class="text-gray-600">진행 중인 거래와 완료된 거래를 확인하세요.</p>
+  </div>
+
+  <!-- 요약 카드 -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+            <i class="fas fa-clock text-yellow-600"></i>
+          </div>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">진행 중</p>
+          <p class="text-2xl font-semibold text-gray-900" th:text="${ongoingCount != null ? ongoingCount : 0}">0</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+            <i class="fas fa-check text-green-600"></i>
+          </div>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">완료</p>
+          <p class="text-2xl font-semibold text-gray-900" th:text="${completedTransactions != null ? completedTransactions.size() : 0}">0</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+            <i class="fas fa-shopping-cart text-blue-600"></i>
+          </div>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">총 구매</p>
+          <p class="text-2xl font-semibold text-gray-900" th:text="${myWinning != null ? myWinning.size() : 0}">0</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <div class="flex items-center">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+            <i class="fas fa-store text-purple-600"></i>
+          </div>
+        </div>
+        <div class="ml-4">
+          <p class="text-sm font-medium text-gray-500">총 판매</p>
+          <p class="text-2xl font-semibold text-gray-900" th:text="${mySelling != null ? mySelling.size() : 0}">0</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 탭 메뉴 -->
+  <div class="bg-white rounded-lg shadow mb-6">
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex space-x-4 flex-wrap">
+        <button onclick="showTab('ongoing')" id="tab-ongoing" class="tab-button active">
+          <i class="fas fa-clock mr-2"></i>
+          진행 중인 거래
+          <span th:if="${ongoingCount > 0}"
+                class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-800"
+                th:text="${ongoingCount}">0</span>
+        </button>
+        <button onclick="showTab('completed')" id="tab-completed" class="tab-button">
+          <i class="fas fa-check mr-2"></i>
+          완료된 거래
+        </button>
+        <button onclick="showTab('purchases')" id="tab-purchases" class="tab-button">
+          <i class="fas fa-shopping-cart mr-2"></i>
+          구매 내역
+        </button>
+        <button onclick="showTab('sales')" id="tab-sales" class="tab-button">
+          <i class="fas fa-store mr-2"></i>
+          판매 내역
+        </button>
+      </div>
+    </div>
+
+    <!-- 진행 중인 거래 탭 -->
+    <div id="content-ongoing" class="tab-content p-6">
+      <div th:if="${ongoingTransactions == null || ongoingTransactions.empty}" class="text-center py-12">
+        <div class="text-4xl text-gray-300 mb-4">📋</div>
+        <p class="text-gray-500">진행 중인 거래가 없습니다.</p>
+      </div>
+
+      <div th:unless="${ongoingTransactions == null || ongoingTransactions.empty}" class="space-y-6">
+        <div th:each="transaction : ${ongoingTransactions}" class="transaction-card">
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center space-x-4">
+              <img th:if="${transaction.product.imageUrl != null}"
+                   th:src="@{/images/{fn}(fn=${transaction.product.imageUrl})}"
+                   class="w-16 h-16 object-cover rounded-lg">
+              <div th:unless="${transaction.product.imageUrl != null}"
+                   class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">
+                <i class="fas fa-seedling text-2xl text-gray-400"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900" th:text="${transaction.product.name}">상품명</h3>
+                <p class="text-sm text-gray-600" th:text="${transaction.product.gram} + 'g • 낙찰가 ' + ${#numbers.formatInteger(transaction.finalPrice, 0, 'COMMA')} + '원'">무게 • 가격</p>
+                <p class="text-xs text-gray-500" th:text="${#temporals.format(transaction.auctionEndTime, 'yyyy-MM-dd')} + ' 낙찰'">낙찰일</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span th:class="'status-badge status-' + ${#strings.toLowerCase(transaction.deliveryStatus != null ? transaction.deliveryStatus : 'pending')}"
+                    th:text="${transaction.deliveryStatusName}">
+                상태
+              </span>
+              <p class="text-xs text-gray-500 mt-1">
+                <span th:if="${transaction.winningBid.member.id == currentMemberId}">구매자</span>
+                <span th:if="${transaction.product.member.id == currentMemberId}">판매자</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- 진행 상황 프로그레스 바 -->
+          <div class="mb-4">
+            <div class="flex justify-between text-sm text-gray-600 mb-2">
+              <span>거래 진행률</span>
+              <span th:text="${transaction.progressPercentage != null ? transaction.progressPercentage : 10} + '%'">10%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="progress-bar bg-blue-600 h-2 rounded-full"
+                   th:style="'width: ' + ${transaction.progressPercentage != null ? transaction.progressPercentage : 10} + '%'"></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500 mt-1">
+              <span>낙찰완료</span>
+              <span>거래정보확인</span>
+              <span th:class="${transaction.deliveryStatus == 'IN_TRANSIT' ? 'font-medium text-blue-600' : ''}">배송중</span>
+              <span>거래완료</span>
+            </div>
+          </div>
+
+          <!-- 액션 버튼 -->
+          <div class="flex space-x-3">
+            <a th:href="@{'/auction/transaction-status/' + ${transaction.id}}"
+               class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors text-center">
+              <i class="fas fa-eye mr-2"></i>
+              상세보기
+            </a>
+
+            <!-- 낙찰자이고 거래방법을 아직 선택하지 않은 경우 -->
+            <a th:if="${transaction.winningBid.member.id == currentMemberId && transaction.transactionMethod == null}"
+               th:href="@{'/auction/completed/' + ${transaction.id}}"
+               class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+              <i class="fas fa-cog mr-2"></i>
+              거래방법 선택
+            </a>
+
+            <!-- 판매자이고 배송추적이 가능한 경우 -->
+            <button th:if="${transaction.product.member.id == currentMemberId && transaction.trackingNumber != null}"
+                    onclick="trackDelivery(this.dataset.trackingNumber)"
+                    th:data-tracking-number="${transaction.trackingNumber}"
+                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+              <i class="fas fa-truck mr-2"></i>
+              배송조회
+            </button>
+          </div>
+
+          <!-- 거래 상세 정보 -->
+          <div th:if="${transaction.transactionMethod != null}" class="mt-4 p-4 bg-gray-50 rounded-lg">
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="text-gray-500">거래방법:</span>
+                <span class="ml-2 font-medium" th:text="${transaction.transactionMethodName}">거래방법</span>
+              </div>
+              <div th:if="${transaction.trackingNumber != null}">
+                <span class="text-gray-500">송장번호:</span>
+                <span class="ml-2 font-medium text-blue-600" th:text="${transaction.trackingNumber}">송장번호</span>
+              </div>
+              <div>
+                <span class="text-gray-500">
+                  <span th:if="${transaction.winningBid.member.id == currentMemberId}">판매자:</span>
+                  <span th:if="${transaction.product.member.id == currentMemberId}">구매자:</span>
+                </span>
+                <span class="ml-2 font-medium">
+                  <span th:if="${transaction.winningBid.member.id == currentMemberId}" th:text="${transaction.product.member.username}">판매자명</span>
+                  <span th:if="${transaction.product.member.id == currentMemberId}" th:text="${transaction.winningBid.member.username}">구매자명</span>
+                </span>
+              </div>
+              <div th:if="${transaction.contactInfo != null}">
+                <span class="text-gray-500">연락처:</span>
+                <span class="ml-2 font-medium" th:text="${#strings.substringAfter(transaction.contactInfo, ' / ')}">연락처</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 완료된 거래 탭 -->
+    <div id="content-completed" class="tab-content hidden p-6">
+      <div th:if="${completedTransactions == null || completedTransactions.empty}" class="text-center py-12">
+        <div class="text-4xl text-gray-300 mb-4">✅</div>
+        <p class="text-gray-500">완료된 거래가 없습니다.</p>
+      </div>
+
+      <div th:unless="${completedTransactions == null || completedTransactions.empty}" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div th:each="transaction : ${completedTransactions}" class="transaction-card">
+          <div class="flex items-center space-x-4 mb-4">
+            <img th:if="${transaction.product.imageUrl != null}"
+                 th:src="@{/images/{fn}(fn=${transaction.product.imageUrl})}"
+                 class="w-12 h-12 object-cover rounded-lg">
+            <div th:unless="${transaction.product.imageUrl != null}"
+                 class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+              <i class="fas fa-seedling text-gray-400"></i>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-semibold text-gray-900" th:text="${transaction.product.name}">상품명</h3>
+              <p class="text-sm text-gray-600" th:text="${transaction.product.gram} + 'g • ' + ${#numbers.formatInteger(transaction.finalPrice, 0, 'COMMA')} + '원'">무게 • 가격</p>
+            </div>
+            <span class="status-badge status-completed">
+              <i class="fas fa-check-circle mr-1"></i>
+              완료
+            </span>
+          </div>
+
+          <!-- 완료 정보 -->
+          <div class="text-sm text-gray-600 space-y-1">
+            <div class="flex justify-between">
+              <span>완료일:</span>
+              <span th:text="${transaction.completedAt != null ? #temporals.format(transaction.completedAt, 'yyyy-MM-dd') : '미확인'}">완료일</span>
+            </div>
+            <div th:if="${transaction.rating != null}" class="flex justify-between">
+              <span>평점:</span>
+              <div class="flex items-center">
+                <span th:each="star : ${#numbers.sequence(1, 5)}"
+                      th:class="${star <= transaction.rating ? 'text-yellow-400' : 'text-gray-300'}"
+                      class="text-sm">⭐</span>
+                <span class="ml-1" th:text="${transaction.rating} + '.0'">5.0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 후기 -->
+          <div th:if="${transaction.review != null && !transaction.review.isEmpty()}"
+               class="mt-3 p-3 bg-gray-50 rounded text-sm" th:text="${transaction.review}">
+            후기 내용
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 구매 내역 탭 -->
+    <div id="content-purchases" class="tab-content hidden p-6">
+      <div th:if="${myWinning == null || myWinning.empty}" class="text-center py-12">
+        <div class="text-4xl text-gray-300 mb-4">🏆</div>
+        <p class="text-gray-500">낙찰 내역이 없습니다.</p>
+      </div>
+
+      <div th:unless="${myWinning == null || myWinning.empty}" class="space-y-4">
+        <div th:each="transaction : ${myWinning}"
+             class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div class="flex items-center space-x-4">
+            <img th:if="${transaction.product.imageUrl != null}"
+                 th:src="@{/images/{fn}(fn=${transaction.product.imageUrl})}"
+                 class="w-10 h-10 object-cover rounded-lg">
+            <div th:unless="${transaction.product.imageUrl != null}"
+                 class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-shopping-cart text-blue-600"></i>
+            </div>
+            <div>
+              <h3 class="font-medium" th:text="${transaction.product.name}">상품명</h3>
+              <p class="text-sm text-gray-600" th:text="${#temporals.format(transaction.auctionEndTime, 'yyyy-MM-dd')} + ' • ' + ${#numbers.formatInteger(transaction.finalPrice, 0, 'COMMA')} + '원'">날짜 • 금액</p>
+            </div>
+          </div>
+          <span th:class="'status-badge status-' + ${#strings.toLowerCase(transaction.deliveryStatus != null ? transaction.deliveryStatus : 'pending')}"
+                th:text="${transaction.deliveryStatusName}">상태</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 판매 내역 탭 -->
+    <div id="content-sales" class="tab-content hidden p-6">
+      <div th:if="${mySelling == null || mySelling.empty}" class="text-center py-12">
+        <div class="text-4xl text-gray-300 mb-4">💰</div>
+        <p class="text-gray-500">판매 내역이 없습니다.</p>
+      </div>
+
+      <div th:unless="${mySelling == null || mySelling.empty}" class="space-y-4">
+        <div th:each="transaction : ${mySelling}"
+             class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div class="flex items-center space-x-4">
+            <img th:if="${transaction.product.imageUrl != null}"
+                 th:src="@{/images/{fn}(fn=${transaction.product.imageUrl})}"
+                 class="w-10 h-10 object-cover rounded-lg">
+            <div th:unless="${transaction.product.imageUrl != null}"
+                 class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-store text-purple-600"></i>
+            </div>
+            <div>
+              <h3 class="font-medium" th:text="${transaction.product.name}">상품명</h3>
+              <p class="text-sm text-gray-600">구매자: <span th:text="${transaction.winningBid.member.username}">구매자명</span></p>
+              <p class="text-lg font-bold text-green-600" th:text="${#numbers.formatInteger(transaction.finalPrice, 0, 'COMMA')} + '원'">판매가</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span th:class="'status-badge status-' + ${#strings.toLowerCase(transaction.deliveryStatus != null ? transaction.deliveryStatus : 'pending')}"
+                  th:text="${transaction.deliveryStatusName}">상태</span>
+            <p class="text-xs text-gray-500 mt-1" th:text="${#temporals.format(transaction.auctionEndTime, 'yyyy-MM-dd')}">판매일</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/moblie.js}"></script>
+<script>
+  function showTab(tabName) {
+    // 모든 탭 버튼 비활성화
+    document.querySelectorAll('.tab-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    // 모든 탭 내용 숨기기
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.classList.add('hidden');
+    });
+
+    // 선택된 탭 활성화
+    document.getElementById(`tab-${tabName}`).classList.add('active');
+    document.getElementById(`content-${tabName}`).classList.remove('hidden');
+  }
+
+  // 배송 조회 함수
+  function trackDelivery(trackingNumber) {
+    if (!trackingNumber) {
+      alert('송장번호가 없습니다.');
+      return;
+    }
+
+    // 실제 구현에서는 택배사 조회 페이지로 이동
+    alert(`배송 조회\n송장번호: ${trackingNumber}\n\n택배사 조회 페이지로 이동합니다.`);
+
+    // 예시: 실제 택배사 조회 URL로 이동
+    // window.open(`https://www.doortodoor.co.kr/parcel/pa_004.jsp?fsp_action=PARC_ACT_002&fsp_cmd=retrieveInvNoACL&invc_no=${trackingNumber}`, '_blank');
+  }
+
+  // 페이지 로드시 기본 탭 설정 및 프로그레스 바 애니메이션
+  document.addEventListener('DOMContentLoaded', function() {
+    showTab('ongoing');
+
+    // 프로그레스 바 애니메이션
+    setTimeout(() => {
+      const progressBars = document.querySelectorAll('.progress-bar');
+      progressBars.forEach(bar => {
+        const targetWidth = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => {
+          bar.style.width = targetWidth;
+        }, 100);
+      });
+    }, 300);
+  });
+</script>
+
+</body>
+</html>
