@@ -85,7 +85,7 @@
         <h2 class="text-lg font-semibold mb-4">상품 정보</h2>
         <div class="flex items-center space-x-4">
           <img th:if="${auctionResult.product.imageUrl != null}"
-               th:src="@{'/images/' + ${auctionResult.product.imageUrl}}"
+               th:src="@{/uploads/images/{fn}(fn=${auctionResult.product.imageUrl})}"
                class="w-16 h-16 object-cover rounded-lg">
           <div th:unless="${auctionResult.product.imageUrl != null}"
                class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">

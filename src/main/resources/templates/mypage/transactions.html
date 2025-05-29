@@ -247,7 +247,7 @@
           <div class="flex items-start justify-between mb-4">
             <div class="flex items-center space-x-4">
               <img th:if="${transaction.product.imageUrl != null}"
-                   th:src="@{/images/{fn}(fn=${transaction.product.imageUrl})}"
+                   th:src="@{/uploads/images/{fn}(fn=${transaction.product.imageUrl})}"
                    class="w-16 h-16 object-cover rounded-lg">
               <div th:unless="${transaction.product.imageUrl != null}"
                    class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center">

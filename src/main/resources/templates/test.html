@@ -176,10 +176,13 @@
                     <div class="flex flex-col p-6">
               <!-- 상품 이미지 -->
                         <div class="w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4 overflow-hidden">
-                          <img th:if="${product.imageUrl != null}" th:src="@{/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
-                          <div th:unless="${product.imageUrl != null}" class="text-4xl text-gray-400">
-                            <i class="fas fa-seedling"></i>
-                          </div>
+                            <img th:if="${product.imageUrl != null}"
+                                 th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}"
+                                 class="w-full h-full object-cover"
+                                 th:alt="${product.name}">
+                            <div th:unless="${product.imageUrl != null}" class="text-4xl text-gray-400">
+                                <i class="fas fa-seedling"></i>
+                            </div>
                         </div>
               <!-- 상품 정보 -->
                         <div class="text-center mb-4">
