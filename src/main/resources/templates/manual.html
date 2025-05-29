@@ -38,7 +38,8 @@
         <!-- 로그인한 경우 -->
         <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
           <button id="profileBtn-full" class="nav-profile-btn">
-            <img class="nav-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+            <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+            <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
             <span class="nav-profile-name" th:text="${username} + '님'"></span>
           </button>
           <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">

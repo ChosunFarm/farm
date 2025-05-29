@@ -33,6 +33,7 @@ public class MainController {
             Member member = memberRepository.findByEmail(email);
             if (member != null) {
                 model.addAttribute("username", member.getUsername());
+                model.addAttribute("profileImage", member.getProfileImage());
                 model.addAttribute("isLogin", true);
             }
         } else {
