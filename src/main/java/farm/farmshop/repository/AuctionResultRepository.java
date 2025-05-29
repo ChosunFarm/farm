@@ -47,6 +47,10 @@ public interface AuctionResultRepository extends JpaRepository<AuctionResult, Lo
             "ORDER BY ar.completedAt DESC")
     List<AuctionResult> findCompletedByMemberId(@Param("memberId") Long memberId);
 
+    // 판매자가 올린 상품 중 후기가 남겨진 결과
+    @Query("SELECT ar FROM AuctionResult ar WHERE ar.product.member.id = :sellerId AND ar.review IS NOT NULL ORDER BY ar.completedAt DESC")
+    List<AuctionResult> findBySellerIdAndReviewIsNotNull(@Param("sellerId") Long sellerId);
+
     // 특정 회원의 거래 통계 조회
     @Query("SELECT COUNT(ar) FROM AuctionResult ar WHERE ar.winningBid.member.id = :memberId AND ar.deliveryStatus = 'COMPLETED'")
     Long countCompletedWinningByMemberId(@Param("memberId") Long memberId);

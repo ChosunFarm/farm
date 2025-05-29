@@ -38,6 +38,7 @@
                     <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
                     <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
                     <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+                    <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
                     <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
                     <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
                 </div>
@@ -89,6 +90,7 @@
             <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
             <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
             <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+            <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
             <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
             <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
 
@@ -152,7 +154,13 @@
                         <span th:text="${product.weightInfo + ' · '}">무게</span>
                         <span class="price" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA') + '원'}">가격</span>
                     </p>
-    
+                    <!-- 입찰자 정보 -->
+                    <div th:each="bid : ${bidDTOs}" th:if="${bid.productId == product.id}">
+                        <p>
+                            <span>입찰자: </span>
+                            <span th:text="${bid.bidderName}">입찰자명</span>
+                        </p>
+                    </div>
                     <!-- 판매 상태 (상태별 다른 아이콘 적용) -->
                     <span th:class="'status ' + ${product.statusClass}">
                     <span th:text="${product.status}">판매 상태</span>

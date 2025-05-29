@@ -29,6 +29,7 @@
                     <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
                     <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
                     <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+                    <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
                     <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
                     <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
                 </div>
@@ -80,6 +81,7 @@
           <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
           <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
           <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+          <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
           <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
           <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
 
@@ -184,7 +186,11 @@
                           <div class="font-semibold text-lg" th:text="${product.name}">상품명</div>
                           <div class="flex justify-between items-center mb-2">
                             <span class="font-bold text-custom">판매자</span>
-                            <span class="font-bold text-custom" th:text="${product.member != null ? product.member.username + '님' : '미등록'}">판매자명</span>
+                            <a th:href="@{/mypage/pagedetail/{username}(username=${product.member.username})}"
+                              class="font-bold text-custom hover:text-gray-700"
+                              th:text="${product.member != null ? product.member.username + '님' : '미등록'}">
+                              판매자명
+                            </a>
                           </div>
                           <div class="flex justify-between items-center mb-2">
                             <span class="font-bold text-custom">판매량</span>

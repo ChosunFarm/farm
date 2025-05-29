@@ -39,6 +39,14 @@ public class MemberRepository {
         return result.isEmpty() ? null : result.get(0);
     }
 
+    public Member findByUsername(String username) {
+        List<Member> result = em.createQuery(
+                "select m from Member m where m.username = :username", Member.class)
+            .setParameter("username", username)
+            .getResultList();
+        return result.isEmpty() ? null : result.get(0);
+    }
+
     public List<Member> findByUsernameOrEmailContaining(String keyword) {
         try {
             return em.createQuery(

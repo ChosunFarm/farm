@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>현대농산물</title>
+
+  <!-- External CSS Libraries -->
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+
+  <!-- External JS Libraries (head 부분) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Glide.js/3.6.0/glide.min.js"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+  <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+
+  <!-- Custom CSS -->
+  <link th:href="@{/css/main.css}" rel="stylesheet">
+  <link th:href="@{/css/font.css}" rel="stylesheet">
+  <link th:href="@{/css/nav.css}" rel="stylesheet">
+
+  <!-- Custom JS -->
+  <script src="/js/profileToggle.js"></script>
+
+  <style>
+    /* 탭 내용 기본 숨김 */
+    .tab-content {
+      display: none;
+    }
+    /* active 클래스가 붙은 탭만 표시 */
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="font-['Noto_Sans_KR'] bg-gray-50">
+  <header class="header-wrapper">
+    <nav class="nav-container">
+      <div class="nav-inner">
+        
+        <!-- 로고 + 메뉴 -->
+        <div class="nav-left">
+          <a th:href="@{/}" class="nav-logo-link">
+            <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+          </a>
+          <div class="nav-menu">
+            <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+            <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+            <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+            <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+            <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+            <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+          </div>
+        </div>
+  
+        <!-- 검색 + 프로필/로그인 -->
+        <div class="nav-right">
+          <!-- 로그인한 경우 -->
+          <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
+            <button id="profileBtn-full" class="nav-profile-btn">
+              <img class="nav-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+              <span class="nav-profile-name" th:text="${username} + '님'"></span>
+            </button>
+            <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
+              <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
+              <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+            </div>
+          </div>
+  
+          <!-- 로그인 안한 경우 -->
+          <div th:if="${!isLogin}" class="nav-auth">
+            <i class="ri-user-line"></i>
+            <a th:href="@{/login}">
+              <button class="nav-auth-btn black">로그인</button>
+            </a>
+            <a th:href="@{/login}">
+              <button class="nav-auth-btn white">회원가입</button>
+            </a>
+          </div>
+        </div>
+  
+        <!-- 모바일 햄버거 버튼 -->
+        <div class="nav-mobile">
+          <button id="mobile-menu-button" class="nav-mobile-btn">
+            <span class="sr-only">메인 메뉴 열기</span>
+            <svg class="nav-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+        </div>
+  
+      </div>
+    </nav>
+  
+    <!-- 모바일 메뉴 -->
+    <div id="mobile-menu" class="mobile-menu">
+      <div class="mobile-menu-inner">
+        <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+        <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+        <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+        <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+        <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+        <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+  
+        <div class="mobile-search-auth">
+          <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+            <button id="profileBtn-half" class="mobile-profile-btn">
+              <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+              <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+            </button>
+            <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+              <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+              <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+            </div>
+          </div>
+  
+          <div th:if="${!isLogin}" class="mobile-auth">
+            <i class="ri-user-line"></i>
+            <a th:href="@{/login}">
+              <button class="mobile-auth-btn black">로그인</button>
+            </a>
+            <a th:href="@{/login}">
+              <button class="mobile-auth-btn white">회원가입</button>
+            </a>
+          </div>
+  
+        </div>
+      </div>
+    </div>
+  </header>
+    <main class="mt-0">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <!-- 프로필 섹션 -->
+            <div class="p-6 flex flex-col md:flex-row items-start md:items-center justify-between border-b border-gray-100">
+                <div class="flex items-center">
+                    <div class="w-20 h-20 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center">
+                        <img class="nav-profile-img w-20 h-20 rounded-full" th:src="@{/images/profile.png}" alt="프로필 이미지"/>
+                    </div>
+                    <div class="ml-4">
+                        <h1 class="text-xl font-semibold text-gray-800 ml-3" th:text="${seller.username} + '님'"></h1>
+                        <p class="text-gray-500">주소</p>
+                    </div>
+                </div>
+                <div class="mt-4 md:mt-0 flex flex-col items-end">
+                <div class="flex items-center">
+                    <span class="text-xl font-bold text-gray-800">별점</span>
+                </div>
+            </div>
+        </div>
+        <!-- 탭 네비게이션 -->
+        <div class="border-b border-gray-200">
+            <div class="flex">
+                <button id="tab-sold"class="tab-button px-6 py-4 font-medium text-gray-800 border-b-2 border-primary" th:text="|판매 물품 (${sellerProducts.size()})|">판매 물품 (0)</button>
+                <button id="tab-reviews" class="tab-button px-6 py-4 font-medium text-gray-500"> 거래 후기 (<span th:text="${reviewedResults.size()}">0</span>)</button>
+            </div>
+        </div>
+        <!-- 판매 물품 탭 내용 -->
+        <div id="sold-content" class="tab-content active bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 transition-all hover:shadow-md p-6">
+            <!-- 판매 상품 그리드 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div th:each="product, iterStat : ${sellerProducts}" th:with="dto=${productDTOs[iterStat.index]}" class="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 transition-all hover:shadow-md">
+                    <div class="w-full h-48 overflow-hidden bg-gray-200 relative rounded-t-lg">
+                        <img th:if="${product.imageUrl != null}" th:src="@{'/images/' + ${product.imageUrl}}" alt="상품 이미지" class="object-cover w-full h-full" />
+                        <div th:unless="${product.imageUrl != null}" class="w-full h-full flex items-center justify-center text-gray-400">
+                            <i class="fas fa-seedling text-6xl"></i>
+                        </div>
+                    </div>            
+                <!-- 텍스트 영역 -->
+                    <div class="p-4">
+                        <h3 class="text-lg font-medium text-gray-800" th:text="${product.name}">상품명</h3>
+                        <p class="text-lg font-bold text-gray-900 mt-1" th:text="${#numbers.formatInteger(product.price,0,'COMMA')} + '원'">가격</p>
+                        <!-- 판매 상태 (상태별 다른 아이콘 적용) -->
+                        <span th:class="${'status ' + dto.statusClass}">
+                            <span th:text="${dto.status}">판매 상태</span>
+                            <span th:if="${dto.statusClass == 'success'}">✔</span>
+                            <span th:if="${dto.statusClass == 'active'}">⏱</span>
+                            <span th:if="${dto.statusClass == 'pending'}">⌛</span>
+                            <span th:if="${dto.statusClass == 'waiting'}">⌛</span>
+                            <span th:if="${dto.statusClass == 'rejected'}">❌</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 거래 후기 탭 내용 -->
+            <div id="reviews-content" class="tab-content bg-white rounded-lg p-6">
+                <div class="space-y-6">
+                    <div class="bg-white rounded-lg p-4 border border-gray-100 shadow-sm">
+                        <div th:if="${reviewedResults.empty}" class="text-center text-gray-500 p-6"> 아직 작성된 거래 후기가 없습니다. </div>
+                        <!-- 후기 카드 반복 -->
+                        <div th:each="ar : ${reviewedResults}" class="bg-white rounded-lg p-4 border border-gray-100 shadow-sm mb-4">
+                        <!-- 카드 헤더: 구매자 + 날짜 -->
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                    <i class="ri-user-line text-gray-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <a th:href="@{/mypage/pagedetail/{username}(username=${ar.winningBid.member.username})}"
+                                        class="font-medium text-gray-800 hover:text-gray-700"
+                                        th:text="${ar.winningBid.member.username}">
+                                        구매자명
+                                    </a>
+                                    <div class="flex items-center">
+                                        <div class="flex">
+                                            <i class="ri-star-fill text-yellow-400"></i>
+                                            <i class="ri-star-fill text-yellow-400"></i>
+                                            <i class="ri-star-fill text-yellow-400"></i>
+                                            <i class="ri-star-fill text-yellow-400"></i>
+                                            <i class="ri-star-line text-gray-300"></i>
+                                        </div>
+                                        <span class="ml-2 text-sm text-gray-500" th:text="${#temporals.format(ar.completedAt,'yyyy-MM-dd')}">구매날짜</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 상품명 -->
+                            <p class="text-sm font-medium text-gray-700 mb-2" th:text="'구매상품: ' + ${ar.product.name}"> 상품명</p>
+                            <!-- 후기 내용 -->
+                            <div class="p-3 bg-gray-50 rounded text-sm" th:text="${ar.review}">후기 내용
+                            </div>
+                        </div>
+                    </div>       
+                </div>
+            </div>
+        </div>
+    </main>
+<script th:src="@{/js/moblie.js}"></script>
+<script id="tab-navigation">
+
+document.addEventListener('DOMContentLoaded', function() 
+{
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabButtons.forEach(button => 
+    {
+        button.addEventListener('click', function() 
+        {
+        // 모든 탭 버튼에서 활성 스타일 제거
+            tabButtons.forEach(btn =>  
+            {
+                btn.classList.remove('border-primary', 'text-gray-800');
+                btn.classList.add('text-gray-500');
+                btn.classList.remove('border-b-2');
+            });
+        // 클릭된 탭 버튼에 활성 스타일 추가
+            this.classList.add('border-primary', 'text-gray-800', 'border-b-2');
+            this.classList.remove('text-gray-500');
+        // 모든 탭 내용 숨기기
+            tabContents.forEach(content => 
+            {
+                content.classList.remove('active');
+        });
+        // 클릭된 탭에 해당하는 내용 표시
+            const targetId = this.id.replace('tab-', '') + '-content';
+            document.getElementById(targetId).classList.add('active');
+            });
+        });
+    });
+</script>
+</html>

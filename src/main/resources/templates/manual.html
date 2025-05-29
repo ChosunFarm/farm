@@ -28,6 +28,7 @@
           <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
           <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
           <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+          <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
           <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
           <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
         </div>
@@ -79,6 +80,7 @@
       <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
       <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
       <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+      <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
       <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
       <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
 
@@ -333,6 +335,47 @@
     </div>
   </div>
 </div>
+<!-- 푸터 영역 -->
+<footer class="bg-gray-800 text-gray-300">
+  <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-4 gap-8">
+      <div>
+        <img class="h-12 w-auto mb-4" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+        <p class="text-sm">신선한 농산물을 합리적인 가격에 만나보세요.</p>
+      </div>
+      <div>
+        <h3 class="text-white font-medium mb-4">고객센터</h3>
+        <p class="text-2xl font-bold text-white mb-2">1588-1234</p>
+        <p class="text-sm">평일 09:00 - 18:00</p>
+        <p class="text-sm">점심 12:00 - 13:00</p>
+      </div>
+      <div>
+        <h3 class="text-white font-medium mb-4">회사 정보</h3>
+        <ul class="space-y-2 text-sm">
+          <li>상호명: (주)현대농산물</li>
+          <li>대표: 조선대 </li>
+          <li>주소: 조선대학교</li>
+          <li>사업자등록번호: 123-456-7890</li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-white font-medium mb-4">바로가기</h3>
+        <ul class="space-y-2 text-sm">
+          <li><a th:href="@{/manual}" class="hover:text-white">이용방법</a></li>
+          <li><a th:href="@{/auction}" class="hover:text-white">상품등록</a></li>
+          <li><a th:href="@{/mypage}" class="hover:text-white">마이페이지</a></li>
+          <li><a th:href="@{/mypage/transactions}" class="hover:text-white">거래현황</a></li>
+          <li><a th:href="@{/live_auction}" class="hover:text-white">실시간 경매</a></li>
+          <li><a th:href="@{/scheduled}" class="hover:text-white">경매 예정 상품</a></li>
+          
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-gray-700 mt-8 pt-8 text-sm text-gray-400">
+      © 2025 농산물경매마켓. All rights reserved.
+    </div>
+  </div>
+</footer>
 
 <!-- 자바스크립트 -->
 <script th:src="@{/js/moblie.js}"></script>

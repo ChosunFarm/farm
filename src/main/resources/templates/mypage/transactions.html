@@ -46,7 +46,9 @@
 <!-- 헤더 -->
 <header class="header-wrapper">
   <nav class="nav-container">
-    <div class="nav-inner">
+    <div class="nav-inner ">
+      
+      <!-- 로고 + 메뉴 -->
       <div class="nav-left">
         <a th:href="@{/}" class="nav-logo-link">
           <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
@@ -61,7 +63,9 @@
         </div>
       </div>
 
+      <!-- 검색 + 프로필/로그인 -->
       <div class="nav-right">
+        <!-- 로그인한 경우 -->
         <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
           <button id="profileBtn-full" class="nav-profile-btn">
             <img class="nav-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
@@ -73,21 +77,29 @@
           </div>
         </div>
 
+        <!-- 로그인 안한 경우 -->
         <div th:if="${!isLogin}" class="nav-auth">
+          <i class="ri-user-line"></i>
           <a th:href="@{/login}">
             <button class="nav-auth-btn black">로그인</button>
+          </a>
+          <a th:href="@{/login}">
+            <button class="nav-auth-btn white">회원가입</button>
           </a>
         </div>
       </div>
 
+      <!-- 모바일 햄버거 버튼 -->
       <div class="nav-mobile">
         <button id="mobile-menu-button" class="nav-mobile-btn">
           <span class="sr-only">메인 메뉴 열기</span>
           <svg class="nav-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16"/>
           </svg>
         </button>
       </div>
+
     </div>
   </nav>
 
@@ -100,9 +112,34 @@
       <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
       <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
       <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+
+      <div class="mobile-search-auth">
+        <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+          <button id="profileBtn-half" class="mobile-profile-btn">
+            <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+            <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+          </button>
+          <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+            <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+            <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+          </div>
+        </div>
+
+        <div th:if="${!isLogin}" class="mobile-auth">
+          <i class="ri-user-line"></i>
+          <a th:href="@{/login}">
+            <button class="mobile-auth-btn black">로그인</button>
+          </a>
+          <a th:href="@{/login}">
+            <button class="mobile-auth-btn white">회원가입</button>
+          </a>
+        </div>
+
+      </div>
     </div>
   </div>
 </header>
+ 
 
 <!-- 메인 콘텐츠 -->
 <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
