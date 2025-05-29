@@ -41,4 +41,11 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
+
+    @Column(name = "intro")
+    private String intro;
+
+    @Column(name = "profile_image")
+    private String profileImage;
+
 }
