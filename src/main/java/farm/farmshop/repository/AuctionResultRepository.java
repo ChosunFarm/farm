@@ -1,6 +1,7 @@
 // AuctionResultRepository.java에 추가 메소드
 package farm.farmshop.repository;
 
+import farm.farmshop.dto.SellerAvgRating;
 import farm.farmshop.entity.AuctionResult;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -48,7 +49,7 @@ public interface AuctionResultRepository extends JpaRepository<AuctionResult, Lo
     List<AuctionResult> findCompletedByMemberId(@Param("memberId") Long memberId);
 
     // 판매자가 올린 상품 중 후기가 남겨진 결과
-    @Query("SELECT ar FROM AuctionResult ar WHERE ar.product.member.id = :sellerId AND ar.review IS NOT NULL ORDER BY ar.completedAt DESC")
+    @Query("SELECT ar FROM AuctionResult ar WHERE ar.product.member.id = :sellerId  AND ar.review IS NOT NULL ORDER BY ar.completedAt DESC")
     List<AuctionResult> findBySellerIdAndReviewIsNotNull(@Param("sellerId") Long sellerId);
 
     // 특정 회원의 거래 통계 조회
@@ -57,4 +58,26 @@ public interface AuctionResultRepository extends JpaRepository<AuctionResult, Lo
 
     @Query("SELECT COUNT(ar) FROM AuctionResult ar WHERE ar.product.member.id = :memberId AND ar.deliveryStatus = 'COMPLETED'")
     Long countCompletedSellingByMemberId(@Param("memberId") Long memberId);
+
+    // 1) 평점(rating)이 있는 거래 목록 조회
+    @Query("SELECT ar FROM AuctionResult ar  WHERE ar.product.member.id = :sellerId AND ar.rating IS NOT NULL ORDER BY ar.completedAt DESC")
+    List<AuctionResult> findByProduct_Member_IdAndRatingIsNotNull(@Param("sellerId") Long sellerId);
+
+
+    // 2) 판매자 평균 평점 조회 (rating IS NOT NULL인 값들의 AVG)
+    @Query("SELECT AVG(ar.rating) FROM AuctionResult ar  WHERE ar.product.member.id = :sellerId AND ar.rating IS NOT NULL")
+    Double findAvgRatingBySellerId(@Param("sellerId") Long sellerId);
+
+    @Query("SELECT ar FROM AuctionResult ar WHERE ar.product.member.id = :sellerId AND ar.rating IS NOT NULL")
+    List<AuctionResult> findRatingsBySeller(@Param("sellerId") Long sellerId);
+
+    @Query(
+      "SELECT ar.product.member.id AS sellerId, AVG(ar.rating) AS avgRating " +
+      "FROM   AuctionResult ar " +
+      "WHERE  ar.rating IS NOT NULL " +
+      "GROUP  BY ar.product.member.id"
+    )
+    List<SellerAvgRating> findAvgRatingBySellerGroup();
+
+
 }
