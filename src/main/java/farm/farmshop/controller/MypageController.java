@@ -1,13 +1,6 @@
 package farm.farmshop.controller;
 
-import farm.farmshop.dto.MyBidDTO;
-import farm.farmshop.dto.MyProductDTO;
-import farm.farmshop.entity.Bid;
 import farm.farmshop.entity.Member;
-import farm.farmshop.entity.product.Fruit;
-import farm.farmshop.entity.product.Grain;
-import farm.farmshop.entity.product.Product;
-import farm.farmshop.entity.product.Vegetable;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.ProductRepository;
 import farm.farmshop.service.BidService;
@@ -19,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,8 +21,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
 
 @Controller
@@ -61,13 +51,7 @@ public class MypageController {
                 Files.copy(image.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
                 member.setProfileImage(filename); // DB에 파일명 저장
 
-<<<<<<< HEAD
-                // ✅ 로그 출력 (터미널 확인용)
-                System.out.println("✅ 프로필 이미지 저장됨: " + savePath.toAbsolutePath());
-                System.out.println("✅ 접근 경로: /uploads/profile/" + filename);
 
-=======
->>>>>>> e98f654dc4a2aa0a86e4dd5fe074436c45f028f8
             } catch (IOException e) {
                 e.printStackTrace();
             }
