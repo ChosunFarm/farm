@@ -61,13 +61,11 @@ public class MypageController {
                 Files.copy(image.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
                 member.setProfileImage(filename); // DB에 파일명 저장
 
-            // ✅ 로그 출력 (터미널 확인용)
-            System.out.println("✅ 프로필 이미지 저장됨: " + savePath.toAbsolutePath());
-            System.out.println("✅ 접근 경로: /uploads/profile/" + filename);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            member.setProfileImage("profile.png");
         }
 
         // 한줄 소개 저장
@@ -80,26 +78,26 @@ public class MypageController {
     }
 
     // 회원정보 수정
-    @GetMapping("/mypage/edit-info")
-    public String showEditInfoForm(Model model, Principal principal) {
-        String email = principal.getName();
-        Member member = memberRepository.findByEmail(email);
-        model.addAttribute("member", member);
-        return "mypage/my-editInfo";
-    }
+    // @GetMapping("/mypage/edit-info")
+    // public String showEditInfoForm(Model model, Principal principal) {
+    //     String email = principal.getName();
+    //     Member member = memberRepository.findByEmail(email);
+    //     model.addAttribute("member", member);
+    //     return "mypage/my-editInfo";
+    // }
 
-    @PostMapping("/mypage/edit-info")
-    @Transactional
-    public String updateMemberInfo(@ModelAttribute Member updatedMember, Principal principal) {
-        String email = principal.getName();
-        Member member = memberRepository.findByEmail(email);
+    // @PostMapping("/mypage/edit-info")
+    // @Transactional
+    // public String updateMemberInfo(@ModelAttribute Member updatedMember, Principal principal) {
+    //     String email = principal.getName();
+    //     Member member = memberRepository.findByEmail(email);
 
-        member.setUsername(updatedMember.getUsername());
-        member.setPhone(updatedMember.getPhone());
-        member.setAddress(updatedMember.getAddress());
+    //     member.setUsername(updatedMember.getUsername());
+    //     member.setPhone(updatedMember.getPhone());
+    //     member.setAddress(updatedMember.getAddress());
 
-        return "redirect:/mypage";
-    }
+    //     return "redirect:/mypage";
+    // }
 
     @GetMapping("/mypage")
     public String myPage(Model model, Principal principal) {
@@ -114,7 +112,14 @@ public class MypageController {
                 model.addAttribute("address", trimmedAddress);
                 model.addAttribute("isLogin", true);
 
-                model.addAttribute("profileImage", member.getProfileImage());
+                // model.addAttribute("profileImage", member.getProfileImage());
+                String profileImage = member.getProfileImage();
+                if (profileImage == null || profileImage.isBlank() || "null".equals(profileImage)) {
+                    model.addAttribute("profileImage", null);  // 강제로 null 처리
+                } else {
+                    model.addAttribute("profileImage", profileImage);
+                }
+
                 model.addAttribute("intro", member.getIntro());
 
                 // 사용자의 상품 목록 조회
