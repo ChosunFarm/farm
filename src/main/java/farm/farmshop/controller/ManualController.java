@@ -12,14 +12,14 @@ import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/propose")
-public class ProposeController {
+@RequestMapping("/manual")
+public class ManualController {
     private final MemberRepository memberRepository;
 
     @GetMapping
-    public String proposePage(Model model, Principal principal) {
+    public String manualPage(Model model, Principal principal) {
         if (principal != null) {
-            String email = principal.getName(); // 로그인한 사용자의 이메일
+            String email = principal.getName();
             Member member = memberRepository.findByEmail(email);
             if (member != null) {
                 model.addAttribute("username", member.getUsername());
@@ -29,8 +29,6 @@ public class ProposeController {
             model.addAttribute("isLogin", false);
         }
 
-        return "propose"; // templates/propose.html
+        return "manual"; // templates/manual.html
     }
 }
-
-

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신규 경매 예정 상품</title>
+
+    <!-- External CSS Libraries -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+
+    <!-- External JS Libraries (head 부분) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Glide.js/3.6.0/glide.min.js"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+
+    <!-- Custom CSS -->
+    <link th:href="@{/css/scheduled.css}" rel="stylesheet">
+    <link th:href="@{/css/font.css}" rel="stylesheet">
+    <link th:href="@{/css/live_auction.css}" rel="stylesheet">
+    <link th:href="@{/css/nav.css}" rel="stylesheet">
+
+    <!-- Custom JS -->
+    <script src="/js/profileToggle.js"></script>
+</head>
+<body class="font-['Noto_Sans_KR'] bg-gray-50">
+<!-- 헤더 영역 -->
+<header class="header-wrapper">
+    <nav class="nav-container">
+        <div class="nav-inner">
+
+            <!-- 로고 + 메뉴 -->
+            <div class="nav-left">
+                <a th:href="@{/}" class="nav-logo-link">
+                    <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+                </a>
+                <div class="nav-menu">
+                    <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+                    <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+                    <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+                    <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+                    <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+                    <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+                </div>
+            </div>
+
+            <!-- 검색 + 프로필/로그인 -->
+            <div class="nav-right">
+                <!-- 로그인한 경우 -->
+                <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
+                    <button id="profileBtn-full" class="nav-profile-btn">
+                        <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                        <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                        <span class="nav-profile-name" th:text="${username} + '님'"></span>
+                    </button>
+                    <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
+                        <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
+                        <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+                    </div>
+                </div>
+
+                <!-- 로그인 안한 경우 -->
+                <div th:if="${!isLogin}" class="nav-auth">
+                    <i class="ri-user-line"></i>
+                    <a th:href="@{/login}">
+                        <button class="nav-auth-btn black">로그인</button>
+                    </a>
+                    <a th:href="@{/login}">
+                        <button class="nav-auth-btn white">회원가입</button>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 모바일 햄버거 버튼 -->
+            <div class="nav-mobile">
+                <button id="mobile-menu-button" class="nav-mobile-btn">
+                    <span class="sr-only">메인 메뉴 열기</span>
+                    <svg class="nav-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 모바일 메뉴 -->
+    <div id="mobile-menu" class="mobile-menu">
+        <div class="mobile-menu-inner">
+            <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+            <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+            <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+            <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+            <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+            <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+
+            <div class="mobile-search-auth">
+                <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+                    <button id="profileBtn-half" class="mobile-profile-btn">
+                        <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+                        <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+                    </button>
+                    <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+                        <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+                        <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+                    </div>
+                </div>
+
+                <div th:if="${!isLogin}" class="mobile-auth">
+                    <i class="ri-user-line"></i>
+                    <a th:href="@{/login}">
+                        <button class="mobile-auth-btn black">로그인</button>
+                    </a>
+                    <a th:href="@{/login}">
+                        <button class="mobile-auth-btn white">회원가입</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main>
+        <!-- 알림 메시지 표시 -->
+        <div th:if="${message}" class="mb-6 p-4 rounded-md border-l-4"
+             th:classappend="${messageType == 'success' ? 'bg-green-50 border-green-400 text-green-700' : 'bg-red-50 border-red-400 text-red-700'}">
+            <p th:text="${message}"></p>
+        </div>
+
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h1 class="text-xl font-medium text-gray-900">신규 경매 예정 상품</h1>
+                <p class="text-xs text-gray-600 mt-2">* 검수 대기 중인 상품과 등록된 상품 목록입니다.</p>
+            </div>
+
+            <div class="p-6">
+                <!-- 검수 대기 중인 상품 목록 -->
+                <div th:if="${not #lists.isEmpty(pendingProducts)}" class="mb-8">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">검수 대기 중인 상품</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- 검수 대기 상품 반복 -->
+                        <div th:each="product : ${pendingProducts}" class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                            <div class="flex flex-col p-6">
+                                <!-- 상품 이미지 -->
+                                <div class="w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4 overflow-hidden">
+                                    <img th:if="${product.imageUrl != null}" th:src="@{/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
+                                    <div th:unless="${product.imageUrl != null}" class="text-4xl text-gray-400">
+                                        <i class="fas fa-seedling"></i>
+                                    </div>
+                                </div>
+
+                                <!-- 상품 정보 -->
+                                <div class="text-center mb-4">
+                                    <div class="font-semibold text-lg" th:text="${product.name}">상품명</div>
+                                    <div class="text-sm text-gray-500" th:text="${product.gram} + 'g'">무게</div>
+                                    <div class="mt-2 text-red-600 font-semibold" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"></div>
+                                </div>
+
+                                <!-- 검수 상태 표시 -->
+                                <div class="py-2 px-3 bg-yellow-100 text-yellow-800 text-sm font-semibold rounded-md text-center mb-4">
+                                    검수 진행 중
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 아무것도 없는 경우 -->
+                        <div th:if="${#lists.isEmpty(pendingProducts)}" class="col-span-full text-center py-6 text-gray-500">
+                            검수 대기 중인 상품이 없습니다.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 미검수(등록된) 상품 목록 -->
+                <div th:if="${not #lists.isEmpty(unprocessedProducts)}">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">등록된 상품</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- 미검수 상품 반복 -->
+                        <div th:each="product : ${unprocessedProducts}" class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                            <div class="flex flex-col p-6">
+                                <!-- 상품 이미지 -->
+                                <div class="w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4 overflow-hidden">
+                                    <img th:if="${product.imageUrl != null}" th:src="@{'/uploads/images/' + ${product.imageUrl}}" class="w-full h-full object-cover" alt="상품 이미지">
+                                    <div th:unless="${product.imageUrl != null}" class="text-4xl text-gray-400">
+                                        <i class="fas fa-seedling"></i>
+                                    </div>
+                                </div>
+
+                                <!-- 상품 정보 -->
+                                <div class="text-center mb-4">
+                                    <div class="font-semibold text-lg" th:text="${product.name}"></div>
+                                    <div class="text-sm text-gray-500" th:text="${product.gram} + 'g'"></div>
+                                    <div class="mt-2 text-red-600 font-semibold" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"></div>
+                                </div>
+
+                                <!-- 검수 신청 버튼 -->
+                                <form th:action="@{/auction/request-inspection}" method="post">
+                                    <input type="hidden" name="productId" th:value="${product.id}">
+                                    <button type="submit" class="w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                        검수 신청
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- 아무것도 없는 경우 -->
+                        <div th:if="${#lists.isEmpty(unprocessedProducts)}" class="col-span-full text-center py-6 text-gray-500">
+                            등록된 상품이 없습니다.
+                            <div class="mt-4">
+                                <a th:href="@{/auction}" class="py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                                    상품 등록하기
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 둘 다 없는 경우 -->
+                <div th:if="${#lists.isEmpty(pendingProducts) && #lists.isEmpty(unprocessedProducts)}" class="text-center py-12">
+                    <div class="text-4xl text-gray-300 mb-4">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <p class="text-gray-500 mb-6">등록된 상품이 없습니다.</p>
+                    <a th:href="@{/auction}" class="py-3 px-6 bg-blue-500 text-white rounded-md hover:bg-blue-600 inline-block">
+                        상품 등록하러 가기
+                    </a>
+                </div>
+                <!-- 둘 다 없는 경우 -->
+                <div th:if="${#lists.isEmpty(pendingProducts) && #lists.isEmpty(unprocessedProducts)}" class="text-center py-12">
+                    <div class="text-4xl text-gray-300 mb-4">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <p class="text-gray-500 mb-6">등록된 상품이 없습니다.</p>
+                    <a th:href="@{/auction}" class="py-3 px-6 bg-blue-500 text-white rounded-md hover:bg-blue-600 inline-block">
+                        상품 등록하러 가기
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Custom JS -->
+<script th:src="@{/js/moblie.js}"></script>
+<script th:src="@{/js/scheduled.js}"></script>
+</body>
+</html>

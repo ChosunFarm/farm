@@ -7,6 +7,39 @@ function closeInspectionPopup() {
   document.getElementById('inspectionPopup').classList.add('hidden');
 }
 
+
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('category');
+    const dynamicField = document.getElementById('dynamicField');
+    const dynamicLabel = document.getElementById('dynamicLabel');
+    const dynamicInput = document.getElementById('dynamicInput');
+
+    if(categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            const selectedCategory = this.value;
+
+            if (selectedCategory === 'F') {
+                dynamicField.style.display = 'block';
+                dynamicLabel.textContent = '과일명';
+                dynamicInput.name = 'fruitName';
+                dynamicInput.placeholder = '과일명을 입력하세요';
+            } else if (selectedCategory === 'V') {
+                dynamicField.style.display = 'block';
+                dynamicLabel.textContent = '채소명';
+                dynamicInput.name = 'vegetableName';
+                dynamicInput.placeholder = '채소명을 입력하세요';
+            } else if (selectedCategory === 'G') {
+                dynamicField.style.display = 'block';
+                dynamicLabel.textContent = '곡물명';
+                dynamicInput.name = 'grainName';
+                dynamicInput.placeholder = '곡물명을 입력하세요';
+            } else {
+                dynamicField.style.display = 'none';
+            }
+        });
+    }
+});
+
 // 기존 파일 업로드 함수 (단일 이미지 업로드)
 function loadFile(input) {
   const preview = document.getElementById('previewImg');
@@ -29,8 +62,109 @@ function loadFile(input) {
     reader.readAsDataURL(file);
   }
 }
+// 이미지 파일 선택 시 미리보기 생성
+function loadFiles(input) {
+    const previewContainer = document.getElementById('previewContainer');
+    const uploadIcon = document.getElementById('uploadIcon');
 
-// 여러 이미지 업로드 및 미리보기 처리
+    if (input.files && input.files.length > 0) {
+        uploadIcon.style.display = 'none';
+        previewContainer.innerHTML = '';
+
+        for (let i = 0; i < input.files.length; i++) {
+            const file = input.files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const previewImg = document.createElement('img');
+                previewImg.src = e.target.result;
+                previewImg.className = 'w-32 h-32 object-cover border rounded-lg';
+                previewContainer.appendChild(previewImg);
+            }
+
+            reader.readAsDataURL(file);
+        }
+    } else {
+        uploadIcon.style.display = 'block';
+        previewContainer.innerHTML = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('category');
+    const dynamicField = document.getElementById('dynamicField');
+    const dynamicLabel = document.getElementById('dynamicLabel');
+    const dynamicInput = document.getElementById('dynamicInput');
+    const fileInput = document.getElementById('file');
+    const uploadIcon = document.getElementById('uploadIcon');
+    const previewContainer = document.getElementById('previewContainer');
+
+    // 카테고리 선택에 따라 추가 필드 표시
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            const selectedCategory = this.value;
+
+            if (selectedCategory === 'F') {
+                dynamicField.style.display = 'block';
+                dynamicLabel.textContent = '과일명';
+                dynamicInput.name = 'fruitName';
+                dynamicInput.placeholder = '과일 종류를 입력하세요';
+            } else if (selectedCategory === 'V') {
+                dynamicField.style.display = 'block';
+                dynamicLabel.textContent = '채소명';
+                dynamicInput.name = 'vegetableName';
+                dynamicInput.placeholder = '채소 종류를 입력하세요';
+            } else if (selectedCategory === 'G') {
+                dynamicField.style.display = 'block';
+                dynamicLabel.textContent = '곡물명';
+                dynamicInput.name = 'grainName';
+                dynamicInput.placeholder = '곡물 종류를 입력하세요';
+            } else {
+                dynamicField.style.display = 'none';
+            }
+        });
+    }
+
+    // 이미지 미리보기
+    window.loadFiles = function(input) {
+        if (input.files && input.files.length > 0) {
+            // 아이콘 숨기기
+            uploadIcon.style.display = 'none';
+
+            // 기존 미리보기 이미지 제거
+            previewContainer.innerHTML = '';
+
+            // 각 파일에 대해 미리보기 생성
+            for (let i = 0; i < input.files.length; i++) {
+                const file = input.files[i];
+
+                if (file.type.match('image.*')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        const imgDiv = document.createElement('div');
+                        imgDiv.className = 'preview-item';
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'h-32 w-32 object-cover rounded-md';
+                        img.alt = 'preview';
+
+                        imgDiv.appendChild(img);
+                        previewContainer.appendChild(imgDiv);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            }
+        } else {
+            // 선택된 파일이 없을 경우 기본 아이콘 표시
+            uploadIcon.style.display = 'block';
+            previewContainer.innerHTML = '';
+        }
+    };
+});
+/*// 여러 이미지 업로드 및 미리보기 처리
 function loadFiles(input) {
   const previewContainer = document.getElementById('previewContainer');
   const icon = document.getElementById('uploadIcon');
@@ -86,4 +220,4 @@ function loadFiles(input) {
 
     reader.readAsDataURL(file);
   });
-}
+}*/

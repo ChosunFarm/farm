@@ -1,5 +1,6 @@
 package farm.farmshop.entity;
 
+import farm.farmshop.entity.product.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,10 @@ public class Member {
     private Long id;
     @Column(unique = true)
     private String email;
+
+    // Member.java에 추가할 부분
+    @OneToMany(mappedBy = "member")
+    private List<Product> products = new ArrayList<>();
 
     private String password;
 
@@ -36,4 +41,11 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
+
+    @Column(name = "intro")
+    private String intro;
+
+    @Column(name = "profile_image")
+    private String profileImage;
+
 }

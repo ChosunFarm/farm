@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>실시간 경매 - [[${product.name}]]</title>
+
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+
+
+  <link th:href="@{/css/font.css}" rel="stylesheet">
+  <link th:href="@{/css/nav.css}" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+  <script src="/js/profileToggle.js"></script>
+  <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+  <!-- <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+  <script src="/webjars/stomp-websocket/stomp.min.js"></script> -->
+
+  <script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          primary: "#ff6b00",
+          secondary: "#4a90e2",
+        },
+        borderRadius: {
+          none: "0px",
+          sm: "4px",
+          DEFAULT: "8px",
+          md: "12px",
+          lg: "16px",
+          xl: "20px",
+          "2xl": "24px",
+          "3xl": "32px",
+          full: "9999px",
+          button: "8px",
+        },
+      },
+    },
+  };
+  </script>
+  <style>
+    :where([class^="ri-"])::before { content: "\f3c2"; }
+    body {
+    font-family: 'Noto Sans KR', sans-serif;
+    }
+    .auction-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .bid-section {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .current-price {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #dc3545;
+    }
+    .bid-history {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      padding: 10px;
+    }
+    .bid-item {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+    .bid-item:last-child {
+      border-bottom: none;
+    }
+    .bidder-name {
+      font-weight: bold;
+      color: #495057;
+    }
+    .bid-amount {
+      color: #dc3545;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+    .bid-time {
+      color: #6c757d;
+      font-size: 0.9rem;
+      float: right;
+    }
+    .online-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: #28a745;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+    .message-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1050;
+    }
+  </style>
+</head>
+<header class="header-wrapper">
+  <nav class="nav-container">
+      <div class="nav-inner">
+
+          <!-- 로고 + 메뉴 -->
+          <div class="nav-left">
+              <a th:href="@{/}" class="nav-logo-link">
+                  <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+              </a>
+              <div class="nav-menu">
+                  <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+                  <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+                  <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+                  <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+                  <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+                  <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+              </div>
+          </div>
+
+          <!-- 검색 + 프로필/로그인 -->
+          <div class="nav-right">
+              <!-- 로그인한 경우 -->
+              <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
+                  <button id="profileBtn-full" class="nav-profile-btn">
+                      <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                      <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                      <span class="nav-profile-name" th:text="${username} + '님'"></span>
+                  </button>
+                  <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
+                      <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
+                      <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+                  </div>
+              </div>
+
+              <!-- 로그인 안한 경우 -->
+              <div th:if="${!isLogin}" class="nav-auth">
+                  <i class="ri-user-line"></i>
+                  <a th:href="@{/login}">
+                      <button class="nav-auth-btn black">로그인</button>
+                  </a>
+                  <a th:href="@{/login}">
+                      <button class="nav-auth-btn white">회원가입</button>
+                  </a>
+              </div>
+          </div>
+
+          <!-- 모바일 햄버거 버튼 -->
+          <div class="nav-mobile">
+              <button id="mobile-menu-button" class="nav-mobile-btn">
+                  <span class="sr-only">메인 메뉴 열기</span>
+                  <svg class="nav-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"/>
+                  </svg>
+              </button>
+          </div>
+
+      </div>
+  </nav>
+
+  <!-- 모바일 메뉴 -->
+  <div id="mobile-menu" class="mobile-menu">
+      <div class="mobile-menu-inner">
+          <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+          <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+          <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+          <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+          <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+          <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+
+          <div class="mobile-search-auth">
+              <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+                  <button id="profileBtn-half" class="mobile-profile-btn">
+                      <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+                      <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+                  </button>
+                  <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+                      <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+                      <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+                  </div>
+              </div>
+
+              <div th:if="${!isLogin}" class="mobile-auth">
+                  <i class="ri-user-line"></i>
+                  <a th:href="@{/login}">
+                      <button class="mobile-auth-btn black">로그인</button>
+                  </a>
+                  <a th:href="@{/login}">
+                      <button class="mobile-auth-btn white">회원가입</button>
+                  </a>
+              </div>
+
+          </div>
+      </div>
+  </div>
+</header>
+<body class="bg-gray-50">
+  <main class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="auction-container">
+      <!-- 메시지 컨테이너 -->
+      <div id="message-container" class="message-container"></div>
+
+      <div class="row">
+        <!-- 상품 정보 -->
+        <div class="col-md-6">
+          <div class="card">
+            <div class="flex flex-col md:flex-row bg-white rounded-lg shadow overflow-hidden">
+              <!-- 좌측: 이미지 + 프로필 -->
+              <div class="md:w-1/2 flex flex-col">
+                <img th:src="'/uploads/images/' + ${product.imageUrl}" alt="상품 이미지" class="w-full h-80 md:h-full object-cover"/>
+              </div>
+              <!-- 우측: 상품 정보 -->
+              <div class="md:w-1/2 p-6 flex flex-col justify-start space-y-6">
+                <div class="flex items-center mb-1">
+                  <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                  <span class="text-sm text-gray-600"> 실시간 경매 진행중</span>
+                </div>
+                <!-- 상품명 -->
+                <h1 th:text="${product.name}" class="text-3xl font-bold text-gray-900">
+                  상품명
+                </h1>
+                <!-- 시작가/무게 -->
+                <div class="space-y-1">
+                  <p class="text-lg text-gray-900">
+                    시작가: <span th:text="|${#numbers.formatInteger(product.price, 0, 'COMMA')}원|">0원</span>
+                  </p>
+                  <p class="text-lg text-gray-600">
+                    무게: <span th:text="${product.gram / 1000.0} + 'kg'">0.00kg</span>
+                  </p>
+                </div>
+                <hr class="border-gray-200" />
+                <!-- 상품 소개 -->
+                <p th:text="${product.description}" class="text-base text-gray-700">
+                  상품 소개
+                </p>
+                <hr class="border-gray-200" />
+              </div>
+            </div>
+          </div>
+          <!-- 판매자 정보 카드 내부 -->
+          <div class="border border-gray-200 rounded-lg p-6 bg-white">
+            <div class="flex items-center justify-between">
+              <!-- 좌측: 판매자 프로필(이미지 + 이름) -->
+              <div class="flex items-center">
+                <img
+                  th:if="${product.member.profileImage != null}"
+                  th:src="@{'/uploads/myage-profile/' + ${product.member.profileImage}}"
+                  alt="판매자 프로필 이미지"
+                  class="w-12 h-12 rounded-full object-cover bg-gray-200"
+                />
+                <img
+                  th:if="${product.member.profileImage == null}"
+                  th:src="@{/images/profile.png}"
+                  alt="기본 프로필"
+                  class="w-12 h-12 rounded-full object-cover bg-gray-200"
+                />
+                <a
+                  th:href="@{/mypage/pagedetail/{username}(username=${product.member.username})}"
+                  class="ml-4 text-lg font-semibold text-gray-900"
+                >
+                  <span th:text="${product.member.username}">판매자명</span>
+                </a>
+              </div>
+
+              <!-- 우측: 평점 부분 -->
+              <div class="flex items-center space-x-2">
+                <div class="flex flex-col space-y-1">
+                  <!-- 1) avgRating이 있을 때만 숫자로 평점 보여주기 -->
+                  <p
+                    th:if="${avgRating != null}"
+                    class="text-sm font-medium text-gray-900"
+                  >
+                    판매자 평점:
+                    <span th:text="${#numbers.formatDecimal(avgRating, 1, 1)}">0.0</span>
+                  </p>
+
+                  <!-- 2) 게이지 바 + 이모지 (avgRating null일 때도 바는 0%로 표시) -->
+                  <div class="flex items-center space-x-2">
+                    <!-- 게이지 바: avgRating이 null이면 width:0% -->
+                    <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        class="h-full bg-sky-400"
+                        th:style="|width:${avgRating != null ? (avgRating * 20) : 0}%|"
+                      ></div>
+                    </div>
+
+                    <!-- 이모지: 있으면 점수 구간별 이모지 -->
+                    <span class="text-lg">
+                      <span th:if="${avgRating != null and avgRating >= 4.5}">😊</span>
+                      <span th:if="${avgRating != null and avgRating >= 3.5 and avgRating < 4.5}">🙂</span>
+                      <span th:if="${avgRating != null and avgRating >= 2.5 and avgRating < 3.5}">😐</span>
+                      <span th:if="${avgRating != null and avgRating >= 1.5 and avgRating < 2.5}">😕</span>
+                      <span th:if="${avgRating != null and avgRating < 1.5}">😠</span>
+                      <span th:if="${avgRating == null}"></span>
+                    </span>
+                  </div>
+
+                  <!-- 3) avgRating == null일 때만 게이지 바로 아래에 “평점 없음” 출력 -->
+                  <p
+                    th:if="${avgRating == null}"
+                    class="text-sm font-medium text-gray-900"
+                  >
+                    판매자 평점: 평점 없음
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 2) 좌우 두 칼럼 (데스크톱 이상에서는 같은 높이로 늘어남) -->
+          <div class="flex flex-col md:flex-row gap-6 md:items-stretch">
+            <!-- ───── 2-1) 왼쪽: 실시간 입찰 현황 ───── -->
+            <div class="md:w-1/2 flex flex-col">
+              <div class="border border-gray-200 rounded-lg bg-white flex flex-col h-full">
+                <!-- 헤더 -->
+                <div class="p-4 border-b border-gray-200">
+                  <h5 class="text-lg font-medium text-gray-900">실시간 입찰 현황</h5>
+                </div>
+                <!-- 입찰 리스트 (4개만 보이고 나머지 스크롤) -->
+                <div id="bid-history" class="bid-history overflow-y-auto px-4 max-h-60">
+                  <div
+                    th:each="bid : ${bids}"
+                    class="bid-item flex justify-between items-center py-2 border-b last:border-b-0"
+                  >
+                    <div class="flex items-center space-x-2">
+                      <span
+                        class="bidder-name text-gray-900 font-medium"
+                        th:text="${bid.member.username}"
+                      ></span>
+                      <span
+                        class="bid-amount text-red-500 font-semibold"
+                        th:text="|${#numbers.formatInteger(bid.bidAmount, 0, 'COMMA')}원|"
+                      >0원</span>
+                    </div>
+                    <span
+                      class="bid-time text-gray-500 text-sm"
+                      th:text="${#temporals.format(bid.bidTime, 'yyyy년 MM월 dd일 a hh:mm:ss')}"
+                    >
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- ───── 2-2) 오른쪽: 입찰 폼 + 현재 최고가 ───── -->
+            <div class="md:w-1/2 flex flex-col">
+              <div class="border border-gray-200 rounded-lg bg-white flex flex-col justify-between h-full">
+                <!-- ① 현재 최고가 / 통계 -->
+                <div class="p-4 border-b border-gray-200">
+                  <h3 class="text-lg font-medium text-gray-900 mb-2">현재 최고가</h3>
+                  <span
+                    class="text-2xl font-semibold text-red-500"
+                    th:text="${product.currentBidPrice != null 
+                               ? #numbers.formatInteger(product.currentBidPrice, 0, 'COMMA') + '원' 
+                               : #numbers.formatInteger(product.price, 0, 'COMMA') + '원'}"
+                  >0원</span>
+                  <div class="mt-2 space-y-1 text-sm text-gray-600">
+                    <p>
+                      입찰 참여자: 
+                      <span id="unique-bidder-count" class="font-semibold"
+                            th:text="${uniqueBidderCount}">0</span>명
+                    </p>
+                    <p>
+                      입찰 횟수: 
+                      <span id="bid-count" class="font-semibold"
+                            th:text="${product.bidCount}">0</span>회
+                    </p>
+                  </div>
+                </div>
+                <!-- ② 입찰 입력 폼 -->
+                <div class="p-4">
+                  <input
+                    type="number"
+                    id="bid-amount"
+                    class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-0 focus:border-gray-300 mb-3"
+                    placeholder="입찰가 입력 (1,000원 단위)"
+                    step="1000"
+                    th:min="${product.currentBidPrice != null 
+                              ? product.currentBidPrice + 1000 
+                              : product.price + 1000}"
+                  />
+                  <button
+                    id="bid-button"
+                    class="w-full bg-primary text-white py-3 font-medium rounded mb-2"
+                    type="button"
+                  >입찰하기</button>
+                  <p class="text-xs text-gray-500">
+                    최소 입찰가:
+                    <span th:text="${#numbers.formatInteger(
+                                   (product.currentBidPrice != null 
+                                     ? product.currentBidPrice + 1000 
+                                     : product.price + 1000), 
+                                   0, 'COMMA')}">
+                      0
+                    </span>원
+                  </p>
+                </div>
+                <!-- ③ 로그인 안내 / 본인 상품 안내 -->
+                <div th:if="${!isLogin}" class="p-4">
+                  <div class="text-sm text-red-500">로그인이 필요합니다.</div>
+                </div>
+                <div th:if="${isLogin and product.member.id == memberId}" class="p-4">
+                  <div class="text-sm text-gray-600">본인의 상품에는 입찰할 수 없습니다.</div>
+                </div>
+              </div>
+            </div>
+          </div> <!-- // 좌우 두 칼럼 끝 -->
+        </div> <!-- // 상품 정보 끝 -->
+      </div> <!-- // row 끝 -->    
+    </div>
+  </main>
+<!-- 1) SockJS / STOMP -->
+<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+
+<!-- 2) WebSocket 래퍼 -->
+<script src="/js/auction-websocket.js"></script>
+
+<!-- 3) 한 번만 초기화 & 클릭 바인딩 -->
+<script th:inline="javascript">
+/*<![CDATA[*/
+  // 서버가 치환해 주는 실제 productId
+  const productId = /*[[${product.id}]]*/ 0;
+
+  // 한 번만 웹소켓 연결
+  initializeAuctionWebSocket(productId);
+
+  // 한 번만 클릭 이벤트 바인딩
+  document.getElementById('bid-button')
+          .addEventListener('click', placeBid);
+/*]]>*/
+</script>
+
+
+
+
+<script th:src="@{/js/moblie.js}"></script>
+</body>
+</html>

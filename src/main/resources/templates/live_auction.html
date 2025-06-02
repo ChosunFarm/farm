@@ -3,136 +3,235 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>실시간 경매</title>
+    <title>실시간 경매 현황</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-    <link th:href="@{/css/font.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font.css}" rel="stylesheet">
     <link th:href="@{/css/live_auction.css}" rel="stylesheet"/>
+    <link th:href="@{/css/nav.css}" rel="stylesheet"/>
 
-    <script th:src="@{/js/live_auction.js}"></script>
+    <script src="/js/profileToggle.js"></script>
     <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
     <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
 </head>
 
 <body class="bg-gray-50 min-h-screen">
-    <nav class="bg-white border-b">
-        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex">
-                    <a th:href="@{/}" class="flex-shrink-0 flex items-center">
-                        <img class="h-12 w-auto" th:src="@{/images/logo2.png}" alt="현대농산물">
-                    </a>
-                    <div class="hidden md:flex ml-10 space-x-4 items-center">
-                        <a th:href="@{/manual}" class="block text-base text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md font-medium">이용방법</a>
-                        <a th:href="@{/mypage}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">마이페이지</a>
-                        <a th:href="@{/live_auction}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">실시간 경매</a>
-                        <a th:href="@{/scheduled}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">경매 예정 상품</a>
-                    </div>
+<header class="header-wrapper">
+    <nav class="nav-container">
+        <div class="nav-inner">
+
+            <!-- 로고 + 메뉴 -->
+            <div class="nav-left">
+                <a th:href="@{/}" class="nav-logo-link">
+                    <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+                </a>
+                <div class="nav-menu">
+                    <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+                    <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+                    <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+                    <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+                    <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+                    <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
                 </div>
-                <div class="hidden md:flex ml-10 space-x-4 items-center">
-                    <div class="flex items-center">
-                        <span class="text-base text-gray-700 mr-4">OOO님</span>
-                        <button type="button" class="px-3 py-1 text-base text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50" onclick="window.location.href='/'">로그아웃</button>
-                    </div>
-                </div>
-                <div class="flex items-center md:hidden">
-                    <button id="mobile-menu-button"
-                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-custom"
-                            aria-controls="mobile-menu" aria-expanded="false">
-                        <span class="sr-only">메인 메뉴 열기</span>
-                        <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
+            </div>
+
+            <!-- 검색 + 프로필/로그인 -->
+            <div class="nav-right">
+                <!-- 로그인한 경우 -->
+                <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
+                    <button id="profileBtn-full" class="nav-profile-btn">
+                        <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                        <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                        <span class="nav-profile-name" th:text="${username} + '님'"></span>
                     </button>
+                    <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
+                        <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
+                        <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+                    </div>
+                </div>
+
+                <!-- 로그인 안한 경우 -->
+                <div th:if="${!isLogin}" class="nav-auth">
+                    <i class="ri-user-line"></i>
+                    <a th:href="@{/login}">
+                        <button class="nav-auth-btn black">로그인</button>
+                    </a>
+                    <a th:href="@{/login}">
+                        <button class="nav-auth-btn white">회원가입</button>
+                    </a>
                 </div>
             </div>
-        </div>
-        <div id="mobile-menu" class="md:hidden hidden">
-            <div class="px-2 pt-2 pb-3 space-y-1">
-                <div class="flex items-center">
-                    <span class="text-base text-gray-700 mr-4">OOO님</span>
-                    <button type="button" class="px-3 py-1 text-base text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50" onclick="window.location.href='/'">로그아웃</button>
-                </div>
-                <a th:href="@{/manual}" class="block text-base text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md font-medium">이용방법</a>
-                <a th:href="@{/mypage}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">마이페이지</a>
-                <a th:href="@{/live_auction}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">실시간 경매</a>
-                <a th:href="@{/scheduled}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">경매 예정 상품</a>
+
+            <!-- 모바일 햄버거 버튼 -->
+            <div class="nav-mobile">
+                <button id="mobile-menu-button" class="nav-mobile-btn">
+                    <span class="sr-only">메인 메뉴 열기</span>
+                    <svg class="nav-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
             </div>
+
         </div>
     </nav>
 
-    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <main>
-            <div class="bg-white shadow rounded-lg">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h1 class="text-xl font-medium text-gray-900">실시간 경매 한눈에 보기</h1>
-                <p class="text-xs text-red-600 mt-2">* 원하는 상품이 있으면 가격을 제안해보세요!</p>
-                <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- 상품 1 -->
-                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                        <div class="flex flex-col items-center p-6">
-                            <div class="w-32 h-24 flex items-center justify-center text-4xl bg-gray-100 border border-gray-300 rounded mb-4">
-                            🍎
-                            </div>
-                        <div class="text-center mb-4">
-                        <div class="font-semibold text-lg">거창 꿀사과</div>
-                        <div class="text-sm text-gray-500">5kg</div>
-                    </div>
-                    <div class="flex justify-center flex-wrap gap-2 mb-4">
-                        <div class="text-center border border-gray-300 px-3 py-2 rounded">
-                            <div class="text-sm">ㅇㅇㅇ님</div>
-                            <div class="text-red-600 font-semibold">15,000</div>
-                        </div>
-                        <div class="text-center border border-gray-300 px-3 py-2 rounded">
-                            <div class="text-sm">ㅇㅅㅇ님</div>
-                            <div class="text-red-600 font-semibold">16,000</div>
-                        </div>
-                        <div class="text-center border border-gray-300 px-3 py-2 rounded">
-                            <div class="text-sm">ㅇㅎㅇ님</div>
-                            <div class="text-red-600 font-semibold">17,000</div>
-                        </div>
-                    </div>
-                    <button class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" onclick="openInspectionPopup()">가격 제안하기</button>
-                    </div>
-                </div>
-                <!-- 상품 2 -->
-                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                    <div class="flex flex-col items-center p-6">
-                        <div class="w-32 h-24 flex items-center justify-center text-4xl bg-gray-100 border border-gray-300 rounded mb-4">
-                        🌽
-                        </div>
-                        <div class="text-center mb-4">
-                        <div class="font-semibold text-lg">옥수수</div>
-                        <div class="text-sm text-gray-500">3kg</div>
-                    </div>
-                    <div class="flex justify-center flex-wrap gap-2 mb-4">
-                        <div class="text-center border border-gray-300 px-3 py-2 rounded">
-                            <div class="text-sm">ㅇㅇㅇ님</div>
-                            <div class="text-red-600 font-semibold">12,000</div>
-                        </div>
-                        <div class="text-center border border-gray-300 px-3 py-2 rounded">
-                            <div class="text-sm">ㅇㅅㅇ님</div>
-                            <div class="text-red-600 font-semibold">13,000</div>
-                        </div>
-                        <div class="text-center border border-gray-300 px-3 py-2 rounded">
-                            <div class="text-sm">ㅇㅎㅇ님</div>
-                            <div class="text-red-600 font-semibold">15,000</div>
-                        </div>
-                    </div>
-                    <button class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" onclick="openInspectionPopup()">가격 제안하기</button>
+    <!-- 모바일 메뉴 -->
+    <div id="mobile-menu" class="mobile-menu">
+        <div class="mobile-menu-inner">
+            <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+            <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+            <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+            <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+            <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+            <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+
+            <div class="mobile-search-auth">
+                <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+                    <button id="profileBtn-half" class="mobile-profile-btn">
+                        <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+                        <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+                    </button>
+                    <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+                        <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+                        <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
                     </div>
                 </div>
 
+                <div th:if="${!isLogin}" class="mobile-auth">
+                    <i class="ri-user-line"></i>
+                    <a th:href="@{/login}">
+                        <button class="mobile-auth-btn black">로그인</button>
+                    </a>
+                    <a th:href="@{/login}">
+                        <button class="mobile-auth-btn white">회원가입</button>
+                    </a>
                 </div>
-              </div>
+
             </div>
-          </div>
-        </main>
-      </div>
-      
-    <script th:src="@{/js/moblie.js}"></script>
-    <script th:src="@{/js/live_auction.js}"></script>
+        </div>
+    </div>
+</header>
+<div class="max-w-8xl mx-auto px-8 sm:px-10 lg:px-16 py-8">
+    <main class="mt-0">
+        <div class="bg-white shadow rounded-lg p-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-6">
+                <span th:if="${categoryName != null}" th:text="${categoryName + ' '}"></span>
+                실시간 경매 현황
+            </h1>
+
+            <!-- 필터 및 검색 -->
+            <div class="mb-8">
+                <form th:action="@{/live_auction}" method="get" class="flex flex-wrap gap-4">
+                    <div class="flex-1 min-w-[200px]">
+                        <input type="text" name="search" th:value="${search}"
+                               class="w-full rounded-md border-gray-300 shadow-sm focus:border-custom focus:ring focus:ring-custom focus:ring-opacity-50"
+                               placeholder="상품명 검색">
+                    </div>
+
+                    <div class="w-40">
+                        <select name="category" th:value="${category}"
+                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-custom focus:ring focus:ring-custom focus:ring-opacity-50">
+                            <option value="">모든 카테고리</option>
+                            <option value="F" th:selected="${category == 'F'}">과일</option>
+                            <option value="V" th:selected="${category == 'V'}">채소</option>
+                            <option value="G" th:selected="${category == 'G'}">곡물</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-end">
+                        <button type="submit"
+                                class="bg-gray-800 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                            검색
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 카테고리 바로가기 버튼 -->
+            <div class="flex flex-wrap gap-4 mb-8">
+                <a th:href="@{/live_auction}"
+                   class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition duration-200">
+                    전체
+                </a>
+                <a th:href="@{/live_auction/category/F}"
+                   class="px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition duration-200">
+                    과일
+                </a>
+                <a th:href="@{/live_auction/category/V}"
+                   class="px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition duration-200">
+                    채소
+                </a>
+                <a th:href="@{/live_auction/category/G}"
+                   class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-md hover:bg-yellow-200 transition duration-200">
+                    곡물
+                </a>
+            </div>
+
+            <!-- 경매 상품 목록 -->
+            <div class="auction-list">
+                <!-- 상품 아이템 반복 -->
+                <div th:each="product : ${approvedProducts}" class="auction-item">
+                    <!-- 상품 이미지 (클릭 시 상세 페이지로 이동) -->
+                    <a th:href="@{'/auction/detail/' + ${product.id}}" class="product-image-link">
+                        <div class="product-image">
+                            <img th:if="${product.imageUrl != null}" th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
+                            <i th:unless="${product.imageUrl != null}" class="fas fa-seedling"></i>
+                        </div>
+                    </a>
+
+                    <!-- 상품 정보 -->
+                    <div class="product-info">
+                        <h3 class="product-title">
+                            <a th:href="@{'/auction/detail/' + ${product.id}}" class="hover:text-custom" th:text="${product.name}">상품명</a>
+                        </h3>
+                        <p class="product-weight" th:text="${product.gram} + 'g'">무게</p>
+
+                        <!-- 판매자 정보 -->
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="font-bold text-custom">판매자</span>
+                            <span class="font-bold text-custom" th:text="${product.member != null ? product.member.username + '님' : '미등록'}">판매자명</span>
+                        </div>
+
+                        <!-- 가격 정보 -->
+                        <div class="price-list">
+                            <div class="price-box">
+                                <div class="price-name">시작가</div>
+                                <div class="price-value" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'">가격</div>
+                            </div>
+                            <div class="price-box">
+                                <div class="price-name">현재가</div>
+                                <div class="price-value" th:text="${#numbers.formatInteger(product.currentBidPrice != null ? product.currentBidPrice : product.price, 0, 'COMMA')} + '원'">현재가</div>
+                            </div>
+                            <div class="price-box">
+                                <div class="price-name">입찰수</div>
+                                <div class="price-value" th:text="${product.bidCount != null ? product.bidCount : 0}">입찰수</div>
+                            </div>
+                        </div>
+                        <!-- 경매 일자 표시 예시 -->
+                        <div class="flex justify-between items-center text-sm text-gray-500">
+                            <span>입찰 <span th:text="${product.bidCount != null ? product.bidCount : 0}"></span>회</span>
+                            <span th:if="${product.auctionDate != null}">
+                                경매일: <span th:text="${#temporals.format(product.auctionDate, 'yyyy-MM-dd HH:mm')}"></span>
+                            </span>
+                        </div>
+
+                        <!-- 액션 버튼 -->
+                        <a th:href="@{'/auction/detail/' + ${product.id}}" class="inline-block bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-sm font-medium">
+                            경매 참여하기
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 데이터가 없을 경우 -->
+                <div th:if="${approvedProducts.empty}" class="text-center text-gray-500 py-10 col-span-full">
+                    <i class="fas fa-box-open text-5xl mb-4"></i>
+                    <p>현재 진행 중인 경매가 없습니다.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/moblie.js}"></script>
 </body>
 </html>

@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.*;
 import java.security.Principal;
+import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/auction")
@@ -27,7 +28,7 @@ public class AuctionController {
     private final MemberRepository memberRepository;
     private final ProductImageRepository productImageRepository;
 
-    /**  
+    /**
      * application.yml 에 설정된 업로드 루트 디렉터리 (예: "./uploads/images")  
      */
     @Value("${spring.file.upload.directory}")
@@ -47,6 +48,7 @@ public class AuctionController {
         return "auction";
     }
 
+    // src/main/java/farm/farmshop/controller/AuctionController.java의 registerProduct 메소드 수정
     @PostMapping
     public String registerProduct(
             @RequestParam("category") String category,
@@ -54,12 +56,17 @@ public class AuctionController {
             @RequestParam("price") int price,
             @RequestParam("stockQuantity") int stockQuantity,
             @RequestParam("gram") int gram,
-            @RequestParam(value = "fruitName",     required = false) String fruitName,
+            @RequestParam(value = "fruitName", required = false) String fruitName,
             @RequestParam(value = "vegetableName", required = false) String vegetableName,
-            @RequestParam(value = "grainName",     required = false) String grainName,
-            @RequestParam(value = "imageFile",     required = false) MultipartFile[] imageFiles
+            @RequestParam(value = "grainName", required = false) String grainName,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "imageFile", required = false) MultipartFile[] imageFiles,
+            @RequestParam(value = "year", required = false) String year,
+            @RequestParam(value = "month", required = false) String month,
+            @RequestParam(value = "day", required = false) String day,
+            Principal principal
     ) throws IOException {
-        // 1) 상품 엔티티 생성
+        // 1) 상품 엔티티 생성 (기존 코드와 동일)
         Product product;
         switch (category) {
             case "F":
@@ -86,11 +93,39 @@ public class AuctionController {
         product.setName(name);
         product.setPrice(price);
         product.setStockQuantity(stockQuantity);
+        product.setStatus("pending"); // 상품 등록 시 기본 상태를 '검수 대기'로 설정
+        product.setDescription(description); // 상품 설명 설정
+
+        // 경매 일자 설정 - 추가된 코드
+        if (year != null && month != null && day != null) {
+            try {
+                // "2024년", "1월", "1일" 형태의 문자열에서 숫자만 추출
+                int yearValue = Integer.parseInt(year.replaceAll("[^0-9]", ""));
+                int monthValue = Integer.parseInt(month.replaceAll("[^0-9]", ""));
+                int dayValue = Integer.parseInt(day.replaceAll("[^0-9]", ""));
+
+                // LocalDateTime 객체 생성 (시간은 오전 10시로 기본 설정)
+                LocalDateTime auctionDate = LocalDateTime.of(yearValue, monthValue, dayValue, 10, 0);
+                product.setAuctionDate(auctionDate);
+            } catch (Exception e) {
+                // 날짜 파싱 에러시 현재 시간의 7일 후로 기본 설정
+                product.setAuctionDate(LocalDateTime.now().plusDays(7));
+            }
+        } else {
+            // 경매 일자 정보가 없으면 현재 시간의 7일 후로 기본 설정
+            product.setAuctionDate(LocalDateTime.now().plusDays(7));
+        }
+
+        // 현재 로그인한 회원 정보 가져오기
+        if (principal != null) {
+            Member member = memberRepository.findByEmail(principal.getName());
+            product.setMember(member); // 상품과 회원 연결
+        }
 
         // 2) 저장 → ID 발급
         productService.saveProduct(product);
 
-        // 3) 업로드된 파일들 처리 (원본 파일명 그대로 저장)
+        // 3) 업로드된 파일들 처리 (기존 코드와 동일)
         if (imageFiles != null && imageFiles.length > 0) {
             for (MultipartFile file : imageFiles) {
                 if (file.isEmpty()) continue;

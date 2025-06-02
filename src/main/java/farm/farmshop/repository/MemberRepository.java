@@ -39,4 +39,28 @@ public class MemberRepository {
         return result.isEmpty() ? null : result.get(0);
     }
 
+    public Member findByUsername(String username) {
+        List<Member> result = em.createQuery(
+                "select m from Member m where m.username = :username", Member.class)
+            .setParameter("username", username)
+            .getResultList();
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+    public List<Member> findByUsernameOrEmailContaining(String keyword) {
+        try {
+            return em.createQuery(
+                            "SELECT m FROM Member m WHERE m.username LIKE :keyword OR m.email LIKE :keyword",
+                            Member.class
+                    )
+                    .setParameter("keyword", "%" + keyword + "%")
+                    .getResultList();
+        } catch (Exception e) {
+            // 예외 로깅
+            e.printStackTrace();
+            // 예외 발생 시 빈 리스트 반환
+            return List.of();
+        }
+    }
+
 }

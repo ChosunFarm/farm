@@ -8,128 +8,211 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
     <link th:href="@{/css/font.css}" rel="stylesheet"/>
     <link th:href="@{/css/mypage.css}" rel="stylesheet"/>
+    <link th:href="@{/css/nav.css}" rel="stylesheet"/>
 
     <script th:src="@{/js/mypage.js}"></script>
     <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
     <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+
+      <!-- Custom JS -->
+    <script src="/js/profileToggle.js"></script>
 </head>
 
 <body class="bg-gray-50 min-h-screen">
-<nav class="bg-white border-b">
-    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <a th:href="@{/}" class="flex-shrink-0 flex items-center">
-                    <img class="h-12 w-auto" th:src="@{/images/logo2.png}" alt="현대농산물">
-                </a>
-                <div class="hidden md:flex ml-10 space-x-4 items-center">
-                    <a th:href="@{/manual}" class="block text-base text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md font-medium">이용방법</a>
-                    <a th:href="@{/mypage}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">마이페이지</a>
-                    <a th:href="@{/live_auction}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">실시간 경매</a>
-                    <a th:href="@{/scheduled}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">경매 예정 상품</a>
+    <!-- 헤더 영역 -->
+    <header class="header-wrapper">
+        <nav class="nav-container">
+          <div class="nav-inner">
+            
+            <!-- 로고 + 메뉴 -->
+            <div class="nav-left">
+              <a th:href="@{/}" class="nav-logo-link">
+                <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+              </a>
+                <!-- 1. 헤더 네비게이션에 추가 (nav.css와 함께 사용하는 헤더) -->
+                <div class="nav-menu">
+                    <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+                    <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+                    <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+                    <!-- 새로 추가 -->
+                    <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+                    <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+                    <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
                 </div>
             </div>
-            <div class="hidden md:flex ml-10 space-x-4 items-center">
-                <div class="flex items-center">
-                    <span class="text-base text-gray-700 mr-4">OOO님</span>
-                    <button type="button" class="px-3 py-1 text-base text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50" onclick="window.location.href='/'">로그아웃</button>
-                </div>
-            </div>
-
-            <div class="flex items-center md:hidden">
-                <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-custom" aria-controls="mobile-menu" aria-expanded="false">
-                    <span class="sr-only">메인 메뉴 열기</span>
-                    <svg class="block h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
+      
+            <!-- 검색 + 프로필/로그인 -->
+            <div class="nav-right">
+              <!-- 로그인한 경우 -->
+              <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
+                <button id="profileBtn-full" class="nav-profile-btn">
+                  <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                  <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                  <span class="nav-profile-name" th:text="${username} + '님'"></span>
                 </button>
+                <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
+                  <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
+                  <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+                </div>
+              </div>
+      
+              <!-- 로그인 안한 경우 -->
+              <div th:if="${!isLogin}" class="nav-auth">
+                <i class="ri-user-line"></i>
+                <a th:href="@{/login}">
+                  <button class="nav-auth-btn black">로그인</button>
+                </a>
+                <a th:href="@{/login}">
+                  <button class="nav-auth-btn white">회원가입</button>
+                </a>
+              </div>
             </div>
+      
+            <!-- 모바일 햄버거 버튼 -->
+            <div class="nav-mobile">
+              <button id="mobile-menu-button" class="nav-mobile-btn">
+                <span class="sr-only">메인 메뉴 열기</span>
+                <svg class="nav-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+              </button>
+            </div>
+      
+          </div>
+        </nav>
+      
+        <!-- 모바일 메뉴 -->
+        <div id="mobile-menu" class="mobile-menu">
+          <div class="mobile-menu-inner">
+            <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+            <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+            <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+            <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+            <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+            <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+      
+            <div class="mobile-search-auth">
+              <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+                <button id="profileBtn-half" class="mobile-profile-btn">
+                  <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+                  <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+                </button>
+                <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+                  <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+                  <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+                </div>
+              </div>
+      
+              <div th:if="${!isLogin}" class="mobile-auth">
+                <i class="ri-user-line"></i>
+                <a th:href="@{/login}">
+                  <button class="mobile-auth-btn black">로그인</button>
+                </a>
+                <a th:href="@{/login}">
+                  <button class="mobile-auth-btn white">회원가입</button>
+                </a>
+              </div>
+      
+            </div>
+          </div>
         </div>
-    </div>
-    <div id="mobile-menu" class="md:hidden hidden px-2 pt-2 pb-3 space-y-1">
-        <div class="flex items-center">
-            <span class="text-base text-gray-700 mr-4">OOO님</span>
-            <button type="button" class="px-3 py-1 text-base text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50" onclick="window.location.href='/'">로그아웃</button>
-        </div>
-        <a th:href="@{/manual}" class="block text-base text-custom hover:bg-custom hover:bg-opacity-10 px-3 py-2 rounded-md font-medium">이용방법</a>
-        <a th:href="@{/mypage}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">마이페이지</a>
-        <a th:href="@{/live-auction}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">실시간 경매</a>
-        <a th:href="@{/scheduled}" class="block text-base text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-md font-medium">경매 예정 상품</a>
-    </div>
-</nav>
+      </header>
 
 <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <main class="mt-0">
         <div class="bg-white shadow rounded-lg px-6 py-4 border-b border-gray-200">
-            <form th:action="@{/submit-product}" method="post" enctype="multipart/form-data" class="space-y-6">
                 <div class="mypage-container grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
                     <aside class="sidebar">
-                        <h2>마이페이지</h2>
                         <ul>
-                            <li><strong>마이페이지</strong></li>
-                            
+                            <li><a th:href="@{/mypage}"><strong>마이페이지</strong></a></li>
+                            <li><a th:href="@{/mypage/my-products}">나의 상품 등록 목록</a></li>
+                            <li><a th:href="@{/mypage/mybids}">나의 입찰 내역</a></li>
+                            <li><a th:href="@{/mypage/received-bids}">받은 입찰 내역</a></li>
+                            <!-- 새로 추가 -->
+                            <li><a th:href="@{/mypage/transactions}">거래 현황</a></li>
+                            <li><a th:href="@{/mypage/my-winning}">낙찰 내역</a></li>
+                            <li><a th:href="@{/mypage/my-selling}">판매 내역</a></li>
+                            <li><a th:href="@{/auction}">상품 등록</a></li>
+                            <li><a th:href="@{/live_auction}">실시간 경매</a></li>
+                            <!-- 회원정보수정 -->
+                            <li><a th:href="@{/mypage/edit-info}">회원정보 수정</a></li>
                         </ul>
-                        <div class="nav-actions">
-                            <a th:href="@{/auction}">상품 등록 +</a>
-                            <a th:href="@{/live_auction}">실시간 경매 +</a>
-                            <button type="button">실시간 시세 +</button>
-                        </div>
                     </aside>
 
-                    <main class="mypage-content col-span-2">
-                        <section class="profile-section">
-                            <div class="profile-image">
-                                <div class="avatar-placeholder">👤</div>
-                                <button type="button" class="small-btn">사진 변경하기</button>
+                    <title>마이페이지</title>
+                      <div class="profile" id="viewMode">
+                        <div class="section">
+                          <div class="top-row">
+                            <!-- 프로필 + 유저정보 -->
+                            <div class="left-info">
+                              <!-- 프로필 -->
+                              <div class="profile-img rounded-full overflow-hidden w-40 h-40 mx-auto">
+                                <!-- 이미지가 있을 때 -->
+                                <img th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                                <!-- 기본 이미지 -->
+                                <img th:if="${profileImage == null}" th:src="@{/images/profile.png}" class="nav-profile-img" alt="기본 프로필"/>
+
+                              </div>
+                              <!-- 사용자 정보 -->
+                              <div class="user-info">
+                                <div class="nickname" th:text="${username}"></div>
+                                <div class="address" th:text="${address}"></div>
+                                <div class="intro" id="introText" th:text="${intro}">한줄소개를 해보세요!</div>
+                              </div>
                             </div>
 
-                            <div class="profile-info">
-                                <div class="nickname" th:text="${username}">
-                                    <strong>경매의 제왕</strong>
-                                    <button type="button" class="small-btn">변경하기</button>
-                                </div>
-
-                                <div class="rating">
-                                    <span>⭐☆☆☆☆</span>
-                                    <strong>4.5</strong>
-                                    <button type="button" class="small-btn">받은 후기보기</button>
-                                </div>
-
-                                <div class="address">
-                                    <span>광주광역시</span>
-                                    <span>동구</span>
-                                    <span>서석동 11-12</span>
-                                    <button type="button">주소 변경하기</button>
-                                </div>
-
-                                <div class="bio">
-                                    <textarea th:placeholder="'한줄소개를 입력해주세요'">한줄 소개 넣을까?</textarea>
-                                    <button type="submit">등록하기</button>
-                                </div>
+                            <!-- 거래 정보 -->
+                            <div class="stats-area">
+                              <div class="stat-box">
+                                <div class="stat-item">거래 건수<span th:text="${tradeCount}"></span></div>
+                              </div>
+                              <div class="stat-box">
+                                <div class="stat-item">평점<span th:text="${rating}">4.5</span></div>
+                              </div>
                             </div>
-                        </section>
+                          </div>
 
-                        <section class="sales-history">
-                            <h2>나의 판매내역 ⌄</h2>
-                            <a th:href="@{/auction}" class="small-btn">상품 등록하러가기</a>
+                          <!-- 버튼 -->
+                          <div class="btn-row">
+                            <button class="btn" id="editBtn"><i class="fas fa-cog"></i> 프로필 편집</button>
+                            <button type="submit" id="saveBtn" class="btn hidden">저장</button>
+                            <button type="button" id="cancelBtn" class="btn hidden">취소</button>
+                            <button class="btn">받은후기 보기</button>
+                          </div>
+                        </div>
+                      </div>
 
-                            <div class="product-card">
-                                <div class="product-image">🍎</div>
-                                <div class="product-info">
-                                    <strong>우리집 뒤뜰 왕사과</strong>
-                                    <p>1kg · <span class="price">15,000원</span></p>
-                                    <span class="status success">판매 완료 ✔</span>
-                                </div>
-                            </div>
-                        </section>
-                    </main>
+                      <!-- 프로필 편집 영역 (처음엔 hidden) -->
+                      <div class="edit-form hidden" id="editMode">
+                        <form th:action="@{/mypage/update}" method="post" enctype="multipart/form-data">
+                          <!-- 이미지 미리보기 -->
+                          <div class="form-group preview-group">
+                            <img id="profilePreview" src="/images/profile.png" alt="미리보기" class="preview-img"/>
+                          </div>
+                          <!-- 이미지 업로드 -->
+                          <div class="form-group">
+                            <label for="profileImageInput">프로필 이미지 변경</label>
+                            <input type="file" id="profileImageInput" name="profileImage" accept="image/*" />
+                          </div>
+                          <!-- 한줄소개 수정 -->
+                          <div class="form-group">
+                            <label for="introInput">한줄 소개 수정</label>
+                            <input type="text" id="introInput" name="introText" placeholder="한줄 소개 입력">
+                          </div>
+                          <!-- 버튼들 -->
+                          <div class="btn-row">
+                            <button type="submit" id="saveBtn" class="btn">저장</button>
+                            <button type="button" id="cancelBtn" class="btn">취소</button>
+                          </div>
+    
+                       
+                      </div>
+                    </div>
+                  </main>
                 </div>
-            </form>
-        </div>
-    </main>
-</div>
 
-<script th:src="@{/js/mobile.js}"></script>
-<script th:src="@{/js/mypage.js}"></script>
+              <script th:src="@{/js/moblie.js}"></script>
+              <script th:src="@{/js/mypage.js}"></script>
 </body>
 </html>
