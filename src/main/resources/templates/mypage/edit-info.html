@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>마이페이지</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/font.css}" rel="stylesheet"/>
+    <link th:href="@{/css/mypage.css}" rel="stylesheet"/>
+    <link th:href="@{/css/nav.css}" rel="stylesheet"/>
+
+    <script th:src="@{/js/mypage.js}"></script>
+    <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
+
+      <!-- Custom JS -->
+    <script src="/js/profileToggle.js"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- 헤더 영역 -->
+    <header class="header-wrapper">
+        <nav class="nav-container">
+          <div class="nav-inner">
+            
+            <!-- 로고 + 메뉴 -->
+            <div class="nav-left">
+                <a th:href="@{/}" class="nav-logo-link">
+                    <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
+                </a>
+                <!-- 1. 헤더 네비게이션에 추가 (nav.css와 함께 사용하는 헤더) -->
+                <div class="nav-menu">
+                    <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+                    <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+                    <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+                    <!-- 새로 추가 -->
+                    <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
+                    <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+                    <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+                </div>
+            </div>
+      
+            <!-- 검색 + 프로필/로그인 -->
+            <div class="nav-right">
+                <!-- 로그인한 경우 -->
+                <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
+                    <button id="profileBtn-full" class="nav-profile-btn">
+                        <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                        <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                        <span class="nav-profile-name" th:text="${username} + '님'"></span>
+                    </button>
+                    <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
+                        <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
+                        <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+                    </div>
+                </div>
+      
+                <!-- 로그인 안한 경우 -->
+                <div th:if="${!isLogin}" class="nav-auth">
+                    <i class="ri-user-line"></i>
+                    <a th:href="@{/login}">
+                        <button class="nav-auth-btn black">로그인</button>
+                    </a>
+                    <a th:href="@{/login}">
+                        <button class="nav-auth-btn white">회원가입</button>
+                    </a>
+                </div>
+            </div>
+      
+            <!-- 모바일 햄버거 버튼 -->
+            <div class="nav-mobile">
+                <button id="mobile-menu-button" class="nav-mobile-btn">
+                    <span class="sr-only">메인 메뉴 열기</span>
+                    <svg class="nav-mobile-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+      
+        <!-- 모바일 메뉴 -->
+        <div id="mobile-menu" class="mobile-menu">
+            <div class="mobile-menu-inner">
+                <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+                <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+                <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+                <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+                <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+      
+                <div class="mobile-search-auth">
+                    <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+                        <button id="profileBtn-half" class="mobile-profile-btn">
+                            <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+                            <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+                        </button>
+                        <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+                            <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+                            <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+                        </div>
+                    </div>
+                </div>
+      
+                <div th:if="${!isLogin}" class="mobile-auth">
+                    <i class="ri-user-line"></i>
+                    <a th:href="@{/login}">
+                        <button class="mobile-auth-btn black">로그인</button>
+                    </a>
+                    <a th:href="@{/login}">
+                        <button class="mobile-auth-btn white">회원가입</button>
+                    </a>
+                </div>
+      
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main class="mt-0">
+            <div class="bg-white shadow rounded-lg px-6 py-4 border-b border-gray-200">
+                <div class="mypage-container grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                    <aside class="sidebar">
+                        <ul>
+                            <li><a th:href="@{/mypage}">마이페이지</a></li>
+                            <li><a th:href="@{/mypage/my-products}">나의 상품 등록 목록</a></li>
+                            <li><a th:href="@{/mypage/mybids}">나의 입찰 내역</a></li>
+                            <li><a th:href="@{/mypage/received-bids}">받은 입찰 내역</a></li>
+                            <!-- 새로 추가 -->
+                            <li><a th:href="@{/mypage/transactions}">거래 현황</a></li>
+                            <li><a th:href="@{/mypage/my-winning}">낙찰 내역</a></li>
+                            <li><a th:href="@{/mypage/my-selling}">판매 내역</a></li>
+                            <li><a th:href="@{/auction}">상품 등록</a></li>
+                            <li><a th:href="@{/live_auction}">실시간 경매</a></li>
+                            <!-- 회원정보수정 -->
+                            <li><a th:href="@{/mypage/edit-info}"><strong>회원정보 수정</strong></a></li>
+                        </ul>
+                    </aside>
+                    <form th:action="@{/mypage/update-info}" method="post">
+
+                        <div class="form-group">
+                            <label for="email">이메일</label>
+                            <input type="email" name="email" th:value="${memberEditDTO.email}" readonly class="bg-gray-100 cursor-not-allowed"/>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="username">닉네임</label>
+                            <input type="text" name="username" th:value="${member.username}" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">주소</label>
+                            <input type="text" name="address" th:value="${memberEditDTO.address}" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">전화번호</label>
+                            <input type="text" name="phone" th:value="${memberEditDTO.phone}" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="currentPassword">현재 비밀번호</label>
+                            <input type="password" name="currentPassword" required />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPassword">새 비밀번호</label>
+                            <input type="password" name="newPassword" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">새 비밀번호 확인</label>
+                            <input type="password" name="confirmPassword" />
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn">저장</button>
+                            <a th:href="@{/mypage}" class="btn btn-secondary">취소</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+      
+
+
+</body>
+</html>
