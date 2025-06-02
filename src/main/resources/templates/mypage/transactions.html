@@ -383,9 +383,9 @@
             <div th:if="${transaction.rating != null}" class="flex justify-between">
               <span>평점:</span>
               <div class="flex items-center">
-                <span th:each="star : ${#numbers.sequence(1, 5)}"
-                      th:class="${star <= transaction.rating ? 'text-yellow-400' : 'text-gray-300'}"
-                      class="text-sm">⭐</span>
+                <span th:each="i : ${#numbers.sequence(1,5)}" th:text="${i <= transaction.rating ? '⭐' : '☆'}" 
+                  th:class="${i <= transaction.rating ? 'text-yellow-400' : 'text-gray-300'}" class="text-sm">
+                </span>
                 <span class="ml-1" th:text="${transaction.rating} + '.0'">5.0</span>
               </div>
             </div>

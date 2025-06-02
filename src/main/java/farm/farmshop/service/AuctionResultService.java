@@ -56,6 +56,9 @@ public class AuctionResultService {
     public List<AuctionResult> findCompletedByMemberId(Long memberId) {
         return auctionResultRepository.findCompletedByMemberId(memberId);
     }
+    public List<AuctionResult> findRatingsBySeller(Long sellerId) {
+        return auctionResultRepository.findByProduct_Member_IdAndRatingIsNotNull(sellerId);
+    }
 
     @Transactional
     public void updateDeliveryStatus(Long auctionResultId, String status) {

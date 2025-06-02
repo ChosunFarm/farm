@@ -1,221 +1,256 @@
-// auction-websocket.js
 class AuctionWebSocket {
     constructor(productId) {
-        this.productId = productId;
-        this.stompClient = null;
-        this.connected = false;
-        this.init();
+      this.productId = productId;
+      this.stompClient = null;
+      this.connected = false;
+      this.init();
     }
-
+  
     init() {
-        // SockJS와 STOMP 연결 설정
-        const socket = new SockJS('/ws');
-        this.stompClient = Stomp.over(socket);
-
-        // 연결 시도
-        this.connect();
+      const socket = new SockJS('/ws');
+      this.stompClient = Stomp.over(socket);
+      this.connect();
     }
-
+  
     connect() {
-        const self = this;
-
-        this.stompClient.connect({}, function(frame) {
-            console.log('Connected: ' + frame);
-            self.connected = true;
-
-            // 특정 상품의 입찰 정보 구독
-            self.stompClient.subscribe('/topic/auction/' + self.productId, function(message) {
-                const bidUpdate = JSON.parse(message.body);
-                self.handleBidUpdate(bidUpdate);
-            });
-
-            // 개인 메시지 구독
-            self.stompClient.subscribe('/user/queue/auction/' + self.productId, function(message) {
-                const update = JSON.parse(message.body);
-                self.handlePersonalUpdate(update);
-            });
-
-            // 경매 참여 신호 전송
-            self.joinAuction();
-
-        }, function(error) {
-            console.log('Connection error: ' + error);
-            self.connected = false;
-            // 5초 후 재연결 시도
-            setTimeout(() => {
-                self.connect();
-            }, 5000);
-        });
+      this.stompClient.connect({}, frame => {
+        this.connected = true;
+        console.log('Connected:', frame);
+  
+        // 1) 전체 입찰 토픽 구독
+        this.stompClient.subscribe(
+          '/topic/auction/' + this.productId,
+          msg => this.handleBidUpdate(JSON.parse(msg.body))
+        );
+  
+        // 2) 개인(joined) 큐 구독
+        this.stompClient.subscribe(
+          '/user/queue/auction/' + this.productId,
+          msg => this.handlePersonalUpdate(JSON.parse(msg.body))
+        );
+  
+        // 3) 경매 참여 알림
+        this.joinAuction();
+      }, err => {
+        console.warn('Connection error:', err);
+        this.connected = false;
+        setTimeout(() => this.connect(), 5000);
+      });
     }
-
-    // 경매 참여
+  
     joinAuction() {
-        if (this.connected && this.stompClient) {
-            this.stompClient.send('/app/auction/join', {}, JSON.stringify({
-                productId: this.productId
-            }));
-        }
+      if (this.connected) {
+        this.stompClient.send(
+          '/app/auction/join', {}, 
+          JSON.stringify({ productId: this.productId })
+        );
+      }
     }
-
-    // 입찰하기
+  
     placeBid(bidAmount) {
-        if (this.connected && this.stompClient) {
-            this.stompClient.send('/app/bid', {}, JSON.stringify({
-                productId: this.productId,
-                bidAmount: bidAmount
-            }));
-        } else {
-            alert('연결이 끊어졌습니다. 페이지를 새로고침해주세요.');
-        }
+      if (this.connected) {
+        this.stompClient.send(
+          '/app/bid', {}, 
+          JSON.stringify({ productId: this.productId, bidAmount })
+        );
+      } else {
+        alert('연결이 끊어졌습니다. 새로고침해주세요.');
+      }
     }
-
-    // 입찰 업데이트 처리
+  
     handleBidUpdate(bidUpdate) {
-        if (bidUpdate.status === 'success') {
-            // 현재 입찰가 업데이트
-            const currentPriceElement = document.getElementById('current-price');
-            if (currentPriceElement) {
-                currentPriceElement.textContent = this.formatPrice(bidUpdate.bidAmount);
-            }
-
-            // 입찰 횟수 업데이트
-            const bidCountElement = document.getElementById('bid-count');
-            if (bidCountElement) {
-                bidCountElement.textContent = bidUpdate.bidCount;
-            }
-
-            // 입찰 히스토리 추가
-            this.addBidToHistory(bidUpdate);
-
-            // 성공 메시지 표시
-            this.showMessage(bidUpdate.message, 'success');
-
-        } else if (bidUpdate.status === 'error') {
-            // 에러 메시지 표시
-            this.showMessage(bidUpdate.message, 'error');
+      if (bidUpdate.status === 'success') {
+        // 최고가 갱신
+        const priceEl = document.getElementById('current-price-value');
+        if (priceEl) {
+          priceEl.textContent = this.formatPrice(bidUpdate.bidAmount) + '원';
         }
-    }
+        // **입찰자 수가 넘어왔을 때만** 갱신
+        if (bidUpdate.bidCount != null) {
+          const cntEl = document.getElementById('bid-count');
+          if (cntEl) {
+            cntEl.textContent = bidUpdate.bidCount;
+          }
+        }
 
-    // 개인 업데이트 처리
+        if (bidUpdate.uniqueBidderCount != null) {
+          const uniqueEl = document.getElementById('unique-bidder-count');
+          if (uniqueEl) {
+            uniqueEl.textContent = bidUpdate.uniqueBidderCount;
+          }
+        }
+    
+        const inputEl = document.getElementById('bid-amount');
+        if (inputEl) {
+          inputEl.value = '';          
+        }
+  
+        // 내역, 메시지, 최소입찰가
+        this.addBidToHistory(bidUpdate);
+        this.showMessage(bidUpdate.message, 'success');
+        this.updateMinHint(bidUpdate.bidAmount + 1000);
+  
+      } else {
+        this.showMessage(bidUpdate.message, 'error');
+      }
+    }
+  
     handlePersonalUpdate(update) {
-        if (update.status === 'joined') {
-            console.log('경매 참여 완료');
-            // 현재 상태로 UI 업데이트
-            if (update.bidAmount) {
-                const currentPriceElement = document.getElementById('current-price');
-                if (currentPriceElement) {
-                    currentPriceElement.textContent = this.formatPrice(update.bidAmount);
-                }
-            }
-            if (update.bidCount) {
-                const bidCountElement = document.getElementById('bid-count');
-                if (bidCountElement) {
-                    bidCountElement.textContent = update.bidCount;
-                }
-            }
+      if (update.status === 'joined') {
+        // 초기 최고가
+        if (update.bidAmount != null) {
+          const priceEl = document.getElementById('current-price-value');
+          if (priceEl) {
+            priceEl.textContent = this.formatPrice(update.bidAmount) + '원';
+          }
+    
         }
+        // 초기 입찰자 수
+        if (update.bidCount != null) {
+          const cntEl = document.getElementById('bid-count');
+          if (cntEl) {
+            cntEl.textContent = update.bidCount;
+          }
+        }
+        if (update.uniqueBidderCount != null) {
+          const uniqueEl = document.getElementById('unique-bidder-count');
+          if (uniqueEl) {
+            uniqueEl.textContent = update.uniqueBidderCount;
+          }
+        }
+        // 최소입찰가 힌트
+        const base = update.bidAmount ??
+          Number(document.getElementById('bid-amount').min);
+        this.updateMinHint(base + 1000);
+      }
     }
-
-    // 입찰 히스토리에 추가
+  
+    updateMinHint(nextMin) {
+      const input = document.getElementById('bid-amount');
+      if (!input) return;
+      input.min = nextMin;
+      const hint = input.closest('.bid-form')
+                        .querySelector('.form-text span');
+      if (hint) hint.textContent =
+        new Intl.NumberFormat('ko-KR').format(nextMin) + '원';
+    }
+  
     addBidToHistory(bidUpdate) {
-        const historyContainer = document.getElementById('bid-history');
-        if (historyContainer) {
-            const bidItem = document.createElement('div');
-            bidItem.className = 'bid-item';
-            bidItem.innerHTML = `
-                <div class="bid-info">
-                    <span class="bidder-name">${bidUpdate.bidderName}</span>
-                    <span class="bid-amount">${this.formatPrice(bidUpdate.bidAmount)}원</span>
-                    <span class="bid-time">${this.formatTime(bidUpdate.bidTime)}</span>
-                </div>
-            `;
-
-            // 최신 입찰을 맨 위에 추가
-            historyContainer.insertBefore(bidItem, historyContainer.firstChild);
-
-            // 최대 10개까지만 표시
-            while (historyContainer.children.length > 10) {
-                historyContainer.removeChild(historyContainer.lastChild);
-            }
-        }
+      const hist = document.getElementById('bid-history');
+      if (!hist) return;
+      const item = document.createElement('div');
+      item.className = 'bid-item';
+      item.innerHTML = `
+        <div class="bid-info">
+          <span class="bidder-name">${bidUpdate.bidderName}</span>
+          <span class="bid-amount">${this.formatPrice(bidUpdate.bidAmount)}원</span>
+          <span class="bid-time">${this.formatTime(bidUpdate.bidTime)}</span>
+        </div>
+      `;
+      hist.insertBefore(item, hist.firstChild);
+      while (hist.children.length > 10) hist.removeChild(hist.lastChild);
     }
-
-    // 메시지 표시
+  
     showMessage(message, type) {
-        const messageContainer = document.getElementById('message-container');
-        if (messageContainer) {
-            const messageElement = document.createElement('div');
-            messageElement.className = `alert alert-${type === 'success' ? 'success' : 'danger'}`;
-            messageElement.textContent = message;
-
-            messageContainer.appendChild(messageElement);
-
-            // 3초 후 메시지 제거
-            setTimeout(() => {
-                messageContainer.removeChild(messageElement);
-            }, 3000);
+      const c = document.getElementById('message-container');
+      if (!c) return;
+    
+      const el = document.createElement('div');
+    
+      // Tailwind용 기본 스타일 (위치, 패딩, 그림자, rounded 등)
+      const baseClasses =
+        'fixed top-4 right-4 max-w-md px-4 py-2 rounded-lg shadow-md mb-2 text-sm flex items-center';
+    
+      // type에 따라 색상만 분기
+      const colorClasses =
+        type === 'success'
+          ? 'bg-green-100 text-green-800'
+          : 'bg-red-100 text-red-800';
+    
+      // 최종 클래스 합치기
+      el.className = `${baseClasses} ${colorClasses}`;
+    
+      // 메시지 텍스트 삽입
+      el.textContent = message;
+    
+      c.appendChild(el);
+    
+      // 3초 뒤 제거
+      setTimeout(() => {
+        if (c.contains(el)) {
+          c.removeChild(el);
         }
+      }, 3000);
     }
-
-    // 가격 포맷팅
-    formatPrice(price) {
-        return new Intl.NumberFormat('ko-KR').format(price);
+    
+  
+    formatPrice(p) {
+      return new Intl.NumberFormat('ko-KR').format(p);
     }
+    formatTime(ts) {
+      const date = new Date(ts);
 
-    // 시간 포맷팅
-    formatTime(timeString) {
-        const date = new Date(timeString);
-        return date.toLocaleTimeString('ko-KR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        });
+      const datePart = date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+  
+      const timePart = date.toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      return `${datePart} ${timePart}`;
+      // return new Date(ts).toLocaleTimeString('ko-KR', {
+      //   hour: '2-digit', minute: '2-digit', second: '2-digit'
+      // });
     }
-
-    // 연결 해제
+  
     disconnect() {
-        if (this.stompClient && this.connected) {
-            this.stompClient.disconnect();
-            this.connected = false;
-            console.log('Disconnected');
-        }
+      if (this.stompClient && this.connected) {
+        this.stompClient.disconnect();
+        this.connected = false;
+      }
     }
-}
-
-// 전역 변수로 웹소켓 인스턴스 관리
-let auctionWebSocket = null;
-
-// 페이지 로드 시 웹소켓 연결
-function initializeAuctionWebSocket(productId) {
+  }
+  
+  // 전역 노출
+  let auctionWebSocket = null;
+  function initializeAuctionWebSocket(productId) {
     auctionWebSocket = new AuctionWebSocket(productId);
-}
-
-// 입찰 버튼 클릭 시 호출
-function placeBid() {
-    const bidAmountInput = document.getElementById('bid-amount');
-    const bidAmount = parseInt(bidAmountInput.value);
-
-    if (!bidAmount || bidAmount <= 0) {
-        alert('올바른 입찰가를 입력해주세요.');
-        return;
+  }
+  function placeBid() {
+    const inputEl = document.getElementById('bid-amount');
+    const v = parseInt(document.getElementById('bid-amount').value, 10);
+    if (!v || v <= 0) {
+      alert('올바른 입찰가를 입력해주세요.');
+      return;
+    }
+    if (v % 1000 !== 0) {
+      alert('1,000원 단위로 입찰해주세요.');
+      return;
     }
 
-    if (bidAmount % 1000 !== 0) {
-        alert('1,000원 단위로 입찰해주세요.');
-        return;
+    const minAllowed = Number(inputEl.min); // inputEl.min은 문자열이므로 숫자로 변환
+    if (v < minAllowed) {
+      // auctionWebSocket이 생성된 상태라고 가정
+      auctionWebSocket.showMessage(
+        '최소 입찰금액보다 낮습니다. 다시 시도해주세요',
+        'error'
+      );
+      return;
     }
+    if (auctionWebSocket?.connected) {
+      auctionWebSocket.placeBid(v);
 
-    if (auctionWebSocket && auctionWebSocket.connected) {
-        auctionWebSocket.placeBid(bidAmount);
-        bidAmountInput.value = '';
     } else {
-        alert('연결이 끊어졌습니다. 페이지를 새로고침해주세요.');
+      alert('연결이 끊어졌습니다. 새로고침해주세요.');
     }
-}
-
-// 페이지 언로드 시 연결 해제
-window.addEventListener('beforeunload', function() {
-    if (auctionWebSocket) {
-        auctionWebSocket.disconnect();
-    }
-});
+  }
+  window.addEventListener('beforeunload', () => {
+    auctionWebSocket?.disconnect();
+  });
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('bid-button')?.addEventListener('click', placeBid);
+  });

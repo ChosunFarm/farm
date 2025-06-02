@@ -8,6 +8,7 @@ import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.BidRepository;
 import farm.farmshop.service.ProductService;
 import farm.farmshop.service.BidService;
+import farm.farmshop.service.RatingService;
 import farm.farmshop.service.AuctionResultService;
 import farm.farmshop.service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class BidController {
     private final MemberRepository memberRepository;
     private final AuctionResultService auctionResultService;
     private final NotificationService notificationService;
+    private final RatingService ratingService;
 
     // 상품 상세 페이지 및 입찰 페이지
     @GetMapping("/auction/detail/{productId}")
@@ -60,7 +62,24 @@ public class BidController {
 
         model.addAttribute("product", product);
         model.addAttribute("bids", bids);
+        long uniqueBidderCount = bids.stream()
+            .map(b -> b.getMember().getId())
+            .distinct()
+            .count();
+        model.addAttribute("uniqueBidderCount", uniqueBidderCount);
 
+        // 판매자 평점
+        Member seller = product.getMember();
+        List<AuctionResult> ratingsList = auctionResultService.findRatingsBySeller(seller.getId());
+        if (ratingsList.isEmpty()) {
+            // 리뷰가 하나도 없으면 avgRating을 null로
+            model.addAttribute("avgRating", null);
+        } else {
+            // 리뷰가 있으면 평균을 계산
+            double rawAvg = ratingService.getAvgRating(seller.getId());
+            double avgRating = Math.round(rawAvg * 2) / 2.0;
+            model.addAttribute("avgRating", avgRating);
+        }
         return "auction/detail";
     }
 

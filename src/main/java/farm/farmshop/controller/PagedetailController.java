@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -47,6 +48,10 @@ public class PagedetailController {
             return "redirect:/";
         }
         model.addAttribute("seller", seller);
+
+        String fullAddress = seller.getAddress();        // Member 엔티티에 주소 필드가 있다고 가정
+        String shortAddress = trimAddress(fullAddress);   // 앞 세 단어까지만 잘라 주는 메소드
+        model.addAttribute("address", shortAddress);
 
         // 판매 상품 목록
         List<Product> sellerProducts = productRepository.findByMember(seller);
@@ -89,11 +94,27 @@ public class PagedetailController {
             auctionResultRepository.findCompletedByMemberId(seller.getId());
         model.addAttribute("completedTransactions", completedTransactions);
 
-        // 거래 후기(리뷰가 있는 완료된 거래)만
+        // 5) 거래 후기(리뷰가 있는 AuctionResult) 목록 → 뷰에서 `${reviewedResults}` 사용
         List<AuctionResult> reviewedResults =
             auctionResultRepository.findBySellerIdAndReviewIsNotNull(seller.getId());
         model.addAttribute("reviewedResults", reviewedResults);
+        
+        List<AuctionResult> ratingsList =
+            auctionResultRepository.findByProduct_Member_IdAndRatingIsNotNull(seller.getId());
+        model.addAttribute("ratingsList", ratingsList);
 
+        // 평균 평점 (AVG(rating))
+        Double avg = auctionResultRepository.findAvgRatingBySellerId(seller.getId());
+        double avgRating = (avg != null) ? avg : 0.0;
+        model.addAttribute("avgRating", avgRating);
+        
         return "mypage/pagedetail";
+    }
+        private String trimAddress(String fullAddress) {
+        if (fullAddress == null || fullAddress.isBlank()) return "";
+
+        String[] parts = fullAddress.trim().split("\\s+");
+        int end = Math.min(parts.length, 3); // 앞 세 단어까지만
+        return String.join(" ", Arrays.copyOfRange(parts, 0, end));
     }
 }
