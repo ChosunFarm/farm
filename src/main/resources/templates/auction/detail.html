@@ -358,7 +358,7 @@
                 <!-- ① 현재 최고가 / 통계 -->
                 <div class="p-4 border-b border-gray-200">
                   <h3 class="text-lg font-medium text-gray-900 mb-2">현재 최고가</h3>
-                  <span
+                  <span id = "current-price-value"
                     class="text-2xl font-semibold text-red-500"
                     th:text="${product.currentBidPrice != null 
                                ? #numbers.formatInteger(product.currentBidPrice, 0, 'COMMA') + '원' 

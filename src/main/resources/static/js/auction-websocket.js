@@ -61,7 +61,7 @@ class AuctionWebSocket {
     handleBidUpdate(bidUpdate) {
       if (bidUpdate.status === 'success') {
         // 최고가 갱신
-        const priceEl = document.getElementById('price-value');
+        const priceEl = document.getElementById('current-price-value');
         if (priceEl) {
           priceEl.textContent = this.formatPrice(bidUpdate.bidAmount) + '원';
         }
@@ -73,6 +73,13 @@ class AuctionWebSocket {
           }
         }
 
+        if (bidUpdate.uniqueBidderCount != null) {
+          const uniqueEl = document.getElementById('unique-bidder-count');
+          if (uniqueEl) {
+            uniqueEl.textContent = bidUpdate.uniqueBidderCount;
+          }
+        }
+    
         const inputEl = document.getElementById('bid-amount');
         if (inputEl) {
           inputEl.value = '';          
@@ -92,7 +99,7 @@ class AuctionWebSocket {
       if (update.status === 'joined') {
         // 초기 최고가
         if (update.bidAmount != null) {
-          const priceEl = document.getElementById('price-value');
+          const priceEl = document.getElementById('current-price-value');
           if (priceEl) {
             priceEl.textContent = this.formatPrice(update.bidAmount) + '원';
           }
@@ -103,6 +110,12 @@ class AuctionWebSocket {
           const cntEl = document.getElementById('bid-count');
           if (cntEl) {
             cntEl.textContent = update.bidCount;
+          }
+        }
+        if (update.uniqueBidderCount != null) {
+          const uniqueEl = document.getElementById('unique-bidder-count');
+          if (uniqueEl) {
+            uniqueEl.textContent = update.uniqueBidderCount;
           }
         }
         // 최소입찰가 힌트
