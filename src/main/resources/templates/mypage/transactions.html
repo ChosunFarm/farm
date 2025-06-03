@@ -51,8 +51,7 @@
       <!-- 로고 + 메뉴 -->
       <div class="nav-left">
         <a th:href="@{/}" class="nav-logo-link">
-          <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
-          <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+          <img class="nav-logo-img" th:src="@{/images/logo2.png}" alt="농산물 경매 마켓">
         </a>
         <div class="nav-menu">
           <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
@@ -64,12 +63,12 @@
         </div>
       </div>
 
-      <!-- 검색 + 프로필/로그인 -->
       <div class="nav-right">
         <!-- 로그인한 경우 -->
         <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
           <button id="profileBtn-full" class="nav-profile-btn">
-            <img class="nav-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+            <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+            <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
             <span class="nav-profile-name" th:text="${username} + '님'"></span>
           </button>
           <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
@@ -116,9 +115,10 @@
 
       <div class="mobile-search-auth">
         <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
-          <button id="profileBtn-half" class="mobile-profile-btn">
-            <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
-            <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+          <button id="profileBtn-full" class="nav-profile-btn">
+            <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+            <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+            <span class="nav-profile-name" th:text="${username} + '님'"></span>
           </button>
           <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
             <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
@@ -137,8 +137,9 @@
         </div>
 
       </div>
+
     </div>
-  </div>
+  </nav>
 </header>
  
 
