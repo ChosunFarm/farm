@@ -182,14 +182,15 @@
 
           <div class="mobile-search-auth">
               <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
-                  <button id="profileBtn-half" class="mobile-profile-btn">
-                      <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
-                      <span class="mobile-profile-name" th:text="${username} + '님'"></span>
-                  </button>
-                  <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
-                      <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
-                      <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
-                  </div>
+                <button id="profileBtn-full" class="nav-profile-btn">
+                  <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                  <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                  <span class="nav-profile-name" th:text="${username} + '님'"></span>
+                </button>
+                <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+                    <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+                    <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+                </div>
               </div>
 
               <div th:if="${!isLogin}" class="mobile-auth">
@@ -358,7 +359,7 @@
                 <!-- ① 현재 최고가 / 통계 -->
                 <div class="p-4 border-b border-gray-200">
                   <h3 class="text-lg font-medium text-gray-900 mb-2">현재 최고가</h3>
-                  <span
+                  <span id = "current-price-value"
                     class="text-2xl font-semibold text-red-500"
                     th:text="${product.currentBidPrice != null 
                                ? #numbers.formatInteger(product.currentBidPrice, 0, 'COMMA') + '원' 

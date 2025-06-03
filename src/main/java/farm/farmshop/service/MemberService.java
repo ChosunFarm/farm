@@ -2,6 +2,7 @@ package farm.farmshop.service;
 
 import farm.farmshop.entity.Member;
 import farm.farmshop.repository.MemberRepository;
+import farm.farmshop.dto.MemberEditDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -17,7 +18,7 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService implements UserDetailsService {
+public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -47,22 +48,39 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(admin);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String processedEmail = username.trim().toLowerCase();
+    // @Override
+    // public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    //     String processedEmail = username.trim().toLowerCase();
 
-        Member member = memberRepository.findByEmail(processedEmail);
+    //     Member member = memberRepository.findByEmail(processedEmail);
 
-        if (member == null) {
-            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + processedEmail);
+    //     if (member == null) {
+    //         throw new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + processedEmail);
+    //     }
+
+    //     String role = "ROLE_" + member.getUser_type();
+
+    //     return new User(
+    //             member.getEmail(),
+    //             member.getPassword(),
+    //             Collections.singletonList(new SimpleGrantedAuthority(role))
+    //     );
+    // }
+
+    @Transactional
+    public Member findByEmail(String email) {
+        return memberRepository.findByEmail(email);
+    }
+
+    @Transactional
+    public boolean updateMemberInfo(String email, MemberEditDTO dto) {
+        Member member = memberRepository.findByEmail(email);
+        if (member != null) {
+            member.setUsername(dto.getUsername());
+            member.setPhone(dto.getPhone());
+            member.setAddress(dto.getAddress());
+            return true;
         }
-
-        String role = "ROLE_" + member.getUser_type();
-
-        return new User(
-                member.getEmail(),
-                member.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority(role))
-        );
+        return false;
     }
 }
