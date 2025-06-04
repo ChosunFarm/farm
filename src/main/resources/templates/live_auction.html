@@ -206,12 +206,12 @@
                             </div>
                             <div class="price-box">
                                 <div class="price-name">입찰수</div>
-                                <div class="price-value" th:text="${product.bidCount != null ? product.bidCount : 0}">입찰수</div>
+                                <div class="price-value" th:text="${product.bidCount != null ? product.bidCount : 0} + '회'">입찰수</div>
                             </div>
                         </div>
                         <!-- 경매 일자 표시 예시 -->
                         <div class="flex justify-between items-center text-sm text-gray-500">
-                            <span>입찰 <span th:text="${product.bidCount != null ? product.bidCount : 0}"></span>회</span>
+                            <!-- <span>입찰 <span th:text="${product.bidCount != null ? product.bidCount : 0}"></span>회</span> -->
                             <span th:if="${product.auctionDate != null}">
                                 경매일: <span th:text="${#temporals.format(product.auctionDate, 'yyyy-MM-dd HH:mm')}"></span>
                             </span>
