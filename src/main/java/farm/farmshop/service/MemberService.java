@@ -67,20 +67,44 @@ public class MemberService {
     //     );
     // }
 
-    @Transactional
+        @Transactional
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email);
     }
 
     @Transactional
-    public boolean updateMemberInfo(String email, MemberEditDTO dto) {
-        Member member = memberRepository.findByEmail(email);
-        if (member != null) {
-            member.setUsername(dto.getUsername());
-            member.setPhone(dto.getPhone());
-            member.setAddress(dto.getAddress());
-            return true;
-        }
+public boolean updateMemberInfo(String email, MemberEditDTO dto) {
+    Member member = memberRepository.findByEmail(email);
+    if (member == null) {
         return false;
     }
+
+    // 비밀번호 미입력 방어 코드
+    if (dto.getCurrentPassword() == null || dto.getCurrentPassword().isBlank()) {
+        return false;
+    }
+
+    // 현재 비밀번호 검증
+    if (!passwordEncoder.matches(dto.getCurrentPassword(), member.getPassword())) {
+        return false; // 비밀번호가 일치하지 않으면 수정 거부
+    }
+
+    // 기본 정보 수정
+    member.setUsername(dto.getUsername());
+    member.setPhone(dto.getPhone());
+    member.setAddress(dto.getAddress());
+
+    // 새 비밀번호가 입력되었을 경우
+    if (dto.getNewPassword() != null && !dto.getNewPassword().isBlank()) {
+        // 새 비밀번호 확인값과 일치하는지 확인
+        if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+            throw new IllegalArgumentException("새 비밀번호와 확인이 일치하지 않습니다.");
+        }
+
+        // 비밀번호 변경
+        member.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+    }
+
+    return true;
+}
 }
