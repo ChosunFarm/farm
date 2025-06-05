@@ -3,7 +3,6 @@ package farm.farmshop.controller;
 import farm.farmshop.entity.Member;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.ProductRepository;
-import farm.farmshop.repository.AuctionResultRepository;
 import farm.farmshop.service.BidService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -30,7 +29,6 @@ public class MypageController {
 
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
-    private final AuctionResultRepository auctionResultRepository;
     private final BidService bidService;
 
     @PostMapping("/mypage/update")
@@ -114,14 +112,6 @@ public class MypageController {
                 }
 
                 model.addAttribute("intro", member.getIntro());
-
-                // ── 4) 평균 평점 계산 ──
-                Long sellerId = member.getId();
-                // (1) 해당 sellerId가 받은 평점(rating) 중 NULL이 아닌 것들의 AVG
-                Double rawAvg = auctionResultRepository.findAvgRatingBySellerId(sellerId);
-                // (2) 만약 평점이 하나도 없었다면 rawAvg == null → avgRating = 0.0
-                double avgRating = (rawAvg != null) ? rawAvg : 0.0;
-                model.addAttribute("avgRating", avgRating);
 
             }
         } else {

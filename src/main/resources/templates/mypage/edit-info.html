@@ -14,16 +14,16 @@
     <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
     <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
 
-      <!-- Custom JS -->
+    <!-- Custom JS -->
     <script src="/js/profileToggle.js"></script>
 </head>
 
 <body class="bg-gray-50 min-h-screen">
-    <!-- 헤더 영역 -->
-    <header class="header-wrapper">
-        <nav class="nav-container">
-          <div class="nav-inner">
-            
+<!-- 헤더 영역 -->
+<header class="header-wrapper">
+    <nav class="nav-container">
+        <div class="nav-inner">
+
             <!-- 로고 + 메뉴 -->
             <div class="nav-left">
                 <a th:href="@{/}" class="nav-logo-link">
@@ -40,7 +40,7 @@
                     <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
                 </div>
             </div>
-      
+
             <!-- 검색 + 프로필/로그인 -->
             <div class="nav-right">
                 <!-- 로그인한 경우 -->
@@ -55,7 +55,7 @@
                         <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
                     </div>
                 </div>
-      
+
                 <!-- 로그인 안한 경우 -->
                 <div th:if="${!isLogin}" class="nav-auth">
                     <i class="ri-user-line"></i>
@@ -67,7 +67,7 @@
                     </a>
                 </div>
             </div>
-      
+
             <!-- 모바일 햄버거 버튼 -->
             <div class="nav-mobile">
                 <button id="mobile-menu-button" class="nav-mobile-btn">
@@ -77,199 +77,127 @@
                     </svg>
                 </button>
             </div>
-        </nav>
-      
-        <!-- 모바일 메뉴 -->
-        <div id="mobile-menu" class="mobile-menu">
-            <div class="mobile-menu-inner">
-                <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
-                <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
-                <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
-                <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
-                <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
-                <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
-      
-                <div class="mobile-search-auth">
-                    <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
-                        <button id="profileBtn-full" class="nav-profile-btn">
-                            <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
-                            <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
-                            <span class="nav-profile-name" th:text="${username} + '님'"></span>
-                        </button>
-                        <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
-                            <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
-                            <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
-                        </div>
+    </nav>
+
+    <!-- 모바일 메뉴 -->
+    <div id="mobile-menu" class="mobile-menu">
+        <div class="mobile-menu-inner">
+            <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
+            <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
+            <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+            <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
+            <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
+
+            <div class="mobile-search-auth">
+                <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
+                    <button id="profileBtn-half" class="mobile-profile-btn">
+                        <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+                        <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+                    </button>
+                    <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+                        <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+                        <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
                     </div>
                 </div>
-      
-                <div th:if="${!isLogin}" class="mobile-auth">
-                    <i class="ri-user-line"></i>
-                    <a th:href="@{/login}">
-                        <button class="mobile-auth-btn black">로그인</button>
-                    </a>
-                    <a th:href="@{/login}">
-                        <button class="mobile-auth-btn white">회원가입</button>
-                    </a>
-                </div>
-      
             </div>
+
+            <div th:if="${!isLogin}" class="mobile-auth">
+                <i class="ri-user-line"></i>
+                <a th:href="@{/login}">
+                    <button class="mobile-auth-btn black">로그인</button>
+                </a>
+                <a th:href="@{/login}">
+                    <button class="mobile-auth-btn white">회원가입</button>
+                </a>
+            </div>
+
         </div>
-    </header>
-<main class="mt-0">
-    <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-<<<<<<< HEAD
+    </div>
+</header>
+
+<div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="mt-0">
         <div class="bg-white shadow rounded-lg px-6 py-4 border-b border-gray-200">
-            <div class="mypage-container grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+            <div class="mypage-container grid grid-cols-[260px_1fr] gap-6">
                 <aside class="sidebar">
                     <ul>
                         <li><a th:href="@{/mypage}">마이페이지</a></li>
                         <li><a th:href="@{/mypage/my-products}">나의 상품 등록 목록</a></li>
                         <li><a th:href="@{/mypage/mybids}">나의 입찰 내역</a></li>
                         <li><a th:href="@{/mypage/received-bids}">받은 입찰 내역</a></li>
-                        <!-- 새로 추가 -->
                         <li><a th:href="@{/mypage/transactions}">거래 현황</a></li>
                         <li><a th:href="@{/mypage/my-winning}">낙찰 내역</a></li>
                         <li><a th:href="@{/mypage/my-selling}">판매 내역</a></li>
                         <li><a th:href="@{/auction}">상품 등록</a></li>
                         <li><a th:href="@{/live_auction}">실시간 경매</a></li>
-                        <!-- 회원정보수정 -->
                         <li><a th:href="@{/mypage/edit-info}"><strong>회원정보 수정</strong></a></li>
                     </ul>
                 </aside>
-                <form th:action="@{/mypage/update-info}" method="post">
 
-                    <div class="form-group">
-                        <label for="email">이메일</label>
-                        <input type="email" name="email" th:value="${memberEditDTO.email}" readonly class="bg-gray-100 cursor-not-allowed"/>
-                    </div>
+                <!-- 회원정보 수정 폼 -->
+                <div class="bg-gray-50 p-8 rounded-lg shadow-inner">
+                    <h2 class="text-2xl font-bold mb-6 border-b pb-2">회원정보 수정</h2>
+                    <div class="w-full flex justify-center">
+                        <form th:action="@{/mypage/update-info}" method="post" class="space-y-5">
+                            <div th:if="${error}" class="text-red-600 text-sm">
+                                <p th:text="${error}"></p>
+                            </div>
 
-                    <div class="form-group">
-                        <label for="username">닉네임</label>
-                        <input type="text" name="username" th:value="${member.username}" required />
-                    </div>
+                            <div>
+                                <label class="block font-medium mb-1">이메일</label>
+                                <input type="email" name="email" th:value="${memberEditDTO.email}" readonly
+                                       class="w-96 px-4 py-2 border rounded bg-gray-100 text-gray-500" />
+                            </div>
 
-                    <div class="form-group">
-                        <label for="address">주소</label>
-                        <input type="text" name="address" th:value="${memberEditDTO.address}" />
-                    </div>
+                            <div>
+                                <label class="block font-medium mb-1">닉네임</label>
+                                <input type="text" name="username" th:value="${member.username}"
+                                       class="w-96 px-4 py-2 border rounded" />
+                            </div>
 
-                    <div class="form-group">
-                        <label for="phone">전화번호</label>
-                        <input type="text" name="phone" th:value="${memberEditDTO.phone}" />
-                    </div>
+                            <div>
+                                <label class="block font-medium mb-1">주소</label>
+                                <input type="text" name="address" th:value="${memberEditDTO.address}"
+                                       class="w-96 px-4 py-2 border rounded" />
+                            </div>
 
-                    <div class="form-group">
-                        <label for="currentPassword">현재 비밀번호</label>
-                        <input type="password" name="currentPassword" required />
-                    </div>
+                            <div>
+                                <label class="block font-medium mb-1">전화번호</label>
+                                <input type="text" name="phone" th:value="${memberEditDTO.phone}"
+                                       class="w-96 px-4 py-2 border rounded" />
+                            </div>
 
-                    <div class="form-group">
-                        <label for="newPassword">새 비밀번호</label>
-                        <input type="password" name="newPassword" />
-                    </div>
+                            <div>
+                                <label class="block font-medium mb-1">현재 비밀번호</label>
+                                <input type="password" name="currentPassword"
+                                       class="w-96 px-4 py-2 border rounded" />
+                            </div>
 
-                    <div class="form-group">
-                        <label for="confirmPassword">새 비밀번호 확인</label>
-                        <input type="password" name="confirmPassword" />
-                    </div>
+                            <div>
+                                <label class="block font-medium mb-1">새 비밀번호</label>
+                                <input type="password" name="newPassword"
+                                       class="w-96 px-4 py-2 border rounded" />
+                            </div>
 
-                    <div class="btn-group">
-                        <button type="submit" class="btn">저장</button>
-                        <a th:href="@{/mypage}" class="btn btn-secondary">취소</a>
+                            <div>
+                                <label class="block font-medium mb-1">새 비밀번호 확인</label>
+                                <input type="password" name="confirmPassword"
+                                       class="w-96 px-4 py-2 border rounded" />
+                            </div>
+
+                            <div class="space-y-3 pt-6">
+                                <button type="submit" class="w-96 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">수정</button>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
+</div>
+</div>
 </main>
 <script th:src="@{/js/moblie.js}"></script>
-=======
-  <main class="mt-0">
-    <div class="bg-white shadow rounded-lg px-6 py-4 border-b border-gray-200">
-      <div class="mypage-container grid grid-cols-[260px_1fr] gap-6">
-        <aside class="sidebar">
-          <ul>
-            <li><a th:href="@{/mypage}">마이페이지</a></li>
-            <li><a th:href="@{/mypage/my-products}">나의 상품 등록 목록</a></li>
-            <li><a th:href="@{/mypage/mybids}">나의 입찰 내역</a></li>
-            <li><a th:href="@{/mypage/received-bids}">받은 입찰 내역</a></li>
-            <li><a th:href="@{/mypage/transactions}">거래 현황</a></li>
-            <li><a th:href="@{/mypage/my-winning}">낙찰 내역</a></li>
-            <li><a th:href="@{/mypage/my-selling}">판매 내역</a></li>
-            <li><a th:href="@{/auction}">상품 등록</a></li>
-            <li><a th:href="@{/live_auction}">실시간 경매</a></li>
-            <li><a th:href="@{/mypage/edit-info}"><strong>회원정보 수정</strong></a></li>
-          </ul>
-        </aside>
-
-        <!-- 회원정보 수정 폼 -->
-<div class="bg-gray-50 p-8 rounded-lg shadow-inner">
-  <h2 class="text-2xl font-bold mb-6 border-b pb-2">회원정보 수정</h2>
-  <div class="w-full flex justify-center">
-  <form th:action="@{/mypage/update-info}" method="post" class="space-y-5">
-    <div th:if="${error}" class="text-red-600 text-sm">
-  <p th:text="${error}"></p>
-</div>
-
-    <div>
-      <label class="block font-medium mb-1">이메일</label>
-      <input type="email" name="email" th:value="${memberEditDTO.email}" readonly
-             class="w-96 px-4 py-2 border rounded bg-gray-100 text-gray-500" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">닉네임</label>
-      <input type="text" name="username" th:value="${member.username}"
-            class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">주소</label>
-      <input type="text" name="address" th:value="${memberEditDTO.address}"
-             class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">전화번호</label>
-      <input type="text" name="phone" th:value="${memberEditDTO.phone}"
-             class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">현재 비밀번호</label>
-      <input type="password" name="currentPassword"
-             class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">새 비밀번호</label>
-      <input type="password" name="newPassword"
-             class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">새 비밀번호 확인</label>
-      <input type="password" name="confirmPassword"
-             class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div class="space-y-3 pt-6">
-      <button type="submit" class="w-96 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">수정</button>
-    </div>
-  </form>
-  </div>
-</div>
-      </div>
-    </div>
-  </main>
-</div>
-                </div>
-        </main>
-
-      
-
-
->>>>>>> ahyun
 </body>
 </html>
+

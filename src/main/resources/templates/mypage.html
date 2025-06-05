@@ -88,16 +88,15 @@
             <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
             <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
             <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
-            <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
             <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
             <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
 
             <div class="mobile-search-auth">
                 <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
-                    <button id="profileBtn-full" class="nav-profile-btn">
-                        <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
-                        <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
-                        <span class="nav-profile-name" th:text="${username} + '님'"></span>
+                    <button id="profileBtn-half" class="mobile-profile-btn">
+                        <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
+                        <img class="mobile-profile-img" th:if="${profileImage == null or profileImage == 'profile.png'}" th:src="@{/images/profile.png}" alt="기본 프로필" />
+                        <span class="mobile-profile-name" th:text="${username} + '님'"></span>
                     </button>
                     <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
                         <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
@@ -180,31 +179,7 @@
                                     <div class="stat-item">거래 건수<span th:text="${tradeCount}"></span></div>
                                 </div>
                                 <div class="stat-box">
-                                    <div class="stat-item">평점
-                                        <div class="flex items-center space-x-2">
-                                            <span th:if="${avgRating == null}" class="text-xl font-bold text-gray-800">
-                                            평점 없음
-                                            </span>
-                                            <!-- ⭐ 아이콘으로 시각화 -->
-                                            <div class="flex">
-                                              <div class="flex space-x-1">
-                                                <span th:each="i : ${#numbers.sequence(1, 5)}">
-                                                    <!-- 꽉 찬 별 -->
-                                                    <i th:if="${avgRating != null and avgRating >= i}"class="fas fa-star text-yellow-400"></i>
-                                                    <!-- 반만 찬 별 -->
-                                                    <i th:if="${avgRating != null and avgRating < i and avgRating >= i - 0.5}" class="fas fa-star-half-alt text-yellow-400"></i>
-                                                    <!-- 빈 별 (avgRating이 null이거나 i-0.5보다 작으면 빈 별) -->
-                                                    <i th:if="${avgRating == null or avgRating < i - 0.5}" class="far fa-star text-gray-300"></i>
-                                                </span>
-                                              </div>
-                                            </div>
-                                            <!-- 평균 평점 숫자 -->
-                                            <span th:if="${avgRating != null}" class="text-xl font-bold text-gray-800" 
-                                            th:text="${#numbers.formatDecimal(avgRating, 1, 1)}">
-                                            0.0
-                                            </span>
-                                        </div>
-                                    </div>
+                                    <div class="stat-item">평점<span th:text="${rating}">4.5</span></div>
                                 </div>
                             </div>
                         </div>
