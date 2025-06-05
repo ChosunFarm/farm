@@ -116,87 +116,59 @@
     </header>
 
     <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <main class="mt-0">
-    <div class="bg-white shadow rounded-lg px-6 py-4 border-b border-gray-200">
-      <div class="mypage-container grid grid-cols-[260px_1fr] gap-6">
-        <aside class="sidebar">
-          <ul>
-            <li><a th:href="@{/mypage}">마이페이지</a></li>
-            <li><a th:href="@{/mypage/my-products}">나의 상품 등록 목록</a></li>
-            <li><a th:href="@{/mypage/mybids}">나의 입찰 내역</a></li>
-            <li><a th:href="@{/mypage/received-bids}">받은 입찰 내역</a></li>
-            <li><a th:href="@{/mypage/transactions}">거래 현황</a></li>
-            <li><a th:href="@{/mypage/my-winning}">낙찰 내역</a></li>
-            <li><a th:href="@{/mypage/my-selling}">판매 내역</a></li>
-            <li><a th:href="@{/auction}">상품 등록</a></li>
-            <li><a th:href="@{/live_auction}">실시간 경매</a></li>
-            <li><a th:href="@{/mypage/edit-info}"><strong>회원정보 수정</strong></a></li>
-          </ul>
-        </aside>
+        <main class="mt-0">
+            <div class="bg-white shadow rounded-lg px-6 py-4 border-b border-gray-200">
+                <div class="mypage-container grid grid-cols-[260px_1fr] gap-6">
+                    <aside class="sidebar">
+                        <ul>
+                            <li><a th:href="@{/mypage}">마이페이지</a></li>
+                            <li><a th:href="@{/mypage/my-products}">나의 상품 등록 목록</a></li>
+                            <li><a th:href="@{/mypage/mybids}">나의 입찰 내역</a></li>
+                            <li><a th:href="@{/mypage/received-bids}">받은 입찰 내역</a></li>
+                            <!-- 새로 추가 -->
+                            <li><a th:href="@{/mypage/transactions}">거래 현황</a></li>
+                            <li><a th:href="@{/mypage/my-winning}">낙찰 내역</a></li>
+                            <li><a th:href="@{/mypage/my-selling}">판매 내역</a></li>
+                            <li><a th:href="@{/auction}">상품 등록</a></li>
+                            <li><a th:href="@{/live_auction}">실시간 경매</a></li>
+                            <!-- 회원정보수정 -->
+                            <li><a th:href="@{/mypage/edit-info}"><strong>회원정보</strong></a></li>
+                        </ul>
+                    </aside>
+                    
+                    <div class="bg-gray-50 p-8 rounded-lg shadow-inner">
+                        <h2 class="text-2xl font-bold mb-6 border-b pb-2">회원정보 확인</h2>
 
-        <!-- 회원정보 수정 폼 -->
-<div class="bg-gray-50 p-8 rounded-lg shadow-inner">
-  <h2 class="text-2xl font-bold mb-6 border-b pb-2">회원정보 수정</h2>
-  <div class="w-full flex justify-center">
-  <form th:action="@{/mypage/update-info}" method="post" class="space-y-5">
-    <div th:if="${error}" class="text-red-600 text-sm">
-  <p th:text="${error}"></p>
-</div>
+                        <div class="space-y-4 text-gray-700">
+                            <div class="flex items-center">
+                                <span class="w-32 font-semibold">이름</span>
+                                <span th:text="${member.username}"></span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-32 font-semibold">이메일</span>
+                                <span th:text="${member.email}"></span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-32 font-semibold">전화번호</span>
+                                <span th:text="${member.phone}"></span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="w-32 font-semibold">주소</span>
+                                <span th:text="${member.address}"></span>
+                            </div>
+                        </div>
 
-    <div>
-      <label class="block font-medium mb-1">이메일</label>
-      <input type="email" name="email" th:value="${memberEditDTO.email}" readonly
-             class="w-96 px-4 py-2 border rounded bg-gray-100 text-gray-500" />
-    </div>
+                        <div class="mt-8 flex justify-end">
+                            <a th:href="@{/mypage/edit-info}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
+                                수정하기
+                            </a>
+                        </div>
+                    </div>
 
-    <div>
-      <label class="block font-medium mb-1">닉네임</label>
-      <input type="text" name="username" th:value="${member.username}"
-            class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">주소</label>
-      <input type="text" name="address" th:value="${memberEditDTO.address}"
-             class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">전화번호</label>
-      <input type="text" name="phone" th:value="${memberEditDTO.phone}"
-             class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">현재 비밀번호</label>
-      <input type="password" name="currentPassword"
-             class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">새 비밀번호</label>
-      <input type="password" name="newPassword"
-             class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div>
-      <label class="block font-medium mb-1">새 비밀번호 확인</label>
-      <input type="password" name="confirmPassword"
-             class="w-96 px-4 py-2 border rounded" />
-    </div>
-
-    <div class="space-y-3 pt-6">
-      <button type="submit" class="w-96 bg-blue-600 text-white py-2 rounded hover:bg-blue-700">수정</button>
-    </div>
-  </form>
-  </div>
-</div>
-      </div>
-    </div>
-  </main>
-</div>
                 </div>
+            </div>
         </main>
+    </div>
 
       
 

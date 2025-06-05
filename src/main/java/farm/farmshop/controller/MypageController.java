@@ -129,4 +129,12 @@ public class MypageController {
         int end = Math.min(parts.length, 3); // 앞 세 단어까지만
         return String.join(" ", Arrays.copyOfRange(parts, 0, end));
     }
+
+    @GetMapping("/mypage/view-info")
+    public String viewInfo(Model model, Principal principal) {
+        String email = principal.getName();
+        Member member = memberRepository.findByEmail(email);
+        model.addAttribute("member", member);
+        return "mypage/view-info";
+    }
 }
