@@ -85,14 +85,16 @@
                 <a th:href="@{/manual}" class="nav-menu-link">이용방법</a>
                 <a th:href="@{/auction}" class="nav-menu-link">상품등록</a>
                 <a th:href="@{/mypage}" class="nav-menu-link">마이페이지</a>
+                <a th:href="@{/mypage/transactions}" class="nav-menu-link">거래현황</a>
                 <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
                 <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
       
                 <div class="mobile-search-auth">
                     <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
-                        <button id="profileBtn-half" class="mobile-profile-btn">
-                            <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
-                            <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+                        <button id="profileBtn-full" class="nav-profile-btn">
+                            <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                            <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                            <span class="nav-profile-name" th:text="${username} + '님'"></span>
                         </button>
                         <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
                             <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
@@ -114,76 +116,72 @@
             </div>
         </div>
     </header>
-
+<main class="mt-0">
     <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <main class="mt-0">
-            <div class="bg-white shadow rounded-lg px-6 py-4 border-b border-gray-200">
-                <div class="mypage-container grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
-                    <aside class="sidebar">
-                        <ul>
-                            <li><a th:href="@{/mypage}">마이페이지</a></li>
-                            <li><a th:href="@{/mypage/my-products}">나의 상품 등록 목록</a></li>
-                            <li><a th:href="@{/mypage/mybids}">나의 입찰 내역</a></li>
-                            <li><a th:href="@{/mypage/received-bids}">받은 입찰 내역</a></li>
-                            <!-- 새로 추가 -->
-                            <li><a th:href="@{/mypage/transactions}">거래 현황</a></li>
-                            <li><a th:href="@{/mypage/my-winning}">낙찰 내역</a></li>
-                            <li><a th:href="@{/mypage/my-selling}">판매 내역</a></li>
-                            <li><a th:href="@{/auction}">상품 등록</a></li>
-                            <li><a th:href="@{/live_auction}">실시간 경매</a></li>
-                            <!-- 회원정보수정 -->
-                            <li><a th:href="@{/mypage/edit-info}"><strong>회원정보 수정</strong></a></li>
-                        </ul>
-                    </aside>
-                    <form th:action="@{/mypage/update-info}" method="post">
+        <div class="bg-white shadow rounded-lg px-6 py-4 border-b border-gray-200">
+            <div class="mypage-container grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-3">
+                <aside class="sidebar">
+                    <ul>
+                        <li><a th:href="@{/mypage}">마이페이지</a></li>
+                        <li><a th:href="@{/mypage/my-products}">나의 상품 등록 목록</a></li>
+                        <li><a th:href="@{/mypage/mybids}">나의 입찰 내역</a></li>
+                        <li><a th:href="@{/mypage/received-bids}">받은 입찰 내역</a></li>
+                        <!-- 새로 추가 -->
+                        <li><a th:href="@{/mypage/transactions}">거래 현황</a></li>
+                        <li><a th:href="@{/mypage/my-winning}">낙찰 내역</a></li>
+                        <li><a th:href="@{/mypage/my-selling}">판매 내역</a></li>
+                        <li><a th:href="@{/auction}">상품 등록</a></li>
+                        <li><a th:href="@{/live_auction}">실시간 경매</a></li>
+                        <!-- 회원정보수정 -->
+                        <li><a th:href="@{/mypage/edit-info}"><strong>회원정보 수정</strong></a></li>
+                    </ul>
+                </aside>
+                <form th:action="@{/mypage/update-info}" method="post">
 
-                        <div class="form-group">
-                            <label for="email">이메일</label>
-                            <input type="email" name="email" th:value="${memberEditDTO.email}" readonly class="bg-gray-100 cursor-not-allowed"/>
-                        </div>
+                    <div class="form-group">
+                        <label for="email">이메일</label>
+                        <input type="email" name="email" th:value="${memberEditDTO.email}" readonly class="bg-gray-100 cursor-not-allowed"/>
+                    </div>
 
-                        <div class="form-group">
-                            <label for="username">닉네임</label>
-                            <input type="text" name="username" th:value="${member.username}" required />
-                        </div>
+                    <div class="form-group">
+                        <label for="username">닉네임</label>
+                        <input type="text" name="username" th:value="${member.username}" required />
+                    </div>
 
-                        <div class="form-group">
-                            <label for="address">주소</label>
-                            <input type="text" name="address" th:value="${memberEditDTO.address}" />
-                        </div>
+                    <div class="form-group">
+                        <label for="address">주소</label>
+                        <input type="text" name="address" th:value="${memberEditDTO.address}" />
+                    </div>
 
-                        <div class="form-group">
-                            <label for="phone">전화번호</label>
-                            <input type="text" name="phone" th:value="${memberEditDTO.phone}" />
-                        </div>
+                    <div class="form-group">
+                        <label for="phone">전화번호</label>
+                        <input type="text" name="phone" th:value="${memberEditDTO.phone}" />
+                    </div>
 
-                        <div class="form-group">
-                            <label for="currentPassword">현재 비밀번호</label>
-                            <input type="password" name="currentPassword" required />
-                        </div>
+                    <div class="form-group">
+                        <label for="currentPassword">현재 비밀번호</label>
+                        <input type="password" name="currentPassword" required />
+                    </div>
 
-                        <div class="form-group">
-                            <label for="newPassword">새 비밀번호</label>
-                            <input type="password" name="newPassword" />
-                        </div>
+                    <div class="form-group">
+                        <label for="newPassword">새 비밀번호</label>
+                        <input type="password" name="newPassword" />
+                    </div>
 
-                        <div class="form-group">
-                            <label for="confirmPassword">새 비밀번호 확인</label>
-                            <input type="password" name="confirmPassword" />
-                        </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">새 비밀번호 확인</label>
+                        <input type="password" name="confirmPassword" />
+                    </div>
 
-                        <div class="btn-group">
-                            <button type="submit" class="btn">저장</button>
-                            <a th:href="@{/mypage}" class="btn btn-secondary">취소</a>
-                        </div>
-                    </form>
-                </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn">저장</button>
+                        <a th:href="@{/mypage}" class="btn btn-secondary">취소</a>
+                    </div>
+                </form>
             </div>
-        </main>
+        </div>
     </div>
-
-      
-
-
+</main>
+<script th:src="@{/js/moblie.js}"></script>
 </body>
 </html>

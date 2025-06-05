@@ -64,6 +64,13 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public List<Product> findApprovedProducts() {
+        return findByStatus("approved");
+    }
+    public List<Product> findCompletedProducts() {
+        return findByStatus("completed");
+    }
+
     // 특정 상태의 상품 조회
     public List<Product> findByStatus(String status) {
         return productRepository.findByStatus(status);

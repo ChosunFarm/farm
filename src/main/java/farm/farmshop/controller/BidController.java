@@ -80,6 +80,11 @@ public class BidController {
             double avgRating = Math.round(rawAvg * 2) / 2.0;
             model.addAttribute("avgRating", avgRating);
         }
+        List<Product> approvedProducts = productService.findApprovedProducts();
+        model.addAttribute("approvedProducts", approvedProducts);
+
+        List<Product> completedProducts = productService.findCompletedProducts();
+        model.addAttribute("completedProducts", completedProducts);
         return "auction/detail";
     }
 

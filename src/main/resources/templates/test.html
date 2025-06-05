@@ -39,10 +39,11 @@
             <div class="nav-right">
                 <!-- 로그인한 경우 -->
                 <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
-                    <button id="profileBtn-full" class="nav-profile-btn">
-                        <img class="nav-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
-                        <span class="nav-profile-name" th:text="${username} + '님'"></span>
-                    </button>
+                  <button id="profileBtn-full" class="nav-profile-btn">
+                    <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                    <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                    <span class="nav-profile-name" th:text="${username} + '님'"></span>
+                  </button>
                     <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
                         <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
                         <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
@@ -87,14 +88,15 @@
 
             <div class="mobile-search-auth">
                 <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
-                    <button id="profileBtn-half" class="mobile-profile-btn">
-                        <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
-                        <span class="mobile-profile-name" th:text="${username} + '님'"></span>
-                    </button>
-                    <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
-                        <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
-                        <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
-                    </div>
+                  <button id="profileBtn-full" class="nav-profile-btn">
+                    <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                    <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                    <span class="nav-profile-name" th:text="${username} + '님'"></span>
+                  </button>
+                  <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+                      <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+                      <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+                  </div>
                 </div>
 
                 <div th:if="${!isLogin}" class="mobile-auth">
@@ -167,12 +169,12 @@
           </a>
         </div>
 
-        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-8xl mx-auto px-2 sm:px-4 lg:px-6 py-8">
           <div class="bg-white shadow rounded-lg">
             <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-start">
               <!-- 낙찰 상품 반복 -->
-                  <div th:each="product : ${completedProducts}" class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                  <div th:each="product : ${completedProducts}" class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden max-w-sm mx-auto">
                     <div class="flex flex-col p-6">
               <!-- 상품 이미지 -->
                         <div class="w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4 overflow-hidden">

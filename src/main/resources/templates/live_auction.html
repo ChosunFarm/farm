@@ -88,9 +88,10 @@
 
             <div class="mobile-search-auth">
                 <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
-                    <button id="profileBtn-half" class="mobile-profile-btn">
-                        <img class="mobile-profile-img" th:src="@{/images/profile.png}" alt="프로필 이미지">
-                        <span class="mobile-profile-name" th:text="${username} + '님'"></span>
+                    <button id="profileBtn-full" class="nav-profile-btn">
+                        <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                        <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                        <span class="nav-profile-name" th:text="${username} + '님'"></span>
                     </button>
                     <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
                         <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
@@ -205,12 +206,12 @@
                             </div>
                             <div class="price-box">
                                 <div class="price-name">입찰수</div>
-                                <div class="price-value" th:text="${product.bidCount != null ? product.bidCount : 0}">입찰수</div>
+                                <div class="price-value" th:text="${product.bidCount != null ? product.bidCount : 0} + '회'">입찰수</div>
                             </div>
                         </div>
                         <!-- 경매 일자 표시 예시 -->
                         <div class="flex justify-between items-center text-sm text-gray-500">
-                            <span>입찰 <span th:text="${product.bidCount != null ? product.bidCount : 0}"></span>회</span>
+                            <!-- <span>입찰 <span th:text="${product.bidCount != null ? product.bidCount : 0}"></span>회</span> -->
                             <span th:if="${product.auctionDate != null}">
                                 경매일: <span th:text="${#temporals.format(product.auctionDate, 'yyyy-MM-dd HH:mm')}"></span>
                             </span>
