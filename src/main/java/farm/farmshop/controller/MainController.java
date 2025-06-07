@@ -45,26 +45,27 @@ public class MainController {
         List<Product> pendingProducts = productRepository.findByStatus("pending");
         List<Product> completedProducts = productRepository.findByStatus("completed");
 
-        // approved + pending 상품 전체에 이미지 매핑 적용
-        List<Product> allProducts = Stream.concat(
-            approvedProducts.stream(),
-            pendingProducts.stream()
-        ).collect(Collectors.toList());
+        List<Product> allProducts = Stream.of(
+            approvedProducts,
+            pendingProducts,
+            completedProducts
+        ).flatMap(List::stream).collect(Collectors.toList());
 
         List<Long> productIds = allProducts.stream()
                 .map(Product::getId)
                 .collect(Collectors.toList());
 
         List<ProductImage> productImages = productImageRepository.findByProductIdIn(productIds);
-        Map<Long, String> productImageMap = productImages.stream()
-                .collect(Collectors.toMap(
-                        ProductImage::getProductId,
-                        ProductImage::getImageUrl,
-                        (existing, replacement) -> existing
-                ));
+        Map<Long, List<String>> productImageMap = productImages.stream()
+        .collect(Collectors.groupingBy(
+            pi -> pi.getProduct().getId(),
+            Collectors.mapping(ProductImage::getImageUrl, Collectors.toList())
+        ));
+
 
         for (Product product : allProducts) {
-            String imageUrl = productImageMap.get(product.getId());
+            List<String> imageUrls = productImageMap.get(product.getId());
+            String imageUrl = (imageUrls != null && !imageUrls.isEmpty()) ? imageUrls.get(0) : null;
             product.setImageUrl(imageUrl);
         }
 
@@ -72,6 +73,7 @@ public class MainController {
         model.addAttribute("approvedProducts", approvedProducts); // 실시간 경매 상품
         model.addAttribute("pendingProducts", pendingProducts);   // 신규 경매 예정 상품
         model.addAttribute("completedProducts", completedProducts);   // 신규 경매 예정 상품
+        model.addAttribute("productImageMap", productImageMap);
         
 
         return "main";

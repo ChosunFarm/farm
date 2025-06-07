@@ -2,7 +2,9 @@ package farm.farmshop.controller;
 
 import farm.farmshop.entity.Member;
 import farm.farmshop.entity.product.Product;
+import farm.farmshop.entity.product.ProductImage;
 import farm.farmshop.repository.MemberRepository;
+import farm.farmshop.repository.ProductImageRepository;
 import farm.farmshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -20,6 +25,7 @@ public class TestController {
 
     private final MemberRepository memberRepository;
     private final ProductService productService;
+    private final ProductImageRepository productImageRepository;
 
     @GetMapping("/test")
     public String showLiveAuctionPage(
@@ -56,6 +62,18 @@ public class TestController {
                     .toList();
         }
 
+        List<Long> productIds = completedProducts.stream()
+        .map(Product::getId)
+        .collect(Collectors.toList());
+
+        List<ProductImage> productImages = productImageRepository.findByProductIdIn(productIds);
+        Map<Long, List<String>> productImageMap = productImages.stream()
+                .collect(Collectors.groupingBy(
+                    pi -> pi.getProduct().getId(),
+                    Collectors.mapping(ProductImage::getImageUrl, Collectors.toList())
+        ));
+
+        model.addAttribute("productImageMap", productImageMap);
         model.addAttribute("completedProducts", completedProducts);
         model.addAttribute("search", search);
         model.addAttribute("category", category);

@@ -2,7 +2,6 @@ package farm.farmshop.controller;
 
 import farm.farmshop.entity.Member;
 import farm.farmshop.entity.product.*;
-import farm.farmshop.entity.product.ProductImage;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.ProductImageRepository;
 import farm.farmshop.service.ProductService;
@@ -135,7 +134,7 @@ public class AuctionController {
 
                 // PRODUCT_IMAGES 테이블에 URL 저장
                 ProductImage pi = new ProductImage();
-                pi.setProductId(product.getId());
+                pi.setProduct(product);
                 pi.setImageUrl(filename);
                 productImageRepository.save(pi);
 

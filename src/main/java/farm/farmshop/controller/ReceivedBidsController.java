@@ -7,8 +7,10 @@ import farm.farmshop.entity.Member;
 import farm.farmshop.entity.product.Fruit;
 import farm.farmshop.entity.product.Grain;
 import farm.farmshop.entity.product.Product;
+import farm.farmshop.entity.product.ProductImage;
 import farm.farmshop.entity.product.Vegetable;
 import farm.farmshop.repository.MemberRepository;
+import farm.farmshop.repository.ProductImageRepository;
 import farm.farmshop.repository.ProductRepository;
 import farm.farmshop.service.BidService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.stream.Stream;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,9 +33,12 @@ public class ReceivedBidsController {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
     private final BidService bidService;
+    private final ProductImageRepository productImageRepository;
+
 
     @GetMapping("mypage/received-bids")
     public String proposePage(Model model, Principal principal) {
+        
         if (principal != null) {
             String email = principal.getName(); // 로그인한 사용자의 이메일
             Member member = memberRepository.findByEmail(email);
@@ -80,6 +88,20 @@ public class ReceivedBidsController {
 
                     receivedBidDTOs.add(dto);
                 }
+                List<Long> productIds = receivedBids.stream()
+                    .map(bid -> bid.getProduct().getId())
+                    .distinct()
+                    .toList();
+
+                List<ProductImage> productImages = productImageRepository.findByProductIdIn(productIds);
+
+                Map<Long, List<String>> productImageMap = productImages.stream()
+                    .collect(Collectors.groupingBy(
+                        pi -> pi.getProduct().getId(),
+                        Collectors.mapping(ProductImage::getImageUrl, Collectors.toList())
+                    ));
+
+                model.addAttribute("productImageMap", productImageMap);
 
                 model.addAttribute("receivedBidDTOs", receivedBidDTOs);
         } else {

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>실시간 경매 현황</title>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+    <link th:href="@{/css/imageswiper.css}" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
     <link th:href="@{/css/font.css}" rel="stylesheet">
     <link th:href="@{/css/test.css}" rel="stylesheet"/>
@@ -174,17 +176,29 @@
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-start">
               <!-- 낙찰 상품 반복 -->
-                  <div th:each="product : ${completedProducts}" class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden max-w-sm mx-auto">
+              <div th:each="product : ${completedProducts}" class="w-full md:w-[300px] lg:w-[300px] bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mx-auto">       
                     <div class="flex flex-col p-6">
               <!-- 상품 이미지 -->
                         <div class="w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4 overflow-hidden">
-                            <img th:if="${product.imageUrl != null}"
-                                 th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}"
-                                 class="w-full h-full object-cover"
-                                 th:alt="${product.name}">
-                            <div th:unless="${product.imageUrl != null}" class="text-4xl text-gray-400">
-                                <i class="fas fa-seedling"></i>
+                          <div class="swiper mySwiper w-full h-80 md:h-full" th:if="${productImageMap.containsKey(product.id)}">
+                            <div class="swiper-wrapper h-full">
+                              <div class="swiper-slide" th:each="img : ${productImageMap[product.id]}">
+                                <img th:src="@{'/uploads/images/' + ${img}}" alt="상품 이미지" class="w-full h-full object-cover" />
+                              </div>
                             </div>
+                        
+                            <!-- 슬라이드 화살표: 이미지가 2장 이상일 때만 -->
+                            <div class="swiper-button-next custom-next"
+                                th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
+                            <div class="swiper-button-prev custom-prev"
+                                th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
+                          </div>
+                        
+                          <!-- 이미지가 없거나 productImageMap에 없을 경우 fallback -->
+                          <div class="product-image" th:unless="${productImageMap.containsKey(product.id)}">
+                            <img th:if="${product.imageUrl != null}" th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
+                            <i th:unless="${product.imageUrl != null}" class="fas fa-seedling text-4xl text-gray-400"></i>
+                          </div>
                         </div>
               <!-- 상품 정보 -->
                         <div class="text-center mb-4">
@@ -228,5 +242,8 @@
     </main>
   </div>
 <script th:src="@{/js/moblie.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script th:src="@{/js/imageswiper.js}"></script>
+
 </body>
 </html>

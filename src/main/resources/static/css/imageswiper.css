@@ -1,0 +1,27 @@
+.custom-next,
+.custom-prev {
+  background-color: rgba(0, 0, 0, 0.5); /* 투명한 검정 */
+  background-size: 60% 60%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 9999px;
+  width: 40px;
+  height: 40px;
+  z-index: 10;
+}
+
+.custom-next {
+  background-image: url('/images/arrow-right.png');
+  right: 10px;
+}
+
+.custom-prev {
+  background-image: url('/images/arrow-left.png');
+  left: 10px;
+}
+
+/* Swiper 기본 화살표 제거 */
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  display: none;
+}

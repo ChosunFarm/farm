@@ -6,6 +6,9 @@
     <title>실시간 경매 현황</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+    <link th:href="@{/css/imageswiper.css}" rel="stylesheet">
     <link th:href="@{/css/font.css}" rel="stylesheet">
     <link th:href="@{/css/live_auction.css}" rel="stylesheet"/>
     <link th:href="@{/css/nav.css}" rel="stylesheet"/>
@@ -175,7 +178,19 @@
                 <div th:each="product : ${approvedProducts}" class="auction-item">
                     <!-- 상품 이미지 (클릭 시 상세 페이지로 이동) -->
                     <a th:href="@{'/auction/detail/' + ${product.id}}" class="product-image-link">
-                        <div class="product-image">
+                        <div class="swiper mySwiper product-thumbnail relative" th:if="${productImageMap.containsKey(product.id)}">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide" th:each="img : ${productImageMap[product.id]}">
+                                    <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover" th:alt="${product.name}" />
+                                </div>
+                            </div>
+                    
+                            <!-- 화살표는 이미지가 2장 이상일 때만 표시 -->
+                            <div class="swiper-button-next custom-next" th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
+                            <div class="swiper-button-prev custom-prev" th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
+                        </div>
+                            <!-- 이미지가 없는 경우 대체 이미지 -->
+                        <div class="product-image" th:unless="${productImageMap.containsKey(product.id)}">
                             <img th:if="${product.imageUrl != null}" th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
                             <i th:unless="${product.imageUrl != null}" class="fas fa-seedling"></i>
                         </div>
@@ -234,5 +249,7 @@
     </main>
 </div>
 <script th:src="@{/js/moblie.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script th:src="@{/js/imageswiper.js}"></script>
 </body>
 </html>
