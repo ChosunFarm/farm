@@ -184,12 +184,12 @@
                                     <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover" th:alt="${product.name}" />
                                 </div>
                             </div>
-                    
+
                             <!-- 화살표는 이미지가 2장 이상일 때만 표시 -->
                             <div class="swiper-button-next custom-next" th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
                             <div class="swiper-button-prev custom-prev" th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
                         </div>
-                            <!-- 이미지가 없는 경우 대체 이미지 -->
+                        <!-- 이미지가 없는 경우 대체 이미지 -->
                         <div class="product-image" th:unless="${productImageMap.containsKey(product.id)}">
                             <img th:if="${product.imageUrl != null}" th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
                             <i th:unless="${product.imageUrl != null}" class="fas fa-seedling"></i>
