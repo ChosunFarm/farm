@@ -8,7 +8,7 @@
     <title>현대농산물</title>
 
     <!-- External CSS Libraries -->
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 
@@ -19,6 +19,7 @@
 
     <!-- Custom CSS -->
     <link th:href="@{/css/myproducts.css}" rel="stylesheet">
+    <link th:href="@{/css/imageswiperv2.css}" rel="stylesheet">
     <link th:href="@{/css/font.css}" rel="stylesheet">
     <link th:href="@{/css/nav.css}" rel="stylesheet">
 
@@ -153,16 +154,23 @@
             <!-- 입찰 내역 목록 -->
             <div th:if="${bidDTOs != null && !bidDTOs.isEmpty()}" th:each="bid : ${bidDTOs}" class="product-card">
                 <div class="product-image">
-                    <!-- 이미지가 있는 경우 -->
-                    <img th:if="${bid.imageUrl != null && !bid.imageUrl.isEmpty()}"
-                         th:src="@{'/images/' + ${bid.imageUrl}}"
-                        alt="상품 이미지"
-                        style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
-
-                    <!-- 이미지가 없는 경우 기본 아이콘 표시 -->
-                    <span th:if="${bid.imageUrl == null || bid.imageUrl.isEmpty()}">
-                    <i class="fas fa-seedling"></i>
-                    </span>
+                    <div class="swiper mySwiper" th:if="${productImageMap.containsKey(bid.productId)}">
+                        <div class="swiper-wrapper h-full">
+                            <div class="swiper-slide" th:each="img : ${productImageMap[bid.productId]}">
+                            <img th:src="@{'/uploads/images/' + ${img}}" alt="상품 이미지" class="w-full h-full object-cover" />
+                          </div>
+                        </div>
+                    
+                        <!-- 슬라이드 화살표: 이미지가 2장 이상일 때만 -->
+                        <div class="swiper-button-next custom-next" th:if="${#lists.size(productImageMap[bid.productId]) > 1}"></div>
+                        <div class="swiper-button-prev custom-prev" th:if="${#lists.size(productImageMap[bid.productId]) > 1}"></div>
+                    </div>
+                    
+                    <!-- 이미지가 없거나 productImageMap에 없을 경우 fallback -->
+                    <div class="product-image" th:unless="${productImageMap.containsKey(bid.productId)}">
+                        <img th:if="${bid.imageUrl != null}" th:src="@{/uploads/images/{fn}(fn=${bid.imageUrl})}" class="w-full h-full object-cover" th:alt="${bid.productName}">
+                        <i th:unless="${bid.imageUrl != null}" class="fas fa-seedling text-4xl text-gray-400"></i>
+                    </div>
                 </div>
                 <div class="product-info">
                     <strong th:text="${bid.productName}">상품명</strong>
@@ -189,5 +197,7 @@
     </div>
 </main>
 <script th:src="@{/js/moblie.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script th:src="@{/js/imageswiper.js}"></script>
 </body>
 </html>

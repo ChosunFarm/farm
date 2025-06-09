@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.stream.Stream;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
@@ -44,9 +45,31 @@ public class ScheduledController {
         List<Product> pendingProducts = productService.findByStatus("pending");
         List<Product> unprocessedProducts = productService.findByStatusNull();
 
+        // 먼저 pending + unprocessed 상품들을 합칩니다.
+        List<Product> allProducts = Stream.concat(pendingProducts.stream(), unprocessedProducts.stream())
+        .collect(Collectors.toList());
+
+        // 각 상품의 ID 추출
+        List<Long> productIds = allProducts.stream()
+        .map(Product::getId)
+        .collect(Collectors.toList());
+
+
+        List<ProductImage> productImages = productImageRepository.findByProductIdIn(productIds);
+
+        Map<Long, List<String>> productImageMap = productImages.stream()
+            .collect(Collectors.groupingBy(
+                pi -> pi.getProduct().getId(),
+                Collectors.mapping(ProductImage::getImageUrl, Collectors.toList())
+            ));
+        
+        model.addAttribute("productImageMap", productImageMap);
+        
+        
         // 검수 대기 상품과 미검수 상품을 함께 표시
         model.addAttribute("pendingProducts", pendingProducts);
         model.addAttribute("unprocessedProducts", unprocessedProducts);
+        model.addAttribute("productImageMap", productImageMap);
 
         return "scheduled"; // templates/scheduled.html
     }

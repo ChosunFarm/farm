@@ -2,7 +2,9 @@ package farm.farmshop.controller;
 
 import farm.farmshop.entity.Member;
 import farm.farmshop.entity.product.Product;
+import farm.farmshop.entity.product.ProductImage;
 import farm.farmshop.repository.MemberRepository;
+import farm.farmshop.repository.ProductImageRepository;
 import farm.farmshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,6 +24,7 @@ public class Live_AuctionController {
 
     private final MemberRepository memberRepository;
     private final ProductService productService;
+    private final ProductImageRepository productImageRepository;
 
     @GetMapping("/live_auction")
     public String showLiveAuctionPage(
@@ -56,9 +61,19 @@ public class Live_AuctionController {
                     .toList();
         }
 
+        List<Long> productIds = approvedProducts.stream().map(Product::getId).toList();
+        List<ProductImage> productImages = productImageRepository.findByProductIdIn(productIds);
+
+        Map<Long, List<String>> productImageMap = productImages.stream()
+                .collect(Collectors.groupingBy(
+                        img -> img.getProduct().getId(),
+                        Collectors.mapping(ProductImage::getImageUrl, Collectors.toList())
+                ));
+
         model.addAttribute("approvedProducts", approvedProducts);
         model.addAttribute("search", search);
         model.addAttribute("category", category);
+        model.addAttribute("productImageMap", productImageMap);
 
         return "live_auction"; // templates/live_auction.html 을 렌더링
     }
@@ -79,8 +94,19 @@ public class Live_AuctionController {
 
         // 카테고리별로 승인된 상품 조회
         List<Product> categoryProducts = productService.findByCategoryAndStatus(category, "approved");
+
+        // 이미지 매핑 추가
+        List<Long> productIds = categoryProducts.stream().map(Product::getId).toList();
+        List<ProductImage> productImages = productImageRepository.findByProductIdIn(productIds);
+        Map<Long, List<String>> productImageMap = productImages.stream()
+                .collect(Collectors.groupingBy(
+                    img -> img.getProduct().getId(),
+                    Collectors.mapping(ProductImage::getImageUrl, Collectors.toList())
+                ));
+
         model.addAttribute("approvedProducts", categoryProducts);
         model.addAttribute("category", category);
+        model.addAttribute("productImageMap", productImageMap);
 
         // 카테고리명 설정
         String categoryName;

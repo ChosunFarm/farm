@@ -14,15 +14,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Glide.js/3.6.0/glide.min.js"></script>
     <script src="https://cdn.tailwindcss.com/3.4.5?plugins=forms@0.5.7,typography@0.5.13,aspect-ratio@0.4.2,container-queries@0.1.1"></script>
     <script src="https://ai-public.creatie.ai/gen_page/tailwind-config.min.js" data-color="#000000" data-border-radius="small"></script>
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
 
     <!-- Custom CSS -->
     <link th:href="@{/css/scheduled.css}" rel="stylesheet">
     <link th:href="@{/css/font.css}" rel="stylesheet">
     <link th:href="@{/css/live_auction.css}" rel="stylesheet">
     <link th:href="@{/css/nav.css}" rel="stylesheet">
+    <link th:href="@{/css/imageswiper.css}" rel="stylesheet">
 
     <!-- Custom JS -->
     <script src="/js/profileToggle.js"></script>
+      
 </head>
 <body class="font-['Noto_Sans_KR'] bg-gray-50">
 <!-- 헤더 영역 -->
@@ -145,9 +149,22 @@
                         <div th:each="product : ${pendingProducts}" class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
                             <div class="flex flex-col p-6">
                                 <!-- 상품 이미지 -->
-                                <div class="w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4 overflow-hidden">
-                                    <img th:if="${product.imageUrl != null}" th:src="@{/images/{fn}(fn=${product.imageUrl})}" class="w-full h-full object-cover" th:alt="${product.name}">
-                                    <div th:unless="${product.imageUrl != null}" class="text-4xl text-gray-400">
+                                <div class="swiper mySwiper w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4 overflow-hidden relative"
+                                    th:if="${productImageMap.containsKey(product.id)}">     
+                                    <div class="swiper-wrapper">
+                                        <div class="swiper-slide" th:each="img : ${productImageMap[product.id]}">
+                                            <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover" th:alt="${product.name}" />
+                                        </div>
+                                    </div>
+                                    <div class="swiper-button-next custom-next"
+                                        th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
+                                    <div class="swiper-button-prev custom-prev"
+                                        th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
+                                </div>
+                                <div class="w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4"
+                                    th:unless="${productImageMap.containsKey(product.id)}">
+                                    <img th:src="@{/images/default-product.jpg}" alt="기본 이미지" class="w-full h-full object-cover" />
+                                    <div class="text-4xl text-gray-400 absolute">
                                         <i class="fas fa-seedling"></i>
                                     </div>
                                 </div>
@@ -181,17 +198,31 @@
                         <div th:each="product : ${unprocessedProducts}" class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
                             <div class="flex flex-col p-6">
                                 <!-- 상품 이미지 -->
-                                <div class="w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4 overflow-hidden">
-                                    <img th:if="${product.imageUrl != null}" th:src="@{'/uploads/images/' + ${product.imageUrl}}" class="w-full h-full object-cover" alt="상품 이미지">
-                                    <div th:unless="${product.imageUrl != null}" class="text-4xl text-gray-400">
+                                <!-- 상품 이미지 -->
+                                <div class="swiper mySwiper w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4 overflow-hidden relative"
+                                    th:if="${productImageMap.containsKey(product.id)}">     
+                                    <div class="swiper-wrapper">
+                                        <div class="swiper-slide" th:each="img : ${productImageMap[product.id]}">
+                                            <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover" th:alt="${product.name}" />
+                                        </div>
+                                    </div>
+                                    <div class="swiper-button-next custom-next"
+                                        th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
+                                    <div class="swiper-button-prev custom-prev"
+                                        th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
+                                </div>
+                                <div class="w-full h-40 flex items-center justify-center bg-gray-100 border border-gray-300 rounded mb-4"
+                                    th:unless="${productImageMap.containsKey(product.id)}">
+                                    <img th:src="@{/images/default-product.jpg}" alt="기본 이미지" class="w-full h-full object-cover" />
+                                    <div class="text-4xl text-gray-400 absolute">
                                         <i class="fas fa-seedling"></i>
                                     </div>
                                 </div>
 
                                 <!-- 상품 정보 -->
                                 <div class="text-center mb-4">
-                                    <div class="font-semibold text-lg" th:text="${product.name}"></div>
-                                    <div class="text-sm text-gray-500" th:text="${product.gram} + 'g'"></div>
+                                    <div class="font-semibold text-lg" th:text="${product.name}">상품명</div>
+                                    <div class="text-sm text-gray-500" th:text="${product.gram} + 'g'">무게</div>
                                     <div class="mt-2 text-red-600 font-semibold" th:text="${#numbers.formatInteger(product.price, 0, 'COMMA')} + '원'"></div>
                                 </div>
 
@@ -245,5 +276,8 @@
 <!-- Custom JS -->
 <script th:src="@{/js/moblie.js}"></script>
 <script th:src="@{/js/scheduled.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script th:src="@{/js/imageswiper.js}"></script>
+  
 </body>
 </html>

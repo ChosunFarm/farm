@@ -359,11 +359,11 @@
         <div th:each="transaction : ${completedTransactions}" class="transaction-card">
           <div class="flex items-center space-x-4 mb-4">
             <img th:if="${transaction.product.imageUrl != null}"
-                 th:src="@{/images/{fn}(fn=${transaction.product.imageUrl})}"
-                 class="w-12 h-12 object-cover rounded-lg">
+            th:src="@{/uploads/images/{fn}(fn=${transaction.product.imageUrl})}"
+            class="w-12 h-12 object-cover rounded-lg">
             <div th:unless="${transaction.product.imageUrl != null}"
-                 class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-              <i class="fas fa-seedling text-gray-400"></i>
+                  class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+              <i class="fas fa-seedling text-2xl text-gray-400"></i>
             </div>
             <div class="flex-1">
               <h3 class="font-semibold text-gray-900" th:text="${transaction.product.name}">상품명</h3>
@@ -413,10 +413,10 @@
              class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
           <div class="flex items-center space-x-4">
             <img th:if="${transaction.product.imageUrl != null}"
-                 th:src="@{/images/{fn}(fn=${transaction.product.imageUrl})}"
-                 class="w-10 h-10 object-cover rounded-lg">
+            th:src="@{/uploads/images/{fn}(fn=${transaction.product.imageUrl})}"
+            class="w-10 h-10 object-cover rounded-lg">
             <div th:unless="${transaction.product.imageUrl != null}"
-                 class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
               <i class="fas fa-shopping-cart text-blue-600"></i>
             </div>
             <div>
@@ -442,10 +442,10 @@
              class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
           <div class="flex items-center space-x-4">
             <img th:if="${transaction.product.imageUrl != null}"
-                 th:src="@{/images/{fn}(fn=${transaction.product.imageUrl})}"
-                 class="w-10 h-10 object-cover rounded-lg">
+            th:src="@{/uploads/images/{fn}(fn=${transaction.product.imageUrl})}"
+            class="w-10 h-10 object-cover rounded-lg">
             <div th:unless="${transaction.product.imageUrl != null}"
-                 class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
               <i class="fas fa-store text-purple-600"></i>
             </div>
             <div>

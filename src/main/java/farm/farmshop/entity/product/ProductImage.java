@@ -14,8 +14,12 @@ public class ProductImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "PRODUCT_ID")
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PRODUCT_ID")  // 외래 키 매핑
+    private Product product;
+    
+    // @Column(name = "PRODUCT_ID")
+    // private Long productId;
 
     @Column(name = "IMAGE_URL")
     private String imageUrl;

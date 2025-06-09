@@ -17,7 +17,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import farm.farmshop.repository.ProductImageRepository;
+import farm.farmshop.entity.product.ProductImage;
 
+
+
+import java.util.stream.Collectors;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,6 +39,7 @@ public class BidController {
     private final AuctionResultService auctionResultService;
     private final NotificationService notificationService;
     private final RatingService ratingService;
+    private final ProductImageRepository productImageRepository;
 
     // 상품 상세 페이지 및 입찰 페이지
     @GetMapping("/auction/detail/{productId}")
@@ -67,6 +73,13 @@ public class BidController {
             .distinct()
             .count();
         model.addAttribute("uniqueBidderCount", uniqueBidderCount);
+        // 이미지 추가
+        List<ProductImage> productImages = productImageRepository.findByProductId(productId);
+        List<String> imageUrls = productImages.stream()
+                .map(ProductImage::getImageUrl)
+                .collect(Collectors.toList());
+        Map<Long, List<String>> productImageMap = Map.of(productId, imageUrls);
+        model.addAttribute("productImageMap", productImageMap);
 
         // 판매자 평점
         Member seller = product.getMember();
