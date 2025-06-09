@@ -145,7 +145,7 @@
                     <div class="section">
                         <div class="top-row">
                             <!-- 프로필 + 유저정보 -->
-                            <div class="left-info">
+                            <div class="left-info flex gap-6 flex-shrink-0">
                                 <!-- 프로필 -->
                                 <div class="profile-img rounded-full overflow-hidden mx-auto">
                                     <div class="profile-img">
@@ -159,11 +159,7 @@
                                              th:src="@{'/uploads/myage-profile/' + ${profileImage}}"
                                              class="nav-profile-img" alt="사용자 프로필" />
                                     </div>
-                                    <!-- 이미지가 있을 때 -->
-                                    <!-- <img th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/> -->
-                                    <!-- 기본 이미지 -->
-                                    <!-- <img th:if="${profileImage == null or profileImage == 'profile.png'}" th:src="@{/images/profile.png}" class="nav-profile-img" alt="기본 이미지"/> -->
-
+                                    
                                 </div>
                                 <!-- 사용자 정보 -->
                                 <div class="user-info">
@@ -187,8 +183,6 @@
                         <!-- 버튼 -->
                         <div class="btn-row">
                             <button class="btn" id="editBtn"><i class="fas fa-cog"></i> 프로필 편집</button>
-                            <!-- <button type="submit" id="saveBtn" class="btn hidden">저장</button>
-                            <button type="button" id="cancelBtn" class="btn hidden">취소</button> -->
                             <button class="btn">받은후기 보기</button>
                         </div>
                     </div>
