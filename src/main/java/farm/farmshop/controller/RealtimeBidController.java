@@ -124,8 +124,8 @@ public class RealtimeBidController {
             return false;
         }
 
-        // 1,000원 단위 체크
-        return bidAmount % 1000 == 0;
+        // 100원 단위 체크
+        return bidAmount % 100 == 0;
     }
 
     // 경매 상품 정보 실시간 업데이트

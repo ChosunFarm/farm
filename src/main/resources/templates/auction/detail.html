@@ -401,33 +401,34 @@
                   </div>
                 </div>
                 <!-- ② 입찰 입력 폼 -->
-                <div class="p-4">
-                  <input
-                    type="number"
-                    id="bid-amount"
-                    class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-0 focus:border-gray-300 mb-3"
-                    placeholder="입찰가 입력 (1,000원 단위)"
-                    step="1000"
-                    th:min="${product.currentBidPrice != null 
-                              ? product.currentBidPrice + 1000 
-                              : product.price + 1000}"
-                  />
-                  <button
-                    id="bid-button"
-                    class="w-full bg-primary text-white py-3 font-medium rounded mb-2"
-                    type="button"
-                  >입찰하기</button>
-                  <p class="text-xs text-gray-500">
-                    최소 입찰가:
-                    <span th:text="${#numbers.formatInteger(
-                                   (product.currentBidPrice != null 
-                                     ? product.currentBidPrice + 1000 
-                                     : product.price + 1000), 
-                                   0, 'COMMA')}">
-                      0
-                    </span>원
-                  </p>
-                </div>
+                  <!-- 입찰 입력 폼 부분만 발췌 -->
+                  <div class="p-4">
+                      <input
+                              type="number"
+                              id="bid-amount"
+                              class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-0 focus:border-gray-300 mb-3"
+                              placeholder="입찰가 입력 (100원 단위)"
+                              step="100"
+                              th:min="${product.currentBidPrice != null
+                                      ? product.currentBidPrice + 100
+                                      : product.price + 100}"
+                      />
+                      <button
+                              id="bid-button"
+                              class="w-full bg-primary text-white py-3 font-medium rounded mb-2"
+                              type="button"
+                      >입찰하기</button>
+                      <p class="text-xs text-gray-500">
+                          최소 입찰가:
+                          <span th:text="${#numbers.formatInteger(
+                   (product.currentBidPrice != null
+                     ? product.currentBidPrice + 100
+                     : product.price + 100),
+                   0, 'COMMA')}">
+                          0
+                        </span>원
+                      </p>
+                  </div>
                 <!-- ③ 로그인 안내 / 본인 상품 안내 -->
                 <div th:if="${!isLogin}" class="p-4">
                   <div class="text-sm text-red-500">로그인이 필요합니다.</div>

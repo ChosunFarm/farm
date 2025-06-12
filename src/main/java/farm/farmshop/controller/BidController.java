@@ -145,9 +145,9 @@ public class BidController {
                 return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "시작가보다 높은 금액을 제시해야 합니다."));
             }
 
-            // 1,000원 단위 체크
-            if (bidAmount % 1000 != 0) {
-                return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "1,000원 단위로 입찰해주세요."));
+            // 100원 단위 체크
+            if (bidAmount % 100 != 0) {
+                return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "100원 단위로 입찰해주세요."));
             }
 
             // 입찰 정보 저장
