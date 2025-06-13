@@ -1,5 +1,6 @@
 package farm.farmshop.controller;
 
+import farm.farmshop.dto.AlertDto;
 import farm.farmshop.dto.MyProductDTO;
 import farm.farmshop.entity.AuctionResult;
 import farm.farmshop.entity.Member;
@@ -7,6 +8,7 @@ import farm.farmshop.entity.product.Product;
 import farm.farmshop.repository.AuctionResultRepository;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.ProductRepository;
+import farm.farmshop.service.AlertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,7 +26,8 @@ public class PagedetailController {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
     private final AuctionResultRepository auctionResultRepository;
-
+    private final AlertService alertService;
+    
     @GetMapping("/mypage/pagedetail/{username}")
     public String pageDetail(
             @PathVariable("username") String username,
@@ -37,6 +40,18 @@ public class PagedetailController {
             model.addAttribute("isLogin", loginMember != null);
             if (loginMember != null) {
                 model.addAttribute("username", loginMember.getUsername());
+
+                Long memberId = loginMember.getId();
+                model.addAttribute("memberId", memberId);
+
+                long unreadCnt = alertService.countUnread(memberId);
+                model.addAttribute("alertCount", unreadCnt);
+
+                List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
+                                                    .stream()
+                                                    .map(AlertDto::fromEntity)
+                                                    .toList();
+                model.addAttribute("alertList", unreadList);
             }
         } else {
             model.addAttribute("isLogin", false);

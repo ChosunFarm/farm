@@ -1,7 +1,9 @@
 package farm.farmshop.controller;
 
+import farm.farmshop.dto.AlertDto;
 import farm.farmshop.dto.MemberEditDTO;
 import farm.farmshop.entity.Member;
+import farm.farmshop.service.AlertService;
 import farm.farmshop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
@@ -12,12 +14,37 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+
+import org.springframework.web.bind.annotation.ModelAttribute;
+import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
 public class MypageEditController {
 
     private final MemberService memberService;
+    private final AlertService alertService;
+
+    
+    @ModelAttribute
+    public void addAlertsToModel(Model model, Principal principal) {
+        if (principal == null) return;
+
+        Member member = memberService.findByEmail(principal.getName());
+        Long memberId = member.getId();
+
+        model.addAttribute("memberId", memberId);
+        model.addAttribute("alertCount", alertService.countUnread(memberId));
+
+        List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
+                                               .stream()
+                                               .map(AlertDto::fromEntity)
+                                               .toList();
+        model.addAttribute("alertList", unreadList);
+    }
 
     // 회원정보 수정 페이지 이동
     @GetMapping("/edit-info")

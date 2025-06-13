@@ -22,9 +22,6 @@
   <link th:href="@{/css/font.css}" rel="stylesheet">
   <link th:href="@{/css/nav.css}" rel="stylesheet">
 
-  <!-- Custom JS -->
-  <script src="/js/profileToggle.js"></script>
-
   <style>
     /* 탭 내용 기본 숨김 */
     .tab-content {
@@ -57,17 +54,42 @@
         </div>
   
         <!-- 검색 + 프로필/로그인 -->
+        
         <div class="nav-right">
+          <div th:if="${isLogin}" class="flex items-center space-x-3">
+            <!-- 🔔 알림 아이콘 -->
+            <!-- 종 아이콘 감싸는 박스 -->
+            <div class="relative" id="notification-wrapper">
+              <!-- 종 아이콘 -->
+              <button id="notificationBtn-nav" th:data-member-id="${memberId}" class="relative focus:outline-none ml-4">
+                <i class="fas fa-bell text-gray-600 text-xl"></i>
+                <span id="alertCount" class="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">0</span>
+              </button>
+
+              <!-- 드롭다운: 종 아이콘 정중앙 아래에 표시 -->
+              <div id="notificationDropdown-nav"
+                  class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-50">
+                <div class="p-3 border-b flex justify-between items-center text-gray-700">
+                  <span class="font-semibold">알림</span>
+                  <button id="clearReadBtn" 
+                          class="text-sm text-gray-500 hover:text-gray-700 focus:outline-none">
+                    읽은 알림 지우기
+                  </button>
+                </div>
+                <ul id="alertList" class="max-h-60 overflow-y-auto"> </ul>
+              </div>
+            </div>
           <!-- 로그인한 경우 -->
-          <div id="profile-container-full" th:if="${isLogin}" class="nav-profile">
-            <button id="profileBtn-full" class="nav-profile-btn">
-              <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
-              <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
-              <span class="nav-profile-name" th:text="${username} + '님'"></span>
-            </button>
-            <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
-              <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
-              <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+            <div id="profile-container-full" class="nav-profile">
+              <button id="profileBtn-full" class="nav-profile-btn">
+                <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                <span class="nav-profile-name" th:text="${username} + '님'"></span>
+              </button>
+              <div id="dropdownMenu-full" class="nav-dropdown-menu hidden">
+                <a th:href="@{/mypage}" class="nav-dropdown-link">내 프로필</a>
+                <a th:href="@{/logout}" class="nav-dropdown-link">로그아웃</a>
+              </div>
             </div>
           </div>
   
@@ -107,19 +129,45 @@
         <a th:href="@{/live_auction}" class="nav-menu-link">실시간 경매</a>
         <a th:href="@{/scheduled}" class="nav-menu-link">경매 예정 상품</a>
   
-        <div class="mobile-search-auth">
-          <div id="profile-container-half" th:if="${isLogin}" class="mobile-profile">
-            <button id="profileBtn-full" class="nav-profile-btn">
-              <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
-              <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
-              <span class="nav-profile-name" th:text="${username} + '님'"></span>
-            </button>
-            <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
-              <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
-              <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+        <div class="mobile-search-auth justify-end gap-3">
+          <div th:if="${isLogin}" class="flex items-center gap-3">
+            <!-- 🔔 알림 아이콘 -->
+            <!-- 종 아이콘 감싸는 박스 -->
+            <div class="relative" id="notification-wrapper">
+              <!-- 종 아이콘 -->
+              <button id="notificationBtn-mobile" th:data-member-id="${memberId}" class="relative focus:outline-none ml-4">
+                <i class="fas fa-bell text-gray-600 text-xl"></i>
+                <span id="alertCountMobile" class="absolute -top-1 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">0</span>
+              </button>
+
+              <!-- 드롭다운: 종 아이콘 정중앙 아래에 표시 -->
+              <div id="notificationDropdown-mobile"
+                  class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-50">
+                <div class="p-3 border-b flex justify-between items-center text-gray-700">
+                  <span class="font-semibold">알림</span>
+                  <button id="clearReadBtn" 
+                          class="text-sm text-gray-500 hover:text-gray-700 focus:outline-none">
+                    읽은 알림 지우기
+                  </button>
+                </div>
+                <ul id="alertListMobile" class="max-h-60 overflow-y-auto"> </ul>
+              </div>
+            </div>
+          <!-- 로그인한 경우 -->
+            <div id="profile-container-half" class="mobile-profile">
+              <button id="profileBtn-half" class="mobile-profile-btn">
+                <img class="nav-profile-img" th:if="${profileImage != null}" th:src="@{'/uploads/myage-profile/' + ${profileImage}}" alt="프로필 이미지"/>
+                <img class="nav-profile-img" th:if="${profileImage == null}" th:src="@{/images/profile.png}" alt="기본 프로필"/>
+                <span class="nav-profile-name" th:text="${username} + '님'"></span>
+              </button>
+              <div id="dropdownMenu-half" class="mobile-dropdown-menu hidden">
+                <a th:href="@{/mypage}" class="mobile-dropdown-link">내 프로필</a>
+                <a th:href="@{/logout}" class="mobile-dropdown-link">로그아웃</a>
+              </div>
             </div>
           </div>
   
+          <!-- 로그인 안한 경우 -->
           <div th:if="${!isLogin}" class="mobile-auth">
             <i class="ri-user-line"></i>
             <a th:href="@{/login}">
@@ -259,7 +307,13 @@
         </div>        
       </div>
     </main>
+<!-- JS 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<!-- 커스텀 JS -->
 <script th:src="@{/js/moblie.js}"></script>
+<script th:src="@{/js/alert.js}"></script>
 <script id="tab-navigation">
 
 document.addEventListener('DOMContentLoaded', function() 

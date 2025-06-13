@@ -35,6 +35,7 @@ public class MainController {
                 model.addAttribute("username", member.getUsername());
                 model.addAttribute("profileImage", member.getProfileImage());
                 model.addAttribute("isLogin", true);
+                model.addAttribute("memberId", member.getId());
             }
         } else {
             model.addAttribute("isLogin", false);

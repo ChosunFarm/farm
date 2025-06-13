@@ -24,5 +24,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")  // CORS 설정
                 .withSockJS();  // SockJS 지원 (WebSocket을 지원하지 않는 브라우저 대응)
+        
+        // 알림 전용 엔드포인트 추가
+        registry.addEndpoint("/ws-alert")
+        .setAllowedOriginPatterns("*")
+        .withSockJS();
     }
 }

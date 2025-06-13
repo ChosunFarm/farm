@@ -1,10 +1,12 @@
 package farm.farmshop.controller;
 
+import farm.farmshop.dto.AlertDto;
 import farm.farmshop.entity.Member;
 import farm.farmshop.entity.product.Product;
 import farm.farmshop.entity.product.ProductImage;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.ProductImageRepository;
+import farm.farmshop.service.AlertService;
 import farm.farmshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -24,8 +26,10 @@ import java.util.stream.Collectors;
 public class TestController {
 
     private final MemberRepository memberRepository;
+    private final AlertService alertService;
     private final ProductService productService;
     private final ProductImageRepository productImageRepository;
+
 
     @GetMapping("/test")
     public String showLiveAuctionPage(
@@ -39,6 +43,18 @@ public class TestController {
             if (member != null) {
                 model.addAttribute("username", member.getUsername());
                 model.addAttribute("isLogin", true);
+
+                Long memberId = member.getId();
+                model.addAttribute("memberId", memberId);         
+        
+                long unreadCnt = alertService.countUnread(memberId);
+                model.addAttribute("alertCount", unreadCnt);
+        
+                List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
+                                                       .stream()
+                                                       .map(AlertDto::fromEntity)
+                                                       .toList();
+                model.addAttribute("alertList", unreadList);
             }
         }
         else {
