@@ -176,26 +176,29 @@
         </div>
       </div>
       <!-- 실시간 경매 현황 영역 -->
-      <div class="mb-12">
+      <section id="live-auction-section" class="scroll-section opacity-0 translate-y-10 transition-all duration-700"></section>
+      <div class="mb-6 relative">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold">실시간 경매 상품</h2>
-          <a th:href="@{/live_auction}" class="text-custom hover:text-custom/80">
+          <h2 class="text-4xl font-bold text-center w-full">실시간 경매 상품</h2>
+          <a th:href="@{/live_auction}" class="absolute right-0 top-1 text-custom hover:text-custom/80 text-sm">
             전체보기 <i class="fas fa-chevron-right ml-1"></i>
           </a>
         </div>
         <div class="grid grid-cols-4 gap-6">
           <!-- Thymeleaf로 DB에서 상품 목록을 가져와 표시 -->
-          <div th:each="product : ${approvedProducts}" class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+          <div th:each="product : ${topApprovedProducts}" 
+          class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <!-- <div th:each="product : ${approvedProducts}" class="auction-item"> -->
             <!-- 상품 이미지 - 실제 이미지가 있으면 그것을 사용하고, 없으면 기본 이미지 사용 -->
-            <div class="product-thumbnail">
+            <div class="product-thumbnail w-full h-[240px] overflow-hidden">
               <img th:if="${product.imageUrl != null}"
-                   th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}"
+                   th:src="@{'/uploads/images/' + ${product.imageUrl}}"
                    th:alt="${product.name}" />
                     
               <img th:unless="${product.imageUrl != null}"
                   th:src="@{/images/default-product.jpg}"
-                  alt="기본 상품 이미지" />
+                  alt="기본 상품 이미지"
+                  class="w-full h-full object-cover" />
             </div>
 
             <div class="p-4">
@@ -239,24 +242,26 @@
           </div>
         </div>
       </div>
+      </section>
       <!-- 실시간 낙찰 현황 영역 -->
-      <div class="mb-12">
+      <section id="completed-auction-section" class="scroll-section opacity-0 translate-y-10 transition-all duration-700">
+      <div class="mb-6 relative">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold">실시간 낙찰 현황</h2>
-          <a th:href="@{/test}" class="text-custom hover:text-custom/80">
+          <h2 class="text-4xl font-bold text-center w-full">실시간 낙찰 현황</h2>
+          <a th:href="@{/test}" class="absolute right-0 top-1 text-custom hover:text-custom/80 text-sm">
             전체보기 <i class="fas fa-chevron-right ml-1"></i>
           </a>
         </div>
         <div class="grid grid-cols-4 gap-6">
           <!-- Thymeleaf로 DB에서 상품 목록을 가져와 표시 -->
-          <div th:each="product : ${completedProducts}" class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+          <div th:each="product : ${topCompletedProducts}" 
+            class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <!-- <div th:each="product : ${approvedProducts}" class="auction-item"> -->
             <!-- 상품 이미지 - 실제 이미지가 있으면 그것을 사용하고, 없으면 기본 이미지 사용 -->
-            <div class="product-thumbnail">
+            <div class="product-thumbnail w-full h-[240px] overflow-hidden">
               <img th:if="${product.imageUrl != null}"
-                  th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}"
+                  th:src="@{'/uploads/images/' + ${product.imageUrl}}"
                    th:alt="${product.name}" />
-                    
               <img th:unless="${product.imageUrl != null}"
                   th:src="@{/images/default-product.jpg}"
                   alt="기본 상품 이미지" />
@@ -288,25 +293,38 @@
               </div>
             </div>
           </div>
+          <div th:if="${#lists.isEmpty(topCompletedProducts)}"
+            class="col-span-4 text-center text-gray-400 py-8">
+            현재 낙찰된 상품이 없습니다.
+          </div>
         </div>
       </div>
+      </section>
 
       <!-- 신규 경매 예정 상품 영역 -->
+      <section id="pending-auction-section" class="scroll-section opacity-0 translate-y-10 transition-all duration-700">
       <div class="mb-12">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold">신규 경매 예정 상품</h2>
-          <a th:href="@{/scheduled}" class="text-custom hover:text-custom/80">
+          <h2 class="text-4xl font-bold text-center w-full">신규 경매 예정 상품</h2>
+          <a th:href="@{/scheduled}" class="absolute right-0 top-1 text-custom hover:text-custom/80 text-sm">
             전체보기 <i class="fas fa-chevron-right ml-1"></i>
           </a>
         </div>
         <div class="grid grid-cols-4 gap-6">
           <!-- Thymeleaf로 DB에서 상품 목록을 가져와 표시 -->
-          <div th:each="product : ${pendingProducts}" class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+          <div th:each="product : ${pendingProducts}" 
+            class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <!-- <div th:if="${!product.approved}"
+                  class="absolute inset-0 bg-black/40 text-white text-sm flex items-center justify-center z-10">
+                  관리자 검수 대기중
+                </div> -->
             <!-- 상품 이미지 - 실제 이미지가 있으면 그것을 사용하고, 없으면 기본 이미지 사용 -->
-            <div class="product-thumbnail">
+            <div class="product-thumbnail w-full h-[240px] overflow-hidden">
               <img th:if="${product.imageUrl != null}"
-                   th:src="@{/uploads/images/{fn}(fn=${product.imageUrl})}"
-                   th:alt="${product.name}" />
+                   th:src="@{'/uploads/images/' + ${product.imageUrl}}"
+                   th:alt="${product.name}"
+                   th:classappend="${product.status == 'pending'} ? ' blur-sm brightness-90' : ''"
+                   class="w-full h-full object-cover transition-all duration-300" />
                     
               <img th:unless="${product.imageUrl != null}"
                   th:src="@{/images/default-product.jpg}"
@@ -371,6 +389,7 @@
               <span class="text-gray-700" th:text="${product.member != null ? product.member.username : '미등록'}">판매자명</span>
             </div> -->
           </div>
+          </section>
         </div>
       </div>
     </div>
