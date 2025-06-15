@@ -15,6 +15,35 @@ new Glide('.glide', {
     }
   }).mount();
   
+  document.addEventListener('DOMContentLoaded', () => {
+  const menuBtn = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+
+  // 🔥 스크롤 애니메이션 (Intersection Observer)
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('opacity-100', 'translate-y-0');
+        entry.target.classList.remove('opacity-0', 'translate-y-10');
+      } else {
+        entry.target.classList.remove('opacity-100', 'translate-y-0');
+        entry.target.classList.add('opacity-0', 'translate-y-10');
+      }
+    });
+  }, {
+    threshold: 0.3 // 뷰포트에 30% 들어오면
+  });
+
+  document.querySelectorAll('.scroll-section').forEach(section => {
+    observer.observe(section);
+  });
+});
+  
 // document.addEventListener('DOMContentLoaded', () => {
 //   const menuBtn = document.getElementById('mobile-menu-button');
 //   const mobileMenu = document.getElementById('mobile-menu');
