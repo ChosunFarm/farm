@@ -5,7 +5,7 @@ import farm.farmshop.entity.Member;
 import farm.farmshop.entity.product.*;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.ProductImageRepository;
-import farm.farmshop.service.AlertService; 
+import farm.farmshop.service.AlertService;
 import farm.farmshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,8 +46,8 @@ public class AuctionController {
                 model.addAttribute("username", member.getUsername());
                 model.addAttribute("isLogin", true);
 
-                Long memberId = member.getId();   
-                model.addAttribute("memberId", memberId);   
+                Long memberId = member.getId();
+                model.addAttribute("memberId", memberId);
 
                 // 미확인 알림 개수
                 long unreadCnt = alertService.countUnread(memberId);
@@ -55,9 +55,9 @@ public class AuctionController {
 
                 // 미확인 알림 리스트 (DTO 변환)
                 List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
-                                                       .stream()
-                                                       .map(AlertDto::fromEntity)
-                                                       .toList();
+                        .stream()
+                        .map(AlertDto::fromEntity)
+                        .toList();
                 model.addAttribute("alertList", unreadList);
 
             }

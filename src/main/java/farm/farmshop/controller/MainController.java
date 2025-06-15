@@ -47,9 +47,9 @@ public class MainController {
         List<Product> completedProducts = productRepository.findByStatus("completed");
 
         List<Product> allProducts = Stream.of(
-            approvedProducts,
-            pendingProducts,
-            completedProducts
+                approvedProducts,
+                pendingProducts,
+                completedProducts
         ).flatMap(List::stream).collect(Collectors.toList());
 
         List<Long> productIds = allProducts.stream()
@@ -58,10 +58,10 @@ public class MainController {
 
         List<ProductImage> productImages = productImageRepository.findByProductIdIn(productIds);
         Map<Long, List<String>> productImageMap = productImages.stream()
-        .collect(Collectors.groupingBy(
-            pi -> pi.getProduct().getId(),
-            Collectors.mapping(ProductImage::getImageUrl, Collectors.toList())
-        ));
+                .collect(Collectors.groupingBy(
+                        pi -> pi.getProduct().getId(),
+                        Collectors.mapping(ProductImage::getImageUrl, Collectors.toList())
+                ));
 
 
         for (Product product : allProducts) {
@@ -70,30 +70,12 @@ public class MainController {
             product.setImageUrl(imageUrl);
         }
 
-        List<Product> topApprovedProducts = approvedProducts.stream()
-                .limit(8)
-                .collect(Collectors.toList());
-
-        List<Product> topCompletedProducts = completedProducts.stream()
-                .limit(8)
-                .collect(Collectors.toList());
-
-        List<Product> topPendingProducts = pendingProducts.stream()
-                .limit(8)
-                .collect(Collectors.toList());
-
         // 모델에 검수 상태에 따른 분리된 리스트 전달
-<<<<<<< HEAD
         model.addAttribute("approvedProducts", approvedProducts); // 실시간 경매 상품
         model.addAttribute("pendingProducts", pendingProducts);   // 신규 경매 예정 상품
         model.addAttribute("completedProducts", completedProducts);   // 신규 경매 예정 상품
         model.addAttribute("productImageMap", productImageMap);
-=======
-        model.addAttribute("topApprovedProducts", topApprovedProducts); // 실시간 경매 상품
-        model.addAttribute("topCompletedProducts", topCompletedProducts);// 신규 경매 예정 상품
-        model.addAttribute("pendingProducts", pendingProducts);// 신규 경매 예정 상품
->>>>>>> ahyun
-        
+
 
         return "main";
     }

@@ -17,7 +17,7 @@ public class ProductImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_ID")  // 외래 키 매핑
     private Product product;
-    
+
     // @Column(name = "PRODUCT_ID")
     // private Long productId;
 

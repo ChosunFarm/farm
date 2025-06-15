@@ -44,15 +44,15 @@ public class Live_AuctionController {
                 model.addAttribute("isLogin", true);
 
                 Long memberId = member.getId();
-                model.addAttribute("memberId", memberId);      
+                model.addAttribute("memberId", memberId);
 
                 long unreadCnt = alertService.countUnread(memberId);
                 model.addAttribute("alertCount", unreadCnt);
 
                 List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
-                                                    .stream()
-                                                    .map(AlertDto::fromEntity)
-                                                    .toList();
+                        .stream()
+                        .map(AlertDto::fromEntity)
+                        .toList();
                 model.addAttribute("alertList", unreadList);
 
             }
@@ -117,8 +117,8 @@ public class Live_AuctionController {
         List<ProductImage> productImages = productImageRepository.findByProductIdIn(productIds);
         Map<Long, List<String>> productImageMap = productImages.stream()
                 .collect(Collectors.groupingBy(
-                    img -> img.getProduct().getId(),
-                    Collectors.mapping(ProductImage::getImageUrl, Collectors.toList())
+                        img -> img.getProduct().getId(),
+                        Collectors.mapping(ProductImage::getImageUrl, Collectors.toList())
                 ));
 
         model.addAttribute("approvedProducts", categoryProducts);
