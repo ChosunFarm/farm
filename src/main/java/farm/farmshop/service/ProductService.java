@@ -2,6 +2,7 @@ package farm.farmshop.service;
 
 import farm.farmshop.entity.product.Product;
 import farm.farmshop.repository.ProductRepository;
+import farm.farmshop.service.AuctionAlertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final AuctionAlertService auctionAlertService;
 
     // 상품 저장
     @Transactional
@@ -46,6 +48,12 @@ public class ProductService {
         if (product != null) {
             product.setStatus("approved");
             productRepository.save(product);
+
+            // 실시간 알림: 검수 완료되어 경매 시작
+            Long sellerId = product.getMember().getId();
+            Long id = product.getId();
+            String name = product.getName();
+            auctionAlertService.notifyInspectionComplete(sellerId, id, name);
         }
     }
 

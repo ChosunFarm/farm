@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BidRepository extends JpaRepository<Bid, Long> {
@@ -30,4 +31,6 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     // 판매자의 상품에 대한 입찰 내역 조회
     @Query("SELECT b FROM Bid b WHERE b.product.member.id = :sellerId")
     List<Bid> findByProductSellerId(@Param("sellerId") Long sellerId);
+
+    Optional<Bid> findTopByProductIdOrderByBidAmountDesc(Long productId);
 }

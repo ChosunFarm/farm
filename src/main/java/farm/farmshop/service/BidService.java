@@ -2,9 +2,11 @@ package farm.farmshop.service;
 
 import farm.farmshop.entity.Bid;
 import farm.farmshop.repository.BidRepository;
+import farm.farmshop.service.AuctionAlertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -15,11 +17,58 @@ import java.util.Optional;
 public class BidService {
 
     private final BidRepository bidRepository;
+    private final AuctionAlertService auctionAlertService;
 
     // 입찰 정보 저장
     @Transactional
     public Long saveBid(Bid bid) {
+
+        Long productId   = bid.getProduct().getId();
+        String productName = bid.getProduct().getName();
+        int    newBid    = bid.getBidAmount();
+        Long   bidderId  = bid.getMember().getId();
+        Long   sellerId  = bid.getProduct().getMember().getId();
+
+        Optional<Bid> prevTopOpt = bidRepository.findTopByProductIdOrderByBidAmountDesc(productId);
+
         bidRepository.save(bid);
+
+
+        // 구매자(입찰자)에게 "내 입찰" 알림
+        auctionAlertService.notifyBidUpdatedForBuyer(
+            bidderId, productId, productName, newBid
+        );
+        // 판매자에게 "새 입찰" 알림
+        auctionAlertService.notifyBidUpdatedForSeller(
+            sellerId, productId, productName, newBid
+        );
+
+        // 이전 최고 입찰자가 있고 다른 사용자인 경우 Outbid 알림
+        prevTopOpt.ifPresent(prevTop -> {
+            Long prevBidderId = prevTop.getMember().getId();
+            if (!prevBidderId.equals(bidderId)) {
+                auctionAlertService.notifyOutbidForBuyer(
+                    prevBidderId, productId, productName, newBid
+                );
+            }
+        });
+        
+
+        List<Bid> allPrevious = bidRepository.findByProductId(productId);
+        String currentBidderName = bid.getMember().getUsername();
+        for (Bid previous : allPrevious) {
+            Long prevId = previous.getMember().getId();
+            if (!prevId.equals(bidderId)) {
+                auctionAlertService.notifyBidByOther(
+                    prevId,
+                    productId,
+                    productName,
+                    newBid,
+                    currentBidderName
+                );
+            }
+        }
+
         return bid.getId();
     }
 

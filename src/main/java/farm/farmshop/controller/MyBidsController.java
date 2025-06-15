@@ -1,5 +1,6 @@
 package farm.farmshop.controller;
 
+import farm.farmshop.dto.AlertDto;
 import farm.farmshop.dto.MyBidDTO;
 import farm.farmshop.dto.MyProductDTO;
 import farm.farmshop.entity.Bid;
@@ -12,6 +13,7 @@ import farm.farmshop.entity.product.Vegetable;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.ProductImageRepository;
 import farm.farmshop.repository.ProductRepository;
+import farm.farmshop.service.AlertService;
 import farm.farmshop.service.BidService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -33,6 +35,7 @@ import java.util.stream.Stream;
 public class MyBidsController {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
+    private final AlertService alertService;
     private final BidService bidService;
     private final ProductImageRepository productImageRepository;
 
@@ -45,6 +48,18 @@ public class MyBidsController {
             if (member != null) {
                 model.addAttribute("username", member.getUsername());
                 model.addAttribute("isLogin", true);
+
+                Long memberId = member.getId();
+                model.addAttribute("memberId", memberId);         
+        
+                long unreadCnt = alertService.countUnread(memberId);
+                model.addAttribute("alertCount", unreadCnt);
+        
+                List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
+                                                       .stream()
+                                                       .map(AlertDto::fromEntity)
+                                                       .toList();
+                model.addAttribute("alertList", unreadList);
             }
             // 사용자의 입찰 목록 조회
                 List<Bid> myBids = bidService.findByMemberId(member.getId());

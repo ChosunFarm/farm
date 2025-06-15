@@ -1,9 +1,11 @@
 package farm.farmshop.controller;
 
+import farm.farmshop.dto.AlertDto;
 import farm.farmshop.entity.Member;
 import farm.farmshop.entity.product.*;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.ProductImageRepository;
+import farm.farmshop.service.AlertService; 
 import farm.farmshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,15 +19,18 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/auction")
 @RequiredArgsConstructor
 public class AuctionController {
 
+    private final AlertService alertService;
     private final ProductService productService;
     private final MemberRepository memberRepository;
     private final ProductImageRepository productImageRepository;
+
 
     /**
      * application.yml 에 설정된 업로드 루트 디렉터리 (예: "./uploads/images")  
@@ -40,6 +45,21 @@ public class AuctionController {
             if (member != null) {
                 model.addAttribute("username", member.getUsername());
                 model.addAttribute("isLogin", true);
+
+                Long memberId = member.getId();   
+                model.addAttribute("memberId", memberId);   
+
+                // 미확인 알림 개수
+                long unreadCnt = alertService.countUnread(memberId);
+                model.addAttribute("alertCount", unreadCnt);
+
+                // 미확인 알림 리스트 (DTO 변환)
+                List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
+                                                       .stream()
+                                                       .map(AlertDto::fromEntity)
+                                                       .toList();
+                model.addAttribute("alertList", unreadList);
+
             }
         } else {
             model.addAttribute("isLogin", false);

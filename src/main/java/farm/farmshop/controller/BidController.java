@@ -1,11 +1,13 @@
 package farm.farmshop.controller;
 
 import farm.farmshop.entity.Member;
+import farm.farmshop.dto.AlertDto;
 import farm.farmshop.entity.product.Product;
 import farm.farmshop.entity.Bid;
 import farm.farmshop.entity.AuctionResult;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.BidRepository;
+import farm.farmshop.service.AlertService;
 import farm.farmshop.service.ProductService;
 import farm.farmshop.service.BidService;
 import farm.farmshop.service.RatingService;
@@ -34,12 +36,34 @@ import java.util.Map;
 public class BidController {
 
     private final ProductService productService;
+    private final AlertService alertService;
     private final BidService bidService;
     private final MemberRepository memberRepository;
     private final AuctionResultService auctionResultService;
     private final NotificationService notificationService;
     private final RatingService ratingService;
     private final ProductImageRepository productImageRepository;
+
+
+    @ModelAttribute
+    public void populateAlerts(Model model, Principal principal) {
+        if (principal == null) return;
+
+        Member member = memberRepository.findByEmail(principal.getName());
+        if (member == null) return;
+
+        Long memberId = member.getId();
+        model.addAttribute("memberId", memberId);
+
+        long unreadCnt = alertService.countUnread(memberId);
+        model.addAttribute("alertCount", unreadCnt);
+
+        List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
+                                                .stream()
+                                                .map(AlertDto::fromEntity)
+                                                .toList();
+        model.addAttribute("alertList", unreadList);
+    }
 
     // 상품 상세 페이지 및 입찰 페이지
     @GetMapping("/auction/detail/{productId}")
@@ -52,6 +76,7 @@ public class BidController {
                 model.addAttribute("username", member.getUsername());
                 model.addAttribute("memberId", member.getId());
                 model.addAttribute("isLogin", true);
+                model.addAttribute("profileImage", member.getProfileImage());
             }
         } else {
             model.addAttribute("isLogin", false);
@@ -258,6 +283,7 @@ public class BidController {
         // 로그인 사용자 정보
         String email = principal.getName();
         Member member = memberRepository.findByEmail(email);
+        model.addAttribute("profileImage", member.getProfileImage());
 
         // 접근 권한 확인 (낙찰자 또는 판매자만)
         boolean isWinner = auctionResult.getWinningBid().getMember().getId().equals(member.getId());
@@ -266,6 +292,16 @@ public class BidController {
         if (!isWinner && !isSeller) {
             return "redirect:/";
         }
+
+        Product product = auctionResult.getProduct();
+        model.addAttribute("product", product);
+
+        List<ProductImage> imgs = productImageRepository.findByProductId(product.getId());
+        List<String> urls = imgs.stream()
+                                .map(ProductImage::getImageUrl)
+                                .toList();
+        model.addAttribute("productImageMap", Map.of(product.getId(), urls));
+
 
         model.addAttribute("auctionResult", auctionResult);
         model.addAttribute("isWinner", isWinner);

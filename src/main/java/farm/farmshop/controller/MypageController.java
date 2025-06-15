@@ -1,9 +1,11 @@
 package farm.farmshop.controller;
 
+import farm.farmshop.dto.AlertDto;
 import farm.farmshop.entity.Member;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.repository.ProductRepository;
 import farm.farmshop.service.BidService;
+import farm.farmshop.service.AlertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ public class MypageController {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
     private final BidService bidService;
+    private final AlertService alertService;
 
     @PostMapping("/mypage/update")
     @Transactional
@@ -68,28 +72,6 @@ public class MypageController {
         return "redirect:/mypage";
     }
 
-    // 회원정보 수정
-    // @GetMapping("/mypage/edit-info")
-    // public String showEditInfoForm(Model model, Principal principal) {
-    //     String email = principal.getName();
-    //     Member member = memberRepository.findByEmail(email);
-    //     model.addAttribute("member", member);
-    //     return "mypage/my-editInfo";
-    // }
-
-    // @PostMapping("/mypage/edit-info")
-    // @Transactional
-    // public String updateMemberInfo(@ModelAttribute Member updatedMember, Principal principal) {
-    //     String email = principal.getName();
-    //     Member member = memberRepository.findByEmail(email);
-
-    //     member.setUsername(updatedMember.getUsername());
-    //     member.setPhone(updatedMember.getPhone());
-    //     member.setAddress(updatedMember.getAddress());
-
-    //     return "redirect:/mypage";
-    // }
-
     @GetMapping("/mypage")
     public String myPage(Model model, Principal principal) {
         if (principal != null) {
@@ -113,6 +95,17 @@ public class MypageController {
 
                 model.addAttribute("intro", member.getIntro());
 
+                Long memberId = member.getId();
+                model.addAttribute("memberId", memberId);         
+                long unreadCnt = alertService.countUnread(memberId);
+                model.addAttribute("alertCount", unreadCnt);
+
+                List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
+                                                    .stream()
+                                                    .map(AlertDto::fromEntity)
+                                                    .toList();
+                model.addAttribute("alertList", unreadList);
+
             }
         } else {
             model.addAttribute("isLogin", false);
@@ -133,7 +126,23 @@ public class MypageController {
     @GetMapping("/mypage/view-info")
     public String viewInfo(Model model, Principal principal) {
         String email = principal.getName();
+
         Member member = memberRepository.findByEmail(email);
+        if (member == null) {
+            return "redirect:/login";
+        }
+
+        Long memberId = member.getId();
+        model.addAttribute("memberId", memberId);         
+
+        long unreadCnt = alertService.countUnread(memberId);
+        model.addAttribute("alertCount", unreadCnt);
+
+        List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
+                                               .stream()
+                                               .map(AlertDto::fromEntity)
+                                               .toList();
+        model.addAttribute("alertList", unreadList);
         model.addAttribute("member", member);
         return "mypage/view-info";
     }

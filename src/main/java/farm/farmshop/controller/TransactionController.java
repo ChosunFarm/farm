@@ -1,9 +1,11 @@
 package farm.farmshop.controller;
 
+import farm.farmshop.dto.AlertDto;
 import farm.farmshop.entity.AuctionResult;
 import farm.farmshop.entity.Member;
 import farm.farmshop.repository.MemberRepository;
 import farm.farmshop.service.AuctionResultService;
+import farm.farmshop.service.AlertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,7 @@ public class TransactionController {
 
     private final MemberRepository memberRepository;
     private final AuctionResultService auctionResultService;
+    private final AlertService alertService;
 
     // 거래 현황 통합 페이지
     @GetMapping("/transactions")
@@ -39,6 +42,18 @@ public class TransactionController {
         model.addAttribute("username", member.getUsername());
         model.addAttribute("isLogin", true);
         model.addAttribute("currentMemberId", member.getId());
+
+                Long memberId = member.getId();
+        model.addAttribute("memberId", memberId);          
+
+        long unreadCnt = alertService.countUnread(memberId);
+        model.addAttribute("alertCount", unreadCnt);
+
+        List<AlertDto> unreadList = alertService.getUnreadAlerts(memberId)
+                                               .stream()
+                                               .map(AlertDto::fromEntity)
+                                               .toList();
+        model.addAttribute("alertList", unreadList);
 
         // 나의 낙찰 내역 (구매자 입장)
         List<AuctionResult> myWinning = auctionResultService.findByWinnerId(member.getId());
