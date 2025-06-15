@@ -24,7 +24,7 @@ new Glide('.glide', {
     });
   }
 
-  // 🔥 스크롤 애니메이션 (Intersection Observer)
+  // 스크롤 애니메이션 (Intersection Observer)
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {

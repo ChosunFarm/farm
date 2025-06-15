@@ -178,7 +178,7 @@
                         <li><a th:href="@{/mypage/mybids}">나의 입찰 내역</a></li>
                         <li><a th:href="@{/mypage/received-bids}">받은 입찰 내역</a></li>
                         <!-- 새로 추가 -->
-                        <li><a th:href="@{/mypage/transactions}"><strong>거래 현황</strong></a></li>
+                        <li><a th:href="@{/mypage/transactions}">거래 현황</a></li>
                         <li><a th:href="@{/auction}">상품 등록</a></li>
                         <li><a th:href="@{/live_auction}">실시간 경매</a></li>
                         <!-- 회원정보수정 -->
@@ -195,15 +195,10 @@
                                 <!-- 프로필 -->
                                 <div class="profile-img rounded-full overflow-hidden mx-auto">
                                     <div class="profile-img">
-                                        <!-- 기본 이미지 조건 -->
-                                        <img th:if="${profileImage == null or profileImage == 'profile.png'}"
-                                             th:src="@{/images/profile.png}"
-                                             class="nav-profile-img" alt="기본 프로필" />
-
-                                        <!-- 업로드 이미지 조건 -->
-                                        <img th:if="${profileImage != null and profileImage != 'profile.png'}"
-                                             th:src="@{'/uploads/myage-profile/' + ${profileImage}}"
-                                             class="nav-profile-img" alt="사용자 프로필" />
+                                        <img id="profileImage"
+                                            th:src="@{'/uploads/myage-profile/' + ${profileImage}}"
+                                            onerror="this.onerror=null; this.src='/images/profile.png';"
+                                            alt="프로필 이미지"/>
                                     </div>
                                     
                                 </div>
