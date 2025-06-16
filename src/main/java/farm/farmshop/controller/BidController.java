@@ -6,7 +6,6 @@ import farm.farmshop.entity.product.Product;
 import farm.farmshop.entity.Bid;
 import farm.farmshop.entity.AuctionResult;
 import farm.farmshop.repository.MemberRepository;
-import farm.farmshop.repository.BidRepository;
 import farm.farmshop.service.AlertService;
 import farm.farmshop.service.ProductService;
 import farm.farmshop.service.BidService;
