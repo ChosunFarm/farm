@@ -1,3 +1,5 @@
+/* 기존 CSS에 추가하거나 수정할 부분 */
+
 body {
     margin: 0;
     padding: 0;
@@ -16,13 +18,6 @@ h2 {
     font-size: 28px;
 }
 
-/*.auction-list {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 3rem;
-    width: 100%
-}*/
-
 .auction-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -36,14 +31,43 @@ h2 {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     padding: 1.5rem;
     display: flex;
-    flex-direction: column; 
-    align-items: stretch;   
+    flex-direction: row; /* 가로 배치로 변경 */
+    align-items: flex-start;
+    gap: 1.5rem;
 }
 
+/* 상품 이미지 링크 컨테이너 */
+.product-image-link {
+    flex-shrink: 0;
+    width: 150px; /* 고정 너비 */
+    height: 150px; /* 고정 높이 */
+}
 
+/* Swiper 이미지 슬라이더 스타일 */
+.product-thumbnail {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+.product-thumbnail .swiper-slide {
+    width: 100%;
+    height: 100%;
+}
+
+.product-thumbnail .swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지 비율 유지하면서 컨테이너 채우기 */
+    border-radius: 8px;
+}
+
+/* 일반 상품 이미지 (Swiper가 아닌 경우) */
 .product-image {
-    width: 100px;
-    height: 100px;
+    width: 100%;
+    height: 100%;
     background-color: #f9f9f9;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -51,18 +75,55 @@ h2 {
     justify-content: center;
     align-items: center;
     font-size: 2rem;
-    flex-shrink: 0;
-    margin-right: 1.5rem;
     overflow: hidden;
 }
+
 .product-image img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover; /* contain에서 cover로 변경 */
 }
-  
+
+/* Swiper 네비게이션 버튼 스타일 조정 */
+.custom-next,
+.custom-prev {
+    width: 25px !important;
+    height: 25px !important;
+    margin-top: -12.5px !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    border-radius: 50% !important;
+}
+
+.custom-next:after,
+.custom-prev:after {
+    font-size: 12px !important;
+    color: white !important;
+}
+
+.custom-next {
+    right: 5px !important;
+}
+
+.custom-prev {
+    left: 5px !important;
+}
+
+/* 상품 정보 영역 */
 .product-info {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* 경매 참여하기 버튼 스타일 */
+.product-info a[href*="/auction/detail/"] {
+    align-self: flex-start; /* 버튼을 왼쪽 정렬 */
+    margin-top: 1rem;
+    min-width: 120px; /* 최소 너비 설정 */
+    max-width: 200px; /* 최대 너비 제한 */
+    text-align: center;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
 }
 
 .product-title {
@@ -102,4 +163,40 @@ h2 {
     color: #d10000;
     font-weight: bold;
     font-size: 1rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .auction-item {
+        flex-direction: column; /* 모바일에서는 세로 배치 */
+        align-items: center;
+        text-align: center;
+    }
+
+    .product-image-link {
+        width: 200px;
+        height: 200px;
+        margin-bottom: 1rem;
+    }
+
+    .auction-list {
+        grid-template-columns: 1fr; /* 모바일에서는 한 줄에 하나씩 */
+        gap: 1.5rem;
+    }
+
+    /* 모바일에서 버튼 중앙 정렬 */
+    .product-info a[href*="/auction/detail/"] {
+        align-self: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-image-link {
+        width: 150px;
+        height: 150px;
+    }
+
+    .auction-item {
+        padding: 1rem;
+    }
 }

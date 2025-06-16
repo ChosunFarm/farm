@@ -118,8 +118,11 @@ class AuctionWebSocket {
         }
       }
       // 최소입찰가 힌트 (100원 단위로 증가)
-      const base = update.bidAmount ?? Number(document.getElementById('bid-amount').min);
+      const inputEl = document.getElementById('bid-amount');
+      const startingPrice = Number(inputEl.getAttribute('data-starting-price') || inputEl.min);
+      const base = update.bidAmount ?? startingPrice;
       this.updateMinHint(base + 100); // 100원씩 증가
+
     }
   }
 

@@ -225,22 +225,23 @@
       </div>
     </div>
     <!-- 실시간 경매 현황 영역 -->
-    <div class="mb-12">
+    <section id="live-auction-section" class="scroll-section opacity-0 translate-y-10 transition-all duration-700">
+    <div class="mb-6 relative">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">실시간 경매 상품</h2>
-        <a th:href="@{/live_auction}" class="text-custom hover:text-custom/80">
-          전체보기 <i class="fas fa-chevron-right ml-1"></i>
+        <h2 class="text-4xl font-bold text-center w-full">실시간 경매 상품</h2>
+        <a th:href="@{/live_auction}" class="absolute right-0 top-1 text-custom hover:text-custom/80 text-sm">
+            전체보기 <i class="fas fa-chevron-right ml-1"></i>
         </a>
       </div>
       <div class="grid grid-cols-4 gap-6">
         <!-- Thymeleaf로 DB에서 상품 목록을 가져와 표시 -->
-        <div th:each="product : ${approvedProducts}" class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+        <div th:each="product : ${topApprovedProducts}" class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
           <!-- 상품 이미지 - 실제 이미지가 있으면 그것을 사용하고, 없으면 기본 이미지 사용 -->
           <div class="swiper mySwiper product-thumbnail relative"
                th:if="${productImageMap.containsKey(product.id)}">
             <div class="swiper-wrapper">
-              <div class="swiper-slide" th:each="img : ${productImageMap[product.id]}">
-                <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover" th:alt="${product.name}" />
+              <div class="swiper-slide h-[240px]" th:each="img : ${productImageMap[product.id]}">
+                <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover object-center block" th:alt="${product.name}" />
               </div>
             </div>
             <div class="swiper-button-next custom-next"
@@ -290,12 +291,14 @@
         </div>
       </div>
     </div>
+    </section>
     <!-- 실시간 낙찰 현황 영역 -->
-    <div class="mb-12">
+     <section id="completed-auction-section" class="scroll-section opacity-0 translate-y-10 transition-all duration-700">
+    <div class="mb-6 relative">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">실시간 낙찰 현황</h2>
-        <a th:href="@{/test}" class="text-custom hover:text-custom/80">
-          전체보기 <i class="fas fa-chevron-right ml-1"></i>
+        <h2 class="text-4xl font-bold text-center w-full">실시간 낙찰 현황</h2>
+        <a th:href="@{/test}" class="absolute right-0 top-1 text-custom hover:text-custom/80 text-sm">
+            전체보기 <i class="fas fa-chevron-right ml-1"></i>
         </a>
       </div>
       <div class="grid grid-cols-4 gap-6">
@@ -305,8 +308,8 @@
           <div class="swiper mySwiper product-thumbnail relative"
                th:if="${productImageMap.containsKey(product.id)}">
             <div class="swiper-wrapper">
-              <div class="swiper-slide" th:each="img : ${productImageMap[product.id]}">
-                <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover" th:alt="${product.name}" />
+              <div class="swiper-slide h-[240px]" th:each="img : ${productImageMap[product.id]}">
+                <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover object-center block" th:alt="${product.name}" />
               </div>
             </div>
 
@@ -350,13 +353,14 @@
         </div>
       </div>
     </div>
-
+</section>
     <!-- 신규 경매 예정 상품 영역 -->
-    <div class="mb-12">
+     <section id="pending-auction-section" class="scroll-section opacity-0 translate-y-10 transition-all duration-700">
+    <div class="mb-6 relative">
       <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">신규 경매 예정 상품</h2>
-        <a th:href="@{/scheduled}" class="text-custom hover:text-custom/80">
-          전체보기 <i class="fas fa-chevron-right ml-1"></i>
+        <h2 class="text-4xl font-bold text-center w-full">신규 경매 예정 상품</h2>
+        <a th:href="@{/scheduled}" class="absolute right-0 top-1 text-custom hover:text-custom/80 text-sm">
+            전체보기 <i class="fas fa-chevron-right ml-1"></i>
         </a>
       </div>
       <div class="grid grid-cols-4 gap-6">
@@ -366,8 +370,8 @@
           <div class="swiper mySwiper product-thumbnail relative"
                th:if="${productImageMap.containsKey(product.id)}">
             <div class="swiper-wrapper">
-              <div class="swiper-slide" th:each="img : ${productImageMap[product.id]}">
-                <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover" th:alt="${product.name}" />
+              <div class="swiper-slide h-[240px]" th:each="img : ${productImageMap[product.id]}">
+                <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover object-center block" th:alt="${product.name}" />
               </div>
             </div>
 
@@ -443,7 +447,7 @@
         </div>
       </div>
     </div>
-  </div>
+    </section>
 </main>
 
 <!-- 푸터 영역 -->
