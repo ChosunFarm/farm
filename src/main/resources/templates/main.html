@@ -371,7 +371,7 @@
                th:if="${productImageMap.containsKey(product.id)}">
             <div class="swiper-wrapper">
               <div class="swiper-slide h-[240px]" th:each="img : ${productImageMap[product.id]}">
-                <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover object-center block" th:alt="${product.name}" />
+                <img th:src="@{'/uploads/images/' + ${img}}" class="w-full h-full object-cover object-center block block blur-sm" th:alt="${product.name}" />
               </div>
             </div>
 
