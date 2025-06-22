@@ -87,6 +87,8 @@ public class MainController {
         model.addAttribute("topCompletedProducts", topCompletedProducts);   // 신규 경매 예정 상품
         model.addAttribute("pendingProducts", pendingProducts);   // 신규 경매 예정 상품
         model.addAttribute("productImageMap", productImageMap);
+        model.addAttribute("completedProducts", completedProducts);
+
 
 
         return "main";

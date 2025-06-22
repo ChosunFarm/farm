@@ -3,7 +3,7 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.type: trace
     org.thymeleaf: TRACE
-    org.thymeleaf.parser: TRACE
+    org.thymeleaf.parser: TRACE 
 
 spring:
   datasource:
@@ -31,7 +31,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect

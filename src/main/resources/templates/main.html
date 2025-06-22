@@ -303,7 +303,7 @@
       </div>
       <div class="grid grid-cols-4 gap-6">
         <!-- Thymeleaf로 DB에서 상품 목록을 가져와 표시 -->
-        <div th:each="product : ${completedProducts}" class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+        <div th:each="product : ${topCompletedProducts}" class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
           <!-- Swiper 슬라이더 (이미지가 존재할 경우) -->
           <div class="swiper mySwiper product-thumbnail relative"
                th:if="${productImageMap.containsKey(product.id)}">
@@ -379,7 +379,7 @@
             <div class="swiper-button-next custom-next"
                  th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
             <div class="swiper-button-prev custom-prev"
-                 th:if="${#lists.size(productImageMap[product.id]) > 1}"></div>
+                 th:if="${#lists.size(productImageMap[product.id]) > 1}", ;lkjggf></div>
           </div>
 
           <!-- 이미지가 아예 없는 경우 기본 이미지 -->
